@@ -1,13 +1,17 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import S from "fluent-json-schema";
 
-export const getPostTokenBodySchema = S.object()
-  .id("/auth/")
+export const postTokenBodySchema = S.object()
+  .id("/auth")
   .title("for token generation POST")
   .prop("userId", S.number().minimum(1).required());
 
+export const getTokenQuerySchema = S.object()
+  .id("/auth?userId=123")
+  .title("verify email that has a token as query")
+  .prop("userId", S.number().required());
 export const deleteTokenBodySchema = S.object()
-  .id("/auth/")
+  .id("/auth")
   .title("for token generation POST")
   .prop("userId", S.number().minimum(1).required())
   .prop("tokenId", S.number().minimum(1).required());

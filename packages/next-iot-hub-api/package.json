@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@humanwhocodes/env": "^2.1.4",
-    "@technologiesitftung/fastify-supabase": "^0.0.1",
+    "@technologiestiftung/fastify-supabase": "0.1.0-alpha.0",
     "esbuild": "^0.11.6",
     "fastify": "3.14.2",
     "fastify-blipp": "3.0.0",
@@ -50,6 +50,6 @@
     "fastify-plugin": "3.0.0",
     "fastify-sensible": "3.1.1",
     "fluent-json-schema": "2.0.4",
-    "make-promises-safe": "^5.1.0"
+    "make-promises-safe": "5.1.0"
   }
 }

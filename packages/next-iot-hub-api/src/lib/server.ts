@@ -5,7 +5,7 @@ import fastifyJwt from "fastify-jwt";
 import fastifyHelmet from "fastify-helmet";
 import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
-import fastifySupabase from "@technologiesitftung/fastify-supabase";
+import fastifySupabase from "@technologiestiftung/fastify-supabase";
 import { jwtSecret, supabaseUrl, supabaseServiceRoleKey } from "./env";
 
 import routes from "./routes";

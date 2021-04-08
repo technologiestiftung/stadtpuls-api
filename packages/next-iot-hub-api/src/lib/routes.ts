@@ -3,9 +3,10 @@ import fp from "fastify-plugin";
 import {
   postHandler,
   deleteHandeler,
-  getPostTokenBodySchema,
+  postTokenBodySchema,
   deleteTokenBodySchema,
   getHandler,
+  getTokenQuerySchema,
 } from "./request-handlers/auth";
 
 interface AuthBody {
@@ -39,6 +40,7 @@ const server: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.route({
     url: "/api",
     method: "GET",
+
     handler: async (request, reply) => {
       reply.send({
         comment: "Should do healthcheck",
@@ -48,16 +50,18 @@ const server: FastifyPluginAsync = async (fastify, _opts) => {
     },
   });
 
-  fastify.route<{ Body: Omit<AuthBody, "tokenId"> }>({
+  fastify.route<{ Querystring: { userId: string } }>({
     url: "/api/v2/auth",
     method: "GET",
-    schema: { body: getPostTokenBodySchema },
+    schema: {
+      querystring: getTokenQuerySchema,
+    },
     handler: getHandler,
   });
   fastify.route<{ Body: Omit<AuthBody, "tokenId"> }>({
     url: "/api/v2/auth",
     method: "POST",
-    schema: { body: getPostTokenBodySchema },
+    schema: { body: postTokenBodySchema },
     handler: postHandler,
   });
 
