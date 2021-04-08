@@ -1,0 +1,22 @@
+
+
+@host = localhost
+@port = 4000
+@mount = api
+
+@version = v2
+
+@apihost = http://{{ host }}:{{ port }}
+
+@baseurl = {{apihost}}/{{ mount }}/{{ version }}
+
+### Healthcheck
+GET {{ baseurl }}
+
+### auth
+
+
+POST {{ baseurl }}/auth
+Content-Type: application/json
+
+{"userId":"123"}
