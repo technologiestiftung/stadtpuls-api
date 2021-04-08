@@ -16,7 +16,7 @@
     "lib"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "repository": {
     "type": "git",
