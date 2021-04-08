@@ -1,11 +1,11 @@
-# `@technologiesitftung/fastify-supabase`
+# `@technologiestiftung/fastify-supabase`
 
 > TODO: description
 
 ## Usage
 
 ```
-const fastifySupabase = require('@technologiesitftung/fastify-supabase');
+const fastifySupabase = require('@technologiestiftung/fastify-supabase');
 
 // TODO: DEMONSTRATE API
 ```

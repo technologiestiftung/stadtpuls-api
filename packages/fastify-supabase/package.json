@@ -46,5 +46,6 @@
     "esbuild": "^0.11.6",
     "fastify": "^3.14.2",
     "fastify-plugin": "^3.0.0"
-  }
+  },
+  "gitHead": "b98c5eebe62e2a02c76184f34fe7ca9f9e23be25"
 }
