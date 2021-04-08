@@ -1,7 +1,7 @@
 {
   "name": "@technologiestiftung/next-iot-hub-api",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "> TODO: description",
   "author": "ff6347 <fabianmoronzirfas@protonmail.ch>",
   "homepage": "https://github.com/technologiestiftung/next-iot-hub-api/tree/main/packages/next-iot-hub-api#readme",
