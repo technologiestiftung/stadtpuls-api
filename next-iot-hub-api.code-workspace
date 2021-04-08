@@ -1,0 +1,32 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "packages/next-iot-hub-api"
+    },
+    {
+      "path": "packages/fastify-supabase"
+    }
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "activityBar.activeBackground": "#9afebd",
+      "activityBar.activeBorder": "#ad81fe",
+      "activityBar.background": "#9afebd",
+      "activityBar.foreground": "#15202b",
+      "activityBar.inactiveForeground": "#15202b99",
+      "activityBarBadge.background": "#ad81fe",
+      "activityBarBadge.foreground": "#15202b",
+      "statusBar.background": "#68fd9c",
+      "statusBar.foreground": "#15202b",
+      "statusBarItem.hoverBackground": "#36fc7b",
+      "titleBar.activeBackground": "#68fd9c",
+      "titleBar.activeForeground": "#15202b",
+      "titleBar.inactiveBackground": "#68fd9c99",
+      "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "#68fd9c"
+  }
+}

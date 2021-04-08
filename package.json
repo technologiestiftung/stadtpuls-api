@@ -1,0 +1,22 @@
+{
+  "name": "@technologiestiftung/next-iot-hub",
+  "version": "0.0.1",
+  "scripts": {
+    "lerna": "lerna",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/technologiestiftung/next-iot-hub-api.git"
+  },
+  "keywords": [],
+  "author": "Fabian Morón Zirfas <fabianmoronzirfas@protonmail.ch> (https://fabianmoronzirfas.me)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/technologiestiftung/next-iot-hub-api/issues"
+  },
+  "homepage": "https://github.com/technologiestiftung/next-iot-hub-api#readme",
+  "devDependencies": {
+    "lerna": "4.0.0"
+  }
+}
