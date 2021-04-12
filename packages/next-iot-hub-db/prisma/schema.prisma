@@ -27,7 +27,7 @@ model categories {
 
 model devices {
   id         Int       @id @default(autoincrement())
-  externalid String    @db.Char(20)
+  externalId String    @db.Char(20)
   name       String?   @db.Char(20)
   projects   projects  @relation(fields: [projectId], references: [id])
   projectId  Int
