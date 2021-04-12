@@ -1,6 +1,13 @@
-import { port } from "./lib/env";
-import server from "./lib/server";
+import {
+  port,
+  jwtSecret,
+  supabaseUrl,
+  supabaseServiceRoleKey,
+} from "./lib/env";
 
+import buildServer from "./lib/server";
+
+const server = buildServer({ jwtSecret, supabaseUrl, supabaseServiceRoleKey });
 async function main(): Promise<void> {
   try {
     await server.listen(port);
