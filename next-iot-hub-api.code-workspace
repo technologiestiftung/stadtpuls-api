@@ -8,6 +8,9 @@
     },
     {
       "path": "packages/next-iot-hub-db"
+    },
+    {
+      "path": ".github"
     }
   ],
   "settings": {
