@@ -13,20 +13,22 @@ export const buildServer: (options: {
   jwtSecret: string;
   supabaseUrl: string;
   supabaseServiceRoleKey: string;
+  logger: boolean;
 }) => FastifyInstance = ({
   jwtSecret,
   supabaseUrl,
   supabaseServiceRoleKey,
+  logger,
 }) => {
-  const server = fastify({ logger: true });
+  const server = fastify({ logger });
 
+  server.register(fastifyBlipp);
   server.register(fastifyHelmet);
   server.register(fastifyCors);
   server.register(fastifySensible);
   server.register(fastifyJwt, {
     secret: jwtSecret,
   });
-  server.register(fastifyBlipp);
   server.register(fastifySupabase, { supabaseUrl, supabaseServiceRoleKey });
   server.register(routes);
   return server;

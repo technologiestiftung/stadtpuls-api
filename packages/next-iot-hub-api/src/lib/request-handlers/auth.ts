@@ -54,7 +54,7 @@ export const getHandler: (
  * reply with it
  *
  */
-export const deleteHandeler: (
+export const deleteHandler: (
   request: FastifyRequest,
   reply: FastifyReply
 ) => Promise<void> = async (request, reply) => {

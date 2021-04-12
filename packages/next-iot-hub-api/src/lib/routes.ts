@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import {
   postHandler,
-  deleteHandeler,
+  deleteHandler,
   postTokenBodySchema,
   deleteTokenBodySchema,
   getHandler,
@@ -69,7 +69,7 @@ const server: FastifyPluginAsync = async (fastify, _opts) => {
     url: "/api/v2/auth",
     method: "DELETE",
     schema: { body: deleteTokenBodySchema },
-    handler: deleteHandeler,
+    handler: deleteHandler,
   });
 };
 
