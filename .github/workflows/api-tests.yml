@@ -8,12 +8,11 @@ env:
 on:
   push:
     branches: [main]
-    paths:
+    paths: &defaultPaths
       - "$LOCATION/src/**"
   pull_request:
     branches: [main]
-    paths:
-      - "$LOCATION/src/**"
+    paths: *defaultPaths
 
 jobs:
   build:
