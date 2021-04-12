@@ -8,6 +8,8 @@ env:
 on:
   push:
     branches: [main]
+    paths:
+      - "$LOCATION/src/**"
   pull_request:
     branches: [main]
     paths:
