@@ -66,7 +66,7 @@ model users {
   id         String       @id @db.Uuid
   name       String?      @unique @db.VarChar(20)
   createdAt  DateTime     @default(now()) @db.Date
-  role       String?      @default("maker") @db.Char(50)
+  role       Role?        @default(maker)
   projects   projects[]
   devices    devices[]
   authtokens authtokens[]
@@ -84,4 +84,8 @@ enum categoryNames {
 enum connectionTypes {
   ttn
   other
+}
+
+enum Role {
+  maker
 }
