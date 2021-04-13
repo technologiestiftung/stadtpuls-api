@@ -1,6 +1,7 @@
 {
   "name": "@technologiesitftung/next-iot-hub-db",
   "version": "0.1.0",
+  "private": true,
   "description": "> TODO: description",
   "author": "ff6347 <fabianmoronzirfas@protonmail.ch>",
   "homepage": "https://github.com/technologiestiftung/next-iot-hub-api/tree/main/packages/next-iot-hub-db#readme",
@@ -14,7 +15,7 @@
     "lib"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,11 @@
   },
   "bugs": {
     "url": "https://github.com/technologiestiftung/next-iot-hub-api/issues"
+  },
+  "devDependencies": {
+    "prisma": "2.20.1"
+  },
+  "dependencies": {
+    "@prisma/client": "2.20.1"
   }
 }
