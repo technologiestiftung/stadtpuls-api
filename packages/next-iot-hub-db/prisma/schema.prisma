@@ -11,7 +11,7 @@ datasource db {
 // TODO: singular models?
 model authtokens {
   id        Int      @id @default(autoincrement())
-  token     String   @db.Char(100)
+  token     String   @db.VarChar(100)
   projects  projects @relation(fields: [projectId], references: [id])
   projectId Int
   user      users?   @relation(fields: [userId], references: [id])
@@ -21,14 +21,14 @@ model authtokens {
 model categories {
   id          Int           @id @default(autoincrement())
   name        categoryNames
-  description String        @db.Char(200)
+  description String        @db.VarChar(200)
   projects    projects[]
 }
 
 model devices {
   id         Int       @id @default(autoincrement())
-  externalId String    @db.Char(20)
-  name       String?   @db.Char(20)
+  externalId String    @db.VarChar(20)
+  name       String?   @db.VarChar(20)
   projects   projects  @relation(fields: [projectId], references: [id])
   projectId  Int
   records    records[]
@@ -38,11 +38,11 @@ model devices {
 
 model projects {
   id          Int             @id @default(autoincrement())
-  name        String          @db.Char(50)
-  description String?         @db.Char(200)
+  name        String          @db.VarChar(50)
+  description String?         @db.VarChar(200)
   createdAt   DateTime        @default(now()) @db.Date
   connectype  connectionTypes @default(ttn)
-  location    String?         @db.Char(20)
+  location    String?         @db.VarChar(20)
   user        users           @relation(fields: [userId], references: [id])
   userId      String          @db.Uuid
   category    categories      @relation(fields: [categoryId], references: [id])
