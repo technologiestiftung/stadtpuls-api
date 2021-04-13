@@ -16,7 +16,5 @@
     "url": "https://github.com/technologiestiftung/next-iot-hub-api/issues"
   },
   "homepage": "https://github.com/technologiestiftung/next-iot-hub-api#readme",
-  "devDependencies": {
-    "lerna": "4.0.0"
-  }
+  "devDependencies": {}
 }
