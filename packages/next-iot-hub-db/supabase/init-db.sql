@@ -77,10 +77,6 @@ insert with check (auth.uid() = "userId");
 create policy "Allow individual delete access" on public.authtokens for delete using (auth.uid() = "userId");
 -- end authtokens
 -- setup delete cascades
--- shows the names of all fk constraints
-select *
-from information_schema.key_column_usage
-where position_in_unique_constraint is not null;
 -- records get deleted from device deletes
 alter table public.records drop constraint "records_deviceId_fkey",
   add constraint "records_deviceId_fkey" foreign key ("deviceId") references devices (id) on delete cascade;
