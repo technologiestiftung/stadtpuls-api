@@ -7,9 +7,9 @@ export const postTokenBodySchema = S.object()
   .prop("userId", S.number().minimum(1).required());
 
 export const getTokenQuerySchema = S.object()
-  .id("/auth?userId=123")
+  .id("/auth?projectId=123")
   .title("verify email that has a token as query")
-  .prop("userId", S.number().required());
+  .prop("projectId", S.number().required());
 export const deleteTokenBodySchema = S.object()
   .id("/auth")
   .title("for token generation POST")
@@ -36,7 +36,7 @@ export const postHandler: (
 /**
  * GET
  * Should return tokenIds and their description
- *
+ * @deprecated
  */
 export const getHandler: (
   request: FastifyRequest,
