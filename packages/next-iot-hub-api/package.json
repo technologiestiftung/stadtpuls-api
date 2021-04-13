@@ -24,6 +24,7 @@
   },
   "scripts": {
     "test": "inpyjamas-scripts test",
+    "generate:types": "ts-node -r dotenv/config scripts/create-supabase-types.ts",
     "build": "esbuild --target=es2020 --format=cjs src/*.ts --outdir=dist",
     "prepare": "npm run build && tsc --emitDeclarationOnly --outDir dist",
     "dev": "nodemon"
@@ -36,7 +37,8 @@
     "dotenv": "^8.2.0",
     "esbuild": "^0.11.6",
     "esbuild-node-tsc": "^1.3.0",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "openapi-typescript": "3.2.2"
   },
   "dependencies": {
     "@humanwhocodes/env": "^2.1.4",
