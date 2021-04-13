@@ -8,8 +8,10 @@ datasource db {
 }
 
 model authtokens {
-  id        Int      @id @default(autoincrement())
-  token     String   @db.VarChar(100)
+  id          Int    @id @default(autoincrement())
+  token       String @db.VarChar(100)
+  description String @db.VarChar(200)
+
   projects  projects @relation(fields: [projectId], references: [id])
   projectId Int
   user      users?   @relation(fields: [userId], references: [id])
