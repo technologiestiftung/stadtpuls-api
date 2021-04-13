@@ -7,7 +7,12 @@ import {
 
 import buildServer from "./lib/server";
 
-const server = buildServer({ jwtSecret, supabaseUrl, supabaseServiceRoleKey });
+const server = buildServer({
+  jwtSecret,
+  supabaseUrl,
+  supabaseServiceRoleKey,
+  logger: process.env.NODE_ENV !== "production" ? true : false,
+});
 async function main(): Promise<void> {
   try {
     await server.listen(port);

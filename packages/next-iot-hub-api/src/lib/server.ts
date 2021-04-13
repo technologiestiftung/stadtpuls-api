@@ -5,6 +5,8 @@ import fastifyJwt from "fastify-jwt";
 import fastifyHelmet from "fastify-helmet";
 import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
+import fastifyAuth from "fastify-auth";
+
 import fastifySupabase from "@technologiestiftung/fastify-supabase";
 
 import routes from "./routes";
@@ -26,6 +28,7 @@ export const buildServer: (options: {
   server.register(fastifyHelmet);
   server.register(fastifyCors);
   server.register(fastifySensible);
+  server.register(fastifyAuth);
   server.register(fastifyJwt, {
     secret: jwtSecret,
   });

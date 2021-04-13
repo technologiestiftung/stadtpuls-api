@@ -1,5 +1,6 @@
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import { definitions } from "../common/supabase";
 import {
   postHandler,
   deleteHandler,
@@ -20,6 +21,9 @@ declare module "fastify" {
   // interface FastifyReply {
   //   usersPluginProp: number;
   // }
+  interface FastifyInstance {
+    verifyJWT: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+  }
 }
 // export interface UsersPluginOptions {
 //   usersOption: string;
@@ -49,28 +53,65 @@ const server: FastifyPluginAsync = async (fastify, _opts) => {
       });
     },
   });
+  fastify
+    .decorate(
+      "verifyJWT",
+      async (request: FastifyRequest, _reply: FastifyReply) => {
+        await request.jwtVerify();
+      }
+    )
+    .after(() => {
+      fastify.route<{ Querystring: { userId: string } }>({
+        url: "/api/v2/auth",
+        method: "GET",
+        schema: {
+          querystring: getTokenQuerySchema,
+        },
+        preHandler: fastify.auth([fastify.verifyJWT]),
+        handler: async (request, reply) => {
+          const decoded = (await request.jwtVerify()) as {
+            aud: "authenticated" | "anon";
+            exp: number;
+            sub: string;
+            email: string;
+            app_metadata: { provider: "email"; [key: string]: any };
+            user_metadata: Record<string, any>;
+            role: "authenticated" | "anon";
+          };
+          // console.log(decoded);
+          // get jwt from request
+          // only get tokens that belong to the user
+          let { data: authtokens, error } = await fastify.supabase
+            .from<
+              Pick<definitions["authtokens"], "id" | "userId" | "projectId">
+            >("authtokens")
+            .select("id, projectId, userId")
+            .eq("userId", decoded.sub);
+          if (error) {
+            throw fastify.httpErrors.internalServerError();
+          }
 
-  fastify.route<{ Querystring: { userId: string } }>({
-    url: "/api/v2/auth",
-    method: "GET",
-    schema: {
-      querystring: getTokenQuerySchema,
-    },
-    handler: getHandler,
-  });
-  fastify.route<{ Body: Omit<AuthBody, "tokenId"> }>({
-    url: "/api/v2/auth",
-    method: "POST",
-    schema: { body: postTokenBodySchema },
-    handler: postHandler,
-  });
-
-  fastify.route<{ Body: AuthBody }>({
-    url: "/api/v2/auth",
-    method: "DELETE",
-    schema: { body: deleteTokenBodySchema },
-    handler: deleteHandler,
-  });
+          reply.status(200).send({
+            comment: "Should return array of tokenIds and description",
+            method: `${request.method}`,
+            url: `${request.url}`,
+            data: authtokens,
+          });
+        },
+      });
+      fastify.route<{ Body: Omit<AuthBody, "tokenId"> }>({
+        url: "/api/v2/auth",
+        method: "POST",
+        schema: { body: postTokenBodySchema },
+        handler: postHandler,
+      });
+      fastify.route<{ Body: AuthBody }>({
+        url: "/api/v2/auth",
+        method: "DELETE",
+        schema: { body: deleteTokenBodySchema },
+        handler: deleteHandler,
+      });
+    });
 };
 
 export default fp(server);
