@@ -64,7 +64,7 @@ model records {
 
 model users {
   id         String       @id @db.Uuid
-  name       String?      @unique @db.Char(20)
+  name       String?      @unique @db.VarChar(20)
   createdAt  DateTime     @default(now()) @db.Date
   role       String?      @default("maker") @db.Char(50)
   projects   projects[]
