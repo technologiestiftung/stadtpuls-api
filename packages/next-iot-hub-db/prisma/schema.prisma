@@ -1,4 +1,3 @@
-// TODO: No camel case.
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TODO: singular models?
 model authtokens {
   id        Int      @id @default(autoincrement())
   token     String   @db.VarChar(100)
@@ -54,7 +52,7 @@ model projects {
 model records {
   id           Int      @id @default(autoincrement())
   recordedAt   DateTime @db.Date
-  measurements Float[] // TODO: this should be an array of numbers is that the right syntax?
+  measurements Float[]
   longitude    Float?   @db.Real
   latitude     Float?   @db.Real
   altitude     Float?   @db.Real
