@@ -73,12 +73,12 @@ model users {
 }
 
 enum categoryNames {
-  Temperatur
-  CO2
-  Luftfeuchtigkeit
-  Druck
-  PAXCounter
-  Lautst_rke        @map("Lautstärke")
+  temp        @map("Temperatur")
+  co2         @map("CO2")
+  humidity    @map("Luftfeuchtigkeit")
+  pressure    @map("Druck")
+  paxcounter  @map("PAXCounter")
+  volume      @map("Lautstärke")
 }
 
 enum connectionTypes {
