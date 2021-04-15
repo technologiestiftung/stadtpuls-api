@@ -6,8 +6,6 @@ values (
       from 0 for 19
     )
   );
-insert into categories ("name", description)
-values ('CO2', 'foo');
 insert into projects ("userId", name, "categoryId")
 values (
     (

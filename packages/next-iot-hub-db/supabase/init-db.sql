@@ -70,10 +70,10 @@ create policy "Allow individual delete access" on public.projects for delete usi
 -- start records
 create policy "Allow read access on public records table" on public.records for
 select using (auth.role() = 'anon');
--- end records
---start authtokens
-create policy "Allow individual insert access" on public.authtokens for
-insert with check (auth.uid() = "userId");
+-- end records/
+--start authtokens/
+-- create policy "Allow individual insert access" on public.authtokens for
+-- insert with check (auth.uid() = "userId");
 create policy "Allow individual delete access" on public.authtokens for delete using (auth.uid() = "userId");
 -- end authtokens
 -- setup delete cascades
@@ -93,3 +93,11 @@ alter table public.authtokens drop constraint "authtokens_userId_fkey",
   add constraint "authtokens_userId_fkey" foreign key ("userId") references users (id) on delete cascade;
 alter table public.authtokens drop constraint "authtokens_projectId_fkey",
   add constraint "authtokens_projectId_fkey" foreign key ("projectId") references projects (id) on delete cascade;
+--TODO: [DATAHUB-207] Write useful descriptions to the categories
+INSERT INTO "public"."categories" ("id", "name", "description")
+VALUES (1, 'CO2', 'foo'),
+  (2, 'Temperatur', 'foo'),
+  (3, 'Luftfeuchtigkeit', 'foo'),
+  (4, 'Druck', 'foo'),
+  (5, 'PAXCounter', 'foo'),
+  (6, 'Lautstärke', 'foo');
