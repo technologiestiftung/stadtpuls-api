@@ -18,6 +18,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.authtokens.id"];
           token?: parameters["rowFilter.authtokens.token"];
+          description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
           /** Filtering Columns */
@@ -72,6 +73,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.authtokens.id"];
           token?: parameters["rowFilter.authtokens.token"];
+          description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
         };
@@ -90,6 +92,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.authtokens.id"];
           token?: parameters["rowFilter.authtokens.token"];
+          description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
         };
@@ -206,9 +209,9 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.devices.id"];
+          externalId?: parameters["rowFilter.devices.externalId"];
           name?: parameters["rowFilter.devices.name"];
           projectId?: parameters["rowFilter.devices.projectId"];
-          externalId?: parameters["rowFilter.devices.externalId"];
           userId?: parameters["rowFilter.devices.userId"];
           /** Filtering Columns */
           select?: parameters["select"];
@@ -261,9 +264,9 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.devices.id"];
+          externalId?: parameters["rowFilter.devices.externalId"];
           name?: parameters["rowFilter.devices.name"];
           projectId?: parameters["rowFilter.devices.projectId"];
-          externalId?: parameters["rowFilter.devices.externalId"];
           userId?: parameters["rowFilter.devices.userId"];
         };
         header: {
@@ -280,9 +283,9 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.devices.id"];
+          externalId?: parameters["rowFilter.devices.externalId"];
           name?: parameters["rowFilter.devices.name"];
           projectId?: parameters["rowFilter.devices.projectId"];
-          externalId?: parameters["rowFilter.devices.externalId"];
           userId?: parameters["rowFilter.devices.userId"];
         };
         body: {
@@ -310,8 +313,8 @@ export interface paths {
           createdAt?: parameters["rowFilter.projects.createdAt"];
           connectype?: parameters["rowFilter.projects.connectype"];
           location?: parameters["rowFilter.projects.location"];
-          categoryId?: parameters["rowFilter.projects.categoryId"];
           userId?: parameters["rowFilter.projects.userId"];
+          categoryId?: parameters["rowFilter.projects.categoryId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -368,8 +371,8 @@ export interface paths {
           createdAt?: parameters["rowFilter.projects.createdAt"];
           connectype?: parameters["rowFilter.projects.connectype"];
           location?: parameters["rowFilter.projects.location"];
-          categoryId?: parameters["rowFilter.projects.categoryId"];
           userId?: parameters["rowFilter.projects.userId"];
+          categoryId?: parameters["rowFilter.projects.categoryId"];
         };
         header: {
           /** Preference */
@@ -390,8 +393,8 @@ export interface paths {
           createdAt?: parameters["rowFilter.projects.createdAt"];
           connectype?: parameters["rowFilter.projects.connectype"];
           location?: parameters["rowFilter.projects.location"];
-          categoryId?: parameters["rowFilter.projects.categoryId"];
           userId?: parameters["rowFilter.projects.userId"];
+          categoryId?: parameters["rowFilter.projects.categoryId"];
         };
         body: {
           /** projects */
@@ -517,9 +520,9 @@ export interface paths {
     get: {
       parameters: {
         query: {
+          id?: parameters["rowFilter.users.id"];
           name?: parameters["rowFilter.users.name"];
           createdAt?: parameters["rowFilter.users.createdAt"];
-          id?: parameters["rowFilter.users.id"];
           role?: parameters["rowFilter.users.role"];
           /** Filtering Columns */
           select?: parameters["select"];
@@ -571,9 +574,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
+          id?: parameters["rowFilter.users.id"];
           name?: parameters["rowFilter.users.name"];
           createdAt?: parameters["rowFilter.users.createdAt"];
-          id?: parameters["rowFilter.users.id"];
           role?: parameters["rowFilter.users.role"];
         };
         header: {
@@ -589,9 +592,9 @@ export interface paths {
     patch: {
       parameters: {
         query: {
+          id?: parameters["rowFilter.users.id"];
           name?: parameters["rowFilter.users.name"];
           createdAt?: parameters["rowFilter.users.createdAt"];
-          id?: parameters["rowFilter.users.id"];
           role?: parameters["rowFilter.users.role"];
         };
         body: {
@@ -653,6 +656,7 @@ export interface definitions {
      */
     id: number;
     token: string;
+    description: string;
     /**
      * Note:
      * This is a Foreign Key to `projects.id`.<fk table='projects' column='id'/>
@@ -685,13 +689,13 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: number;
+    externalId: string;
     name?: string;
     /**
      * Note:
      * This is a Foreign Key to `projects.id`.<fk table='projects' column='id'/>
      */
     projectId: number;
-    externalId: string;
     /**
      * Note:
      * This is a Foreign Key to `users.id`.<fk table='users' column='id'/>
@@ -711,14 +715,14 @@ export interface definitions {
     location?: string;
     /**
      * Note:
-     * This is a Foreign Key to `categories.id`.<fk table='categories' column='id'/>
-     */
-    categoryId: number;
-    /**
-     * Note:
      * This is a Foreign Key to `users.id`.<fk table='users' column='id'/>
      */
     userId: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `categories.id`.<fk table='categories' column='id'/>
+     */
+    categoryId: number;
   };
   records: {
     /**
@@ -738,13 +742,13 @@ export interface definitions {
     deviceId: number;
   };
   users: {
-    name?: string;
-    createdAt: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
     id: string;
+    name?: string;
+    createdAt: string;
     role?: "maker";
   };
 }
@@ -774,6 +778,7 @@ export interface parameters {
   "body.authtokens": definitions["authtokens"];
   "rowFilter.authtokens.id": string;
   "rowFilter.authtokens.token": string;
+  "rowFilter.authtokens.description": string;
   "rowFilter.authtokens.projectId": string;
   "rowFilter.authtokens.userId": string;
   /** categories */
@@ -784,9 +789,9 @@ export interface parameters {
   /** devices */
   "body.devices": definitions["devices"];
   "rowFilter.devices.id": string;
+  "rowFilter.devices.externalId": string;
   "rowFilter.devices.name": string;
   "rowFilter.devices.projectId": string;
-  "rowFilter.devices.externalId": string;
   "rowFilter.devices.userId": string;
   /** projects */
   "body.projects": definitions["projects"];
@@ -796,8 +801,8 @@ export interface parameters {
   "rowFilter.projects.createdAt": string;
   "rowFilter.projects.connectype": string;
   "rowFilter.projects.location": string;
-  "rowFilter.projects.categoryId": string;
   "rowFilter.projects.userId": string;
+  "rowFilter.projects.categoryId": string;
   /** records */
   "body.records": definitions["records"];
   "rowFilter.records.id": string;
@@ -809,9 +814,9 @@ export interface parameters {
   "rowFilter.records.deviceId": string;
   /** users */
   "body.users": definitions["users"];
+  "rowFilter.users.id": string;
   "rowFilter.users.name": string;
   "rowFilter.users.createdAt": string;
-  "rowFilter.users.id": string;
   "rowFilter.users.role": string;
 }
 
