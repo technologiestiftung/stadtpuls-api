@@ -3,6 +3,7 @@ import {
   jwtSecret,
   supabaseUrl,
   supabaseServiceRoleKey,
+  issuer,
 } from "./lib/env";
 
 import buildServer from "./lib/server";
@@ -12,6 +13,7 @@ const server = buildServer({
   supabaseUrl,
   supabaseServiceRoleKey,
   logger: process.env.NODE_ENV !== "production" ? true : false,
+  issuer,
 });
 async function main(): Promise<void> {
   try {

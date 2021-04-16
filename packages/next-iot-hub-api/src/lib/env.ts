@@ -9,5 +9,9 @@ const supabaseUrl = env.require("SUPABASE_URL") as string;
 const supabaseServiceRoleKey = env.require(
   "SUPABASE_SERVICE_ROLE_KEY"
 ) as string;
+const issuer = env.get(
+  "TOKEN_ISSUER",
+  "technologiestiftung-berlin.de"
+) as string;
 
-export { jwtSecret, supabaseUrl, supabaseServiceRoleKey, port };
+export { jwtSecret, supabaseUrl, supabaseServiceRoleKey, port, issuer };
