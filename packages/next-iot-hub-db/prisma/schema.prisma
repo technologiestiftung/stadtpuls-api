@@ -8,14 +8,15 @@ datasource db {
 }
 
 model authtokens {
-  id          Int    @id @default(autoincrement())
-  token       String @db.VarChar(100)
+  niceId      Int    @default(autoincrement())
+  id          String @id
   description String @db.VarChar(200)
 
   projects  projects @relation(fields: [projectId], references: [id])
   projectId Int
   user      users?   @relation(fields: [userId], references: [id])
   userId    String?  @db.Uuid
+  @@unique([id, niceId])
 }
 
 model categories {
@@ -58,7 +59,7 @@ model records {
   longitude    Float?   @db.Real
   latitude     Float?   @db.Real
   altitude     Float?   @db.Real
-  devices      devices  @relation(fields: [deviceId], references: [id])
+  device       devices  @relation(fields: [deviceId], references: [id])
   deviceId     Int
 }
 
