@@ -17,10 +17,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.authtokens.id"];
-          token?: parameters["rowFilter.authtokens.token"];
           description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
+          niceId?: parameters["rowFilter.authtokens.niceId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -72,10 +72,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.authtokens.id"];
-          token?: parameters["rowFilter.authtokens.token"];
           description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
+          niceId?: parameters["rowFilter.authtokens.niceId"];
         };
         header: {
           /** Preference */
@@ -91,10 +91,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.authtokens.id"];
-          token?: parameters["rowFilter.authtokens.token"];
           description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
+          niceId?: parameters["rowFilter.authtokens.niceId"];
         };
         body: {
           /** authtokens */
@@ -654,8 +654,7 @@ export interface definitions {
      * Note:
      * This is a Primary Key.<pk/>
      */
-    id: number;
-    token: string;
+    id: string;
     description: string;
     /**
      * Note:
@@ -667,6 +666,7 @@ export interface definitions {
      * This is a Foreign Key to `users.id`.<fk table='users' column='id'/>
      */
     userId?: string;
+    niceId: number;
   };
   categories: {
     /**
@@ -777,10 +777,10 @@ export interface parameters {
   /** authtokens */
   "body.authtokens": definitions["authtokens"];
   "rowFilter.authtokens.id": string;
-  "rowFilter.authtokens.token": string;
   "rowFilter.authtokens.description": string;
   "rowFilter.authtokens.projectId": string;
   "rowFilter.authtokens.userId": string;
+  "rowFilter.authtokens.niceId": string;
   /** categories */
   "body.categories": definitions["categories"];
   "rowFilter.categories.id": string;
