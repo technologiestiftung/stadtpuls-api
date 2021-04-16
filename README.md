@@ -11,6 +11,8 @@
 
 ## Using Prisma migrate
 
+ACHTUNG!: We had some issue where all permissions for the public tables where gone. This *might* be related to prisma migrate. (or might not we will have to investigate).
+
 * To create a migration and apply it directly run `pnpx prisma migrate dev --name init`
 * !DONT edit migrations that already have been applied
 * To only create but not apply a migration run `pnpx prisma migrate dev --create-only`
