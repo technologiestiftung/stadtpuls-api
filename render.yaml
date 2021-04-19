@@ -7,7 +7,7 @@ services:
     # dockerfilePath: ./Dockerfile
     # dockerContext: ./
     buildCommand: ./build.sh
-    staticPublishPath: ./start.sh
+    startCommand: ./start.sh
     branch: main
     healthCheckPath: /
     envVars:
