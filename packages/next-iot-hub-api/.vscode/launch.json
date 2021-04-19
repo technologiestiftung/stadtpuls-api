@@ -12,7 +12,9 @@
       "request": "launch",
       "restart": true,
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "type": "pwa-node"
     },
     {
@@ -20,13 +22,26 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
-
-      "runtimeArgs": ["-r", "ts-node/register", "-r", "dotenv/config"],
-      "args": ["${workspaceRoot}/src/index.ts"],
+      "runtimeArgs": [
+        "-r",
+        "ts-node/register",
+        "-r",
+        "dotenv/config"
+      ],
+      "args": [
+        "${workspaceRoot}/src/index.ts"
+      ],
       "skipFiles": [
         "${workspaceFolder}/node_modules/**/*.js",
         "<node_internals>/**/*.js"
       ]
+    },
+    {
+      "name": "Docker Node.js Launch",
+      "type": "docker",
+      "request": "launch",
+      "preLaunchTask": "docker-run: debug",
+      "platform": "node"
     }
   ]
 }

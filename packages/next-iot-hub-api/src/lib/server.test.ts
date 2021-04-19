@@ -7,6 +7,7 @@ describe("server tests", () => {
       supabaseUrl: "http://localhost:8080",
       supabaseServiceRoleKey: "123",
       logger: false,
+      issuer: "tsb",
     });
     const response = await server.inject({ method: "GET", url: "/api/v2" });
     expect(response.body).toMatchInlineSnapshot(

@@ -25,7 +25,7 @@ const req = https.request(url, (res) => {
 
     const input = JSON.parse(spec); // Input can be any JS object (OpenAPI format)
     const output = swaggerToTS(input); // Outputs TypeScript defs as a string (to be parsed, or written to a file)
-    console.log(output);
+    // console.log(output);
     fs.writeFile(
       path.resolve(process.cwd(), "./src/common/supabase.ts"),
       output,

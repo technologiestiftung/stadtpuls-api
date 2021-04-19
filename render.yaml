@@ -1,0 +1,27 @@
+services:
+  - name: next-iot-hub
+    type: web
+    env: node
+    region: frankfurt
+    plan: starter
+    # dockerfilePath: ./Dockerfile
+    # dockerContext: ./
+    buildCommand: ./build.sh
+    staticPublishPath: ./start.sh
+    branch: main
+    healthCheckPath: /
+    envVars:
+      - key: JWT_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT=4000
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: TOKEN_ISSUER
+        sync: false
