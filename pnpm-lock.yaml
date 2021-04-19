@@ -7,38 +7,38 @@ importers:
 
   packages/fastify-supabase:
     specifiers:
-      '@inpyjamas/scripts': ^0.1.11-alpha
-      '@supabase/supabase-js': ^1.9.0
-      dotenv: ^8.2.0
-      esbuild: ^0.11.6
-      esbuild-node-tsc: ^1.3.0
+      '@inpyjamas/scripts': 0.1.11-alpha
+      '@supabase/supabase-js': 1.11.6
+      dotenv: 8.2.0
+      esbuild: 0.11.6
+      esbuild-node-tsc: 1.3.0
       eslint: 7.24.0
-      fastify: ^3.14.2
-      fastify-plugin: ^3.0.0
-      nodemon: ^2.0.7
+      fastify: 3.14.2
+      fastify-plugin: 3.0.0
+      nodemon: 2.0.7
     dependencies:
-      '@supabase/supabase-js': 1.11.0
-      esbuild: 0.11.10
+      '@supabase/supabase-js': 1.11.6
+      esbuild: 0.11.6
       fastify: 3.14.2
       fastify-plugin: 3.0.0
     devDependencies:
       '@inpyjamas/scripts': 0.1.11-alpha
       dotenv: 8.2.0
-      esbuild-node-tsc: 1.4.0
+      esbuild-node-tsc: 1.3.0
       eslint: 7.24.0
       nodemon: 2.0.7
 
   packages/next-iot-hub-api:
     specifiers:
-      '@humanwhocodes/env': ^2.1.4
-      '@inpyjamas/scripts': ^0.1.11-alpha
+      '@humanwhocodes/env': 2.1.4
+      '@inpyjamas/scripts': 0.1.11-alpha
       '@technologiestiftung/fastify-supabase': workspace:*
       '@types/bcrypt': 3.0.1
       '@types/uuid': 8.3.0
       bcrypt: 5.0.1
-      dotenv: ^8.2.0
-      esbuild: ^0.11.6
-      esbuild-node-tsc: ^1.3.0
+      dotenv: 8.2.0
+      esbuild: 0.11.6
+      esbuild-node-tsc: 1.3.0
       eslint: 7.24.0
       fastify: 3.14.2
       fastify-auth: 1.1.0
@@ -50,14 +50,14 @@ importers:
       fastify-sensible: 3.1.1
       fluent-json-schema: 2.0.4
       make-promises-safe: 5.1.0
-      nodemon: ^2.0.7
+      nodemon: 2.0.7
       openapi-typescript: 3.2.2
       uuid: 8.3.2
     dependencies:
       '@humanwhocodes/env': 2.1.4
       '@technologiestiftung/fastify-supabase': link:../fastify-supabase
       bcrypt: 5.0.1
-      esbuild: 0.11.10
+      esbuild: 0.11.6
       fastify: 3.14.2
       fastify-auth: 1.1.0
       fastify-blipp: 3.0.0
@@ -74,7 +74,7 @@ importers:
       '@types/bcrypt': 3.0.1
       '@types/uuid': 8.3.0
       dotenv: 8.2.0
-      esbuild-node-tsc: 1.4.0
+      esbuild-node-tsc: 1.3.0
       eslint: 7.24.0
       nodemon: 2.0.7
       openapi-typescript: 3.2.2
@@ -975,14 +975,20 @@ packages:
       cross-fetch: 3.1.4
     dev: false
 
+  /@supabase/gotrue-js/1.13.1:
+    resolution: {integrity: sha512-LBn1RK4UaHwy+CqO3ZJb29Z30iGI8yxyTTVZGZN9JOzS3Zr6bxgYFdBVHLkIY7jQsEur+fH6SFze+truUQIYpw==}
+    dependencies:
+      cross-fetch: 3.1.4
+    dev: false
+
   /@supabase/postgrest-js/0.25.0:
     resolution: {integrity: sha512-oYD/YruiUZxzzDkwSVQNmNqIDykZTp4jlG577qcpltAmKY6G3g2sFPES4Ig6Z4DYFgfyg7JleozjiaBu4ZcpqQ==}
     dependencies:
       cross-fetch: 3.1.4
     dev: false
 
-  /@supabase/postgrest-js/0.28.0:
-    resolution: {integrity: sha512-h7em0UwOy6HK+33kzTOWbOzfB9uXe7DtxNv2JLDcgj9vRN1fSIUSYKrbuwmM93zz3r6ZMpkALXND8S/4fgoXBA==}
+  /@supabase/postgrest-js/0.28.1:
+    resolution: {integrity: sha512-DaBsqlqWa2ru+yoUcahkeVPdi2pK1sMaWBr7ZkfkB4jFFZ2ekOvKFt11q9a3BhDAXh8x3PaBx7g76Tvd+i2lDw==}
     dependencies:
       cross-fetch: 3.1.4
     dev: false
@@ -995,12 +1001,19 @@ packages:
       websocket: 1.0.33
     dev: false
 
-  /@supabase/supabase-js/1.11.0:
-    resolution: {integrity: sha512-3R6sPDilDTejZnW4Nqst0anWZx6nDWYaZA25/k7bieQDSr9CaeMWsyCw6814xJy5gL3BKdd6SV48jEKf7zxgXg==}
+  /@supabase/realtime-js/1.0.8:
+    resolution: {integrity: sha512-QEOx5aN0Slp/s3XCbHxQHkWNSAtecDW4eilEH0gSMesyGkC+Q4xFyEX/1OJULG/61m+hySUpljLPk3fcfBDP+Q==}
     dependencies:
-      '@supabase/gotrue-js': 1.13.0
-      '@supabase/postgrest-js': 0.28.0
-      '@supabase/realtime-js': 1.0.6
+      '@types/websocket': 1.0.2
+      websocket: 1.0.34
+    dev: false
+
+  /@supabase/supabase-js/1.11.6:
+    resolution: {integrity: sha512-LJcM+aChrppoH4UgBm1gC+SWh0O6+MRRS9Cgh7Pj14s2HTaEtg1muxV90zKR19RNlt70vexeHfbE6UBkmc1LWA==}
+    dependencies:
+      '@supabase/gotrue-js': 1.13.1
+      '@supabase/postgrest-js': 0.28.1
+      '@supabase/realtime-js': 1.0.8
       cross-fetch: 3.1.4
     dev: false
 
@@ -1109,7 +1122,7 @@ packages:
     resolution: {integrity: sha512-SEYeGAIQIQX8NN6LDKprLjbrd5dARM5EXsd8GI/A5l0apYI1fGMWgPHSe4ZKL4eozlAyI+doUE9XbYS4xCkQ1w==}
     dependencies:
       '@types/minimatch': 3.0.4
-      '@types/node': 14.14.37
+      '@types/node': 14.14.40
     dev: true
 
   /@types/graceful-fs/4.1.5:
@@ -1185,10 +1198,10 @@ packages:
 
   /@types/node/14.14.37:
     resolution: {integrity: sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==}
+    dev: false
 
   /@types/node/14.14.40:
     resolution: {integrity: sha512-2HoZZGylcnz19ZSbvWhgWHqvprw1ZGHanxIrDWYykPD4CauLW4gcyLzCVfUN2kv/1t1F3CurQIdi+s1l9+XgEA==}
-    dev: true
 
   /@types/normalize-package-data/2.4.0:
     resolution: {integrity: sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==}
@@ -1262,7 +1275,7 @@ packages:
   /@types/websocket/1.0.2:
     resolution: {integrity: sha512-B5m9aq7cbbD/5/jThEr33nUY8WEfVi6A2YKCTOvw5Ldy7mtsOkqRvGjnzy6g7iMMDsgu7xREuCzqATLDLQVKcQ==}
     dependencies:
-      '@types/node': 14.14.37
+      '@types/node': 14.14.40
     dev: false
 
   /@types/yargs-parser/20.2.0:
@@ -2831,8 +2844,8 @@ packages:
       ext: 1.4.0
     dev: false
 
-  /esbuild-node-tsc/1.4.0:
-    resolution: {integrity: sha512-RXFcvkffLLjJNkXxGoxVQQ0Cbo69qRIIMiGHA3x6A3CcdI6ZbkrhWWgK8f0Y52yW/hKOcq9epDoTI+JcB9KXmQ==}
+  /esbuild-node-tsc/1.3.0:
+    resolution: {integrity: sha512-6FsXdxKWMkws1hGRa3ArZe9Pzjf70mXWjpsjO1QOr7Z7lYbnrwFOl/tXp+eXp4TgQ4TFt2Mryow5+8IxVEVpPA==}
     hasBin: true
     peerDependencies:
       typescript: '*'
@@ -2847,6 +2860,13 @@ packages:
     resolution: {integrity: sha512-XvGbf+UreVFA24Tlk6sNOqNcvF2z49XAZt4E7A4H80+yqn944QOLTTxaU0lkdYNtZKFiITNea+VxmtrfjvnLPA==}
     hasBin: true
     requiresBuild: true
+    dev: true
+
+  /esbuild/0.11.6:
+    resolution: {integrity: sha512-L+nKW9ftVS/N2CVJMR9YmXHbkm+vHzlNYuo09rzipQhF7dYNvRLfWoEPSDRTl10and4owFBV9rJ2CTFNtLIOiw==}
+    hasBin: true
+    requiresBuild: true
+    dev: false
 
   /esbuild/0.9.7:
     resolution: {integrity: sha512-VtUf6aQ89VTmMLKrWHYG50uByMF4JQlVysb8dmg6cOgW8JnFCipmz7p+HNBl+RR3LLCuBxFGVauAe2wfnF9bLg==}
@@ -4495,7 +4515,7 @@ packages:
       jest-validate: 26.6.2
       micromatch: 4.0.4
       pretty-format: 26.6.2
-      ts-node: 9.1.1_typescript@4.2.2
+      ts-node: 9.1.1
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -8109,6 +8129,18 @@ packages:
 
   /websocket/1.0.33:
     resolution: {integrity: sha512-XwNqM2rN5eh3G2CUQE3OHZj+0xfdH42+OFK6LdC2yqiC0YU8e5UK0nYre220T0IyyN031V/XOvtHvXozvJYFWA==}
+    engines: {node: '>=4.0.0'}
+    dependencies:
+      bufferutil: 4.0.3
+      debug: 2.6.9
+      es5-ext: 0.10.53
+      typedarray-to-buffer: 3.1.5
+      utf-8-validate: 5.0.4
+      yaeti: 0.0.6
+    dev: false
+
+  /websocket/1.0.34:
+    resolution: {integrity: sha512-PRDso2sGwF6kM75QykIesBijKSVceR6jL2G8NGYyq2XrItNC2P5/qL5XeR056GhA+Ly7JMFvJb9I312mJfmqnQ==}
     engines: {node: '>=4.0.0'}
     dependencies:
       bufferutil: 4.0.3
