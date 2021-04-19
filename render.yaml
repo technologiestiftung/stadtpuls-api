@@ -6,8 +6,8 @@ services:
     plan: starter
     # dockerfilePath: ./Dockerfile
     # dockerContext: ./
-    buildCommand: ./build.sh
-    startCommand: ./start.sh
+    buildCommand: npm run build
+    startCommand: node dist/index.js
     branch: main
     healthCheckPath: /
     envVars:
