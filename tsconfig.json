@@ -1,5 +1,5 @@
 {
-  "exclude": ["dist", "scripts"],
+  "exclude": ["dist", "scripts", "dev-tools"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
