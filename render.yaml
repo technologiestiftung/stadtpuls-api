@@ -17,7 +17,7 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
-      - key: PORT=4000
+      - key: PORT
         sync: false
       - key: SUPABASE_ANON_KEY
         sync: false
