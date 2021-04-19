@@ -16,5 +16,7 @@
     "url": "https://github.com/technologiestiftung/next-iot-hub-api/issues"
   },
   "homepage": "https://github.com/technologiestiftung/next-iot-hub-api#readme",
-  "devDependencies": {}
+  "devDependencies": {
+    "pnpm": "6.0.2"
+  }
 }

@@ -3,7 +3,10 @@ lockfileVersion: 5.3
 importers:
 
   .:
-    specifiers: {}
+    specifiers:
+      pnpm: 6.0.2
+    devDependencies:
+      pnpm: 6.0.2
 
   packages/fastify-supabase:
     specifiers:
@@ -6271,6 +6274,12 @@ packages:
     resolution: {integrity: sha512-gQR3WpIgNIKwBMVLkpMUeR3e1/E1y42bqDQZfql+kDeXd8COYfM8PQA4X6y7a8u9Ua9FHmsrrmirW2vHs45hWg==}
     dependencies:
       semver-compare: 1.0.0
+    dev: true
+
+  /pnpm/6.0.2:
+    resolution: {integrity: sha512-Zg1wbTjGu2dcQKzKq4IZSshK6zIEedEvlmE/EpujnFcbzJHXCAuyHZR2GuhR1887qc41dHs/bxnXEOol2/sapQ==}
+    engines: {node: '>=12.17'}
+    hasBin: true
     dev: true
 
   /posix-character-classes/0.1.1:
