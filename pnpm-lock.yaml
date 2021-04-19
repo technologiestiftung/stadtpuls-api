@@ -55,6 +55,7 @@ importers:
       make-promises-safe: 5.1.0
       nodemon: 2.0.7
       openapi-typescript: 3.2.2
+      ts-node: 9.1.1
       uuid: 8.3.2
     dependencies:
       '@humanwhocodes/env': 2.1.4
@@ -81,6 +82,7 @@ importers:
       eslint: 7.24.0
       nodemon: 2.0.7
       openapi-typescript: 3.2.2
+      ts-node: 9.1.1
 
   packages/next-iot-hub-db:
     specifiers:
@@ -4518,7 +4520,7 @@ packages:
       jest-validate: 26.6.2
       micromatch: 4.0.4
       pretty-format: 26.6.2
-      ts-node: 9.1.1
+      ts-node: 9.1.1_typescript@4.2.2
     transitivePeerDependencies:
       - bufferutil
       - canvas
