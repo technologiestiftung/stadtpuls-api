@@ -6,8 +6,8 @@ services:
     plan: starter
     # dockerfilePath: ./Dockerfile
     # dockerContext: ./
-    buildCommand: npm run build
-    startCommand: node dist/index.js
+    buildCommand: NODE_ENV=development npm ci && npm run build
+    startCommand: NODE_ENV=production node dist/index.js
     branch: main
     healthCheckPath: /
     envVars:
