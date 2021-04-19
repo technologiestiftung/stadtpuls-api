@@ -1,16 +1,16 @@
 FROM node:14.16-slim as builder
 ENV NODE_ENV=development
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm ci --silent
 COPY . .
 RUN npm run build
 
 FROM node:14.16-slim as runner
-WORKDIR /usr/app
+WORKDIR /usr/app/
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm ci --silent
-COPY --from=builder /usr/src/app/dist ./
+COPY --from=builder /usr/src/app/dist/ /usr/app/
 # Add Tini
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
@@ -19,4 +19,4 @@ ENTRYPOINT ["/tini", "--"]
 
 USER node
 EXPOSE 4000
-CMD ["node", "index.js"]
+CMD ["node", "/usr/app/index.js"]
