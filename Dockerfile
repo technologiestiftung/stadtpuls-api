@@ -7,6 +7,7 @@ COPY . .
 RUN npm run build
 
 FROM node:14.16-slim as runner
+WORKDIR /usr/app
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm ci --silent
 COPY --from=builder /usr/src/app/dist ./
