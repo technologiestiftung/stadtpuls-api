@@ -1,13 +1,11 @@
 services:
   - name: next-iot-hub
     type: web
-    env: node
+    env: docker
     region: frankfurt
     plan: starter
-    # dockerfilePath: ./Dockerfile
-    # dockerContext: ./
-    buildCommand: NODE_ENV=development npm ci && npm run build
-    startCommand: NODE_ENV=production node dist/index.js
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
     branch: main
     healthCheckPath: /
     envVars:

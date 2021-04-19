@@ -17,12 +17,9 @@
 **/compose*
 **/Dockerfile*
 **/node_modules
-node_modules
 **/npm-debug.log
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
 README.md
-packages/next-iot-hub-dev-client/**
-packages/next-iot-hub-dev-mqtt/**
-packages/next-iot-hub-db/**
+dev-tools/**
