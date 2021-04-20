@@ -102,7 +102,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
     method: "POST",
     schema: { body: postTokenBodySchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
-
     handler: async (request, reply) => {
       const { projectId, description } = request.body;
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
@@ -116,6 +115,19 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       };
       const token = fastify.jwt.sign(payload, options);
       const hashedToken = await hash(token, 10);
+      const { data: projects, error: projError } = await fastify.supabase
+        .from<definitions["projects"]>("projects")
+        .select("id")
+        .eq("id", projectId)
+        .eq("userId", decoded.sub);
+      if (projError) {
+        throw fastify.httpErrors.internalServerError(
+          "error while checking for existing project"
+        );
+      }
+      if (!projects || projects.length === 0) {
+        throw fastify.httpErrors.notFound("project not found");
+      }
 
       const { data: existingToken, error } = await fastify.supabase
         .from<definitions["authtokens"]>("authtokens")
@@ -125,7 +137,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       if (error) {
         console.error(error);
         throw fastify.httpErrors.internalServerError(
-          "error while checking for existing tokens "
+          "error while checking for existing tokens"
         );
       }
       if (!existingToken || existingToken.length === 0) {
@@ -167,7 +179,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         comment: "Should do create a token",
         method: `${request.method}`,
         url: `${request.url}`,
-        data: { token, hashedToken },
+        data: { token },
       });
     },
   });
@@ -185,7 +197,9 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         .select("niceId, id")
         .eq("niceId", niceId)
         .single();
-      console.log(authtoken);
+      if (!authtoken) {
+        throw fastify.httpErrors.notFound("token not found");
+      }
       if (error) {
         fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
