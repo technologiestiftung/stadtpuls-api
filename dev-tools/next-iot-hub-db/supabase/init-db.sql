@@ -38,6 +38,8 @@ alter table public.users enable row level security;
 -- start users
 create policy "Allow read access on public users table" on public.users for
 select using (auth.role() = 'anon');
+create policy "Allow read access for authenticated on public users table" on public.users for
+select using (auth.role() = 'authenticated');
 create policy "Allow individual insert access" on public.users for
 insert with check (auth.uid() = id);
 create policy "Allow individual update access" on public.users for
@@ -51,6 +53,8 @@ select using (auth.role() = 'anon');
 -- start devices
 create policy "Allow read access on public devices table" on public.devices for
 select using (auth.role() = 'anon');
+create policy "Allow read access for authenticated on public devices table" on public.devices for
+select using (auth.role() = 'authenticated');
 create policy "Allow individual insert access" on public.devices for
 insert with check (auth.uid() = "userId");
 create policy "Allow individual update access" on public.devices for
@@ -61,8 +65,12 @@ create policy "Allow individual delete access" on public.devices for delete usin
 -- start projects
 create policy "Allow read access on public projects table" on public.projects for
 select using (auth.role() = 'anon');
+create policy "Allow read access for authenticated on public projects table" on public.projects for
+select using (auth.role() = 'authenticated');
 create policy "Allow individual insert access" on public.projects for
 insert with check (auth.uid() = "userId");
+create policy "Allow individual insert access for authenticated users" on public.projects for
+insert with check (auth.role() = 'authenticated');
 create policy "Allow individual update access" on public.projects for
 update using (auth.uid() = "userId");
 create policy "Allow individual delete access" on public.projects for delete using (auth.uid() = "userId");
@@ -70,6 +78,8 @@ create policy "Allow individual delete access" on public.projects for delete usi
 -- start records
 create policy "Allow read access on public records table" on public.records for
 select using (auth.role() = 'anon');
+create policy "Allow read access for authenticated on public records table" on public.records for
+select using (auth.role() = 'authenticated');
 -- end records/
 --start authtokens/
 -- create policy "Allow individual insert access" on public.authtokens for
