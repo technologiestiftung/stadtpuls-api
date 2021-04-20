@@ -37,13 +37,39 @@ export function Profile({
               className={`text-blue-600 transition duration-150 ease-in-out  hover:text-blue-900 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue ${thClasses}`}
               onClick={() => {
                 const session = supabase.auth.session();
+                console.log(session);
                 if (!session)
                   throw new Error('Could not get superbase session');
-                fetch('http://localhost:8888/protected', {
-                  headers: {
-                    Authorization: `Bearer ${session.access_token}`,
+                // fetch('https://next-iot-hub.onrender.com/api/v2/authtokens', {
+                //   headers: {
+                //     'Content-Type': 'application/json',
+                //     Authorization: `Bearer ${session.access_token}`,
+                //   },
+                //   method: 'DELETE',
+                //   body: JSON.stringify({
+                //     tokenId: 16,
+                //     projectId: 23,
+                //   }),
+                // })
+                // fetch('https://next-iot-hub.onrender.com/api/v2/authtokens', {
+                //   headers: {
+                //     'Content-Type': 'application/json',
+                //     Authorization: `Bearer ${session.access_token}`,
+                //   },
+                //   method: 'POST',
+                //   body: JSON.stringify({
+                //     projectId: 1,
+                //     description: 'my fancy token',
+                //   }),
+                // })
+                fetch(
+                  'https://next-iot-hub.onrender.com/api/v2/authtokens?projectId=1',
+                  {
+                    headers: {
+                      Authorization: `Bearer ${session.access_token}`,
+                    },
                   },
-                })
+                )
                   .then((response) => {
                     if (!response.ok) {
                       throw new Error('Response not okay from api');
