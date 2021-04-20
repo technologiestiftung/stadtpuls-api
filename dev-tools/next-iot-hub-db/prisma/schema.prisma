@@ -14,8 +14,8 @@ model authtokens {
 
   projects  projects @relation(fields: [projectId], references: [id])
   projectId Int
-  user      users?   @relation(fields: [userId], references: [id])
-  userId    String?  @db.Uuid
+  user      users    @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
   @@unique([id, niceId])
 }
 
@@ -33,8 +33,8 @@ model devices {
   projects   projects  @relation(fields: [projectId], references: [id])
   projectId  Int
   records    records[]
-  user       users?    @relation(fields: [userId], references: [id])
-  userId     String?   @db.Uuid
+  user       users     @relation(fields: [userId], references: [id])
+  userId     String    @db.Uuid
 }
 
 model projects {
