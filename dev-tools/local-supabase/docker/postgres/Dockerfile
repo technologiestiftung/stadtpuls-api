@@ -1,7 +1,6 @@
 FROM supabase/postgres:0.13.0
 
-COPY 00-initial-schema.sql /docker-entrypoint-initdb.d/00-initial-schema.sql
-COPY auth-schema.sql /docker-entrypoint-initdb.d/auth-schema.sql
+COPY docker-entrypoint-initdb.d/ /docker-entrypoint-initdb.d/
 
 # Run time values
 ENV POSTGRES_DB=postgres

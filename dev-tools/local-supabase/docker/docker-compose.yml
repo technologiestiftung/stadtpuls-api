@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 services:
   kong:
     container_name: supabase-kong
@@ -22,12 +22,12 @@ services:
       API_EXTERNAL_URL: localhost
       GOTRUE_API_HOST: 0.0.0.0
       PORT: 9999
-      GOTRUE_DISABLE_SIGNUP: 'false'
+      GOTRUE_DISABLE_SIGNUP: "false"
       GOTRUE_SITE_URL: localhost
-      GOTRUE_MAILER_AUTOCONFIRM: 'true'
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
       GOTRUE_LOG_LEVEL: DEBUG
       GOTRUE_OPERATOR_TOKEN: super-secret-operator-token
-      DATABASE_URL: 'postgres://postgres:postgres@db:5432/postgres?sslmode=disable'
+      DATABASE_URL: "postgres://postgres:postgres@db:5432/postgres?sslmode=disable"
     depends_on:
       - db
   rest:
@@ -56,7 +56,7 @@ services:
       PORT: 4000
       HOSTNAME: localhost
       # Disable JWT Auth locally. The JWT_SECRET will be ignored.
-      SECURE_CHANNELS: 'false'
+      SECURE_CHANNELS: "false"
       JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
   db:
     container_name: supabase-db
@@ -68,6 +68,10 @@ services:
       - postgres
       - -c
       - wal_level=logical
+      - -c
+      - log_statement=all
+      # - -c
+      # - log_destination=stderr
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres

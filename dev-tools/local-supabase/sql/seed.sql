@@ -1,4 +1,4 @@
-insert into users (id, name)
+insert into userProfiles (id, name)
 values (
     uuid_generate_v4 (),
     substring(
@@ -10,7 +10,7 @@ insert into projects ("userId", name, "categoryId")
 values (
     (
       select id
-      from users
+      from userProfiles
       order by random()
       limit 1
     ), md5(random()::text), (
@@ -24,7 +24,7 @@ insert into devices ("userId", "externalId", "projectId")
 values (
     (
       select id
-      from users
+      from userProfiles
       order by random()
       limit 1
     ), 'foo', (

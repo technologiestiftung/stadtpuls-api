@@ -65,7 +65,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   //     }
   //   )
   //   .after(() => {
-  fastify.route<{ Querystring: { userId: string } }>({
+  fastify.route<{ Querystring: { projectId: number } }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "GET",
     schema: {
@@ -74,6 +74,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
+      const projectId = request.query.projectId;
       const { data: authtokens, error } = await fastify.supabase
         .from<
           Pick<
@@ -82,7 +83,8 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
           >
         >("authtokens")
         .select("projectId,  description, niceId")
-        .eq("userId", decoded.sub);
+        .eq("userId", decoded.sub)
+        .eq("projectId", projectId);
 
       if (error) {
         fastify.log.error(error);
@@ -135,13 +137,11 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         .eq("projectId", projectId)
         .eq("userId", decoded.sub);
       if (error) {
-        console.error(error);
         throw fastify.httpErrors.internalServerError(
           "error while checking for existing tokens"
         );
       }
       if (!existingToken || existingToken.length === 0) {
-        // no token found
         fastify.log.info(`inserting new token`);
 
         await fastify.supabase
@@ -203,9 +203,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       if (error) {
         fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
-      }
-      if (!authtoken) {
-        throw fastify.httpErrors.notFound();
       }
       const success = await fastify.supabase
         .from("authtokens")

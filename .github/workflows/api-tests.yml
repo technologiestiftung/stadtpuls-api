@@ -2,12 +2,18 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: Node.js CI
+env:
+  SUPABASE_ANON_KEY: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYwMzk2ODgzNCwiZXhwIjoyNTUwNjUzNjM0LCJyb2xlIjoiYW5vbiJ9.36fUebxgx1mcBo4s19v0SzqmzunP--hm_hep0uLX0ew"
+  SUPABASE_SERVICE_ROLE_KEY: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYwMzk2ODgzNCwiZXhwIjoyNTUwNjUzNjM0LCJyb2xlIjoic2VydmljZV9yb2xlIn0.necIJaiP7X2T2QjGeV-FhpkizcNTX8HjDDBAxpgQTEI"
+  JWT_SECRET: "super-secret-jwt-token-with-at-least-32-characters-long"
+  SUPABASE_URL: http://localhost:8000
 
 on:
   push:
     branches: [main]
     paths: &defaultPaths
       - "src/**"
+      - "dev-tools/local-supabase/**"
   pull_request:
     branches: [main]
     paths: *defaultPaths
@@ -19,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 15.x]
+        node-version: [12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -28,6 +34,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Run supabase
+        run: cd dev-tools/local-supabase && docker-compose up -d
       - run: npm ci
-      - run: pnpm run build --if-present
-      - run: pnpm test
+      - run: npm run build --if-present
+      - run: npm test
