@@ -5,6 +5,7 @@ import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 // lets see if the tests run
+// again
 declare module "fastify" {
   interface FastifyInstance {
     verifyJWT: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
