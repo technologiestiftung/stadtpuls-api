@@ -45,6 +45,7 @@ export const buildServer: (options: {
   server.register(fastifyJwt, {
     secret: jwtSecret,
   });
+
   server.register(fastifySupabase, {
     supabaseUrl,
     supabaseServiceRoleKey,
