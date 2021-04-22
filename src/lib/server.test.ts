@@ -1,56 +1,59 @@
 /* eslint-disable jest/no-hooks */
-import "global-agent/bootstrap";
 import buildServer from "./server";
-import { setupMSWServer } from "../mocks/server";
-const supabaseUrl = "https://dyxublythmmlsositxtg.supabase.co";
-const server = setupMSWServer(new URL(supabaseUrl));
-const jwtSecret = process.env.JWT_SECRET || "mysecretneedsatleast32characters";
-const supabaseAnonKey =
-  process.env.SUPABASE_ANON_KEY ||
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYxODQwOTgzMiwiZXhwIjoxOTMzOTg1ODMyfQ.NdUHVmj8xSEvAInZfovt4r_LSsnstuVPwdvZvMz50yMs";
+import faker from "faker";
+import { createClient } from "@supabase/supabase-js";
+const supabaseUrl = "http://localhost:8000";
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
+const jwtSecret =
+  process.env.JWT_SECRET ||
+  "super-secret-jwt-token-with-at-least-32-characters-long";
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "123";
 const apikey = supabaseAnonKey;
-// import nock from "nock";
-// let supabaseMock: nock.Scope;
-import { sign } from "jsonwebtoken";
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+let userToken: string;
+let userId: string;
+const email = faker.internet.email();
+const password = "1234password";
+import { login, logout, signup } from "../__test-utils";
+import { definitions } from "../common/supabase";
 describe("server tests", () => {
-  // beforeEach(() => {
-  //   supabaseMock = nock(supabaseUrl);
-  // });
-  // afterEach(() => {
-  //   supabaseMock.done();
-  //   nock.cleanAll();
-  // });
-
-  beforeAll(() => {
-    // Enable the mocking in tests.
-    server.listen({
-      onUnhandledRequest(req) {
-        console.error(
-          "Found an unhandled %s request to %s",
-
-          req.method,
-
-          req.url.href
-        );
-      },
+  beforeEach(async () => {
+    const { id, token } = await login({
+      anonKey: supabaseAnonKey,
+      email,
+      password,
+      url: new URL(`${supabaseUrl}/auth/v1/token?grant_type=password`),
     });
+    userId = id;
+    userToken = token;
+  });
+  afterEach(async () => {
+    const success = await logout({
+      userToken,
+      anonKey: supabaseAnonKey,
+      url: new URL(`${supabaseUrl}/auth/v1/logout`),
+    });
+    if (!success) {
+      throw new Error("could not log out");
+    }
   });
 
-  afterEach(() => {
-    // Reset any runtime handlers tests may use.
-    server.resetHandlers();
-    server.printHandlers();
+  beforeAll(async () => {
+    const { id, token } = await signup({
+      anonKey: supabaseAnonKey,
+      email,
+      password,
+      url: new URL(`${supabaseUrl}/auth/v1/signup`),
+    });
+    userId = id;
+    userToken = token;
   });
 
-  afterAll(() => {
-    // Clean up once the tests are done.
-    server.close();
-  });
   test("should run the server and inject routes", async () => {
     const server = buildServer({
       jwtSecret,
       supabaseUrl,
-      supabaseServiceRoleKey: "123",
+      supabaseServiceRoleKey,
       logger: false,
       issuer: "tsb",
     });
@@ -65,7 +68,7 @@ describe("server tests", () => {
     const server = buildServer({
       jwtSecret,
       supabaseUrl,
-      supabaseServiceRoleKey: "123",
+      supabaseServiceRoleKey,
       logger: false,
       issuer: "tsb",
     });
@@ -81,28 +84,31 @@ describe("server tests", () => {
     );
   });
 
-  test("should complain GET", async () => {
-    // supabase[Mock.get("/rest/v1/authtokens", {});
-    const token = await sign({ sub: "123" }, jwtSecret);
+  test("should GET an empty list of tokens for that user", async () => {
     const server = buildServer({
       jwtSecret,
       supabaseUrl,
-      supabaseServiceRoleKey: "123",
+      supabaseServiceRoleKey,
       logger: false,
       issuer: "tsb",
     });
+    const { data: project, error } = await supabase
+      .from<definitions["projects"]>("projects")
+      .insert([{ name: "test", userId, categoryId: 1 }]);
+    if (!project) {
+      throw error;
+    }
 
     const response = await server.inject({
       method: "GET",
-      url: "/api/v2/authtokens?projectId=123",
+      url: `/api/v2/authtokens?projectId=${project[0].id}`,
       headers: {
-        authorization: `Bearer ${token}`,
-        apikey,
+        authorization: `Bearer ${userToken}`,
+        apikey: supabaseAnonKey,
       },
     });
+    // console.log(response);
     expect(response.statusCode).toBe(200);
-    expect(response.body).toMatchInlineSnapshot(
-      `"{\\"comment\\":\\"Should return array of tokenIds and description\\",\\"method\\":\\"GET\\",\\"url\\":\\"/api/v2/authtokens?projectId=123\\",\\"data\\":[{\\"id\\":\\"$2b$10$/LKvAbv/D/8ASjrR3uAupOqHEqFN70RdSvKd6yJUhFDD.dowJn3Je\\",\\"description\\":\\"my fancy token\\",\\"projectId\\":28,\\"userId\\":\\"ede34664-574f-4558-bc42-695b184d5ccd\\",\\"niceId\\":27}]}"`
-    );
+    expect(response.body).toMatchInlineSnapshot();
   });
 });
