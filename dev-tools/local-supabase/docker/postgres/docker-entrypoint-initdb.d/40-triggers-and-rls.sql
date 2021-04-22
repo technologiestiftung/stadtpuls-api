@@ -1,9 +1,9 @@
--- inserts a row into public.users when a user signs up
+-- inserts a row into public.userprofiles when a user signs up
 -- https://supabase.io/docs/ guides/auth#create-a-publicusers-table
 drop trigger if exists on_auth_user_created on auth.users;
 drop function if exists public.handle_new_user();
 create function public.handle_new_user() returns trigger as $$ begin
-insert into public.users (id)
+insert into public.userprofiles (id)
 values (new.id);
 return new;
 end;
@@ -33,22 +33,24 @@ alter table public.categories enable row level security;
 alter table public.devices enable row level security;
 alter table public.projects enable row level security;
 alter table public.records enable row level security;
-alter table public.users enable row level security;
+alter table public.userprofiles enable row level security;
 -- allow read access
 -- start users
-create policy "Allow read access on public users table" on public.users for
+create policy "Allow read access on public users table" on public.userprofiles for
 select using (auth.role() = 'anon');
-create policy "Allow read access for authenticated on public users table" on public.users for
+create policy "Allow read access for authenticated on public users table" on public.userprofiles for
 select using (auth.role() = 'authenticated');
-create policy "Allow individual insert access" on public.users for
+create policy "Allow individual insert access" on public.userprofiles for
 insert with check (auth.uid() = id);
-create policy "Allow individual update access" on public.users for
+create policy "Allow individual update access" on public.userprofiles for
 update using (auth.uid() = id);
-create policy "Allow individual delete access" on public.users for delete using (auth.uid() = id);
+create policy "Allow individual delete access" on public.userprofiles for delete using (auth.uid() = id);
 -- end users
 -- start categories
 create policy "Allow read access on public categories table" on public.categories for
 select using (auth.role() = 'anon');
+create policy "Allow read access on public categories table authorized" on public.categories for
+select using (auth.role() = 'authenticated');
 -- end categories
 -- start devices
 create policy "Allow read access on public devices table" on public.devices for
@@ -86,28 +88,3 @@ select using (auth.role() = 'authenticated');
 -- insert with check (auth.uid() = "userId");
 create policy "Allow individual delete access" on public.authtokens for delete using (auth.uid() = "userId");
 -- end authtokens
--- setup delete cascades
--- records get deleted from device deletes
-alter table public.records drop constraint "records_deviceId_fkey",
-  add constraint "records_deviceId_fkey" foreign key ("deviceId") references devices (id) on delete cascade;
--- devices get deleted by project and by user deletes
-alter table public.devices drop constraint "devices_projectId_fkey",
-  add constraint "devices_projectId_fkey" foreign key ("projectId") references projects (id) on delete cascade;
-alter table public.devices drop constraint "devices_userId_fkey",
-  add constraint "devices_userId_fkey" foreign key ("userId") references users (id) on delete cascade;
--- projects get deleted by user delete
-alter table public.projects drop constraint "projects_userId_fkey",
-  add constraint "projects_userId_fkey" foreign key ("userId") references users (id) on delete cascade;
--- authtokens get deleted by user and by project deletes
-alter table public.authtokens drop constraint "authtokens_userId_fkey",
-  add constraint "authtokens_userId_fkey" foreign key ("userId") references users (id) on delete cascade;
-alter table public.authtokens drop constraint "authtokens_projectId_fkey",
-  add constraint "authtokens_projectId_fkey" foreign key ("projectId") references projects (id) on delete cascade;
---TODO: [DATAHUB-207] Write useful descriptions to the categories
-INSERT INTO "public"."categories" ("id", "name", "description")
-VALUES (1, 'CO2', 'foo'),
-  (2, 'Temperatur', 'foo'),
-  (3, 'Luftfeuchtigkeit', 'foo'),
-  (4, 'Druck', 'foo'),
-  (5, 'PAXCounter', 'foo'),
-  (6, 'Lautstärke', 'foo');

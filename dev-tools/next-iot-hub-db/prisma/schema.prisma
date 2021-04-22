@@ -12,10 +12,10 @@ model authtokens {
   id          String @id
   description String @db.VarChar(200)
 
-  projects  projects @relation(fields: [projectId], references: [id])
-  projectId Int
-  user      users    @relation(fields: [userId], references: [id])
-  userId    String   @db.Uuid
+  projects    projects     @relation(fields: [projectId], references: [id])
+  projectId   Int
+  userProfile userprofiles @relation(fields: [userId], references: [id])
+  userId      String       @db.Uuid
   @@unique([id, niceId])
 }
 
@@ -27,14 +27,14 @@ model categories {
 }
 
 model devices {
-  id         Int       @id @default(autoincrement())
-  externalId String    @db.VarChar(20)
-  name       String?   @db.VarChar(20)
-  projects   projects  @relation(fields: [projectId], references: [id])
-  projectId  Int
-  records    records[]
-  user       users     @relation(fields: [userId], references: [id])
-  userId     String    @db.Uuid
+  id          Int          @id @default(autoincrement())
+  externalId  String       @db.VarChar(20)
+  name        String?      @db.VarChar(20)
+  projects    projects     @relation(fields: [projectId], references: [id])
+  projectId   Int
+  records     records[]
+  userProfile userprofiles @relation(fields: [userId], references: [id])
+  userId      String       @db.Uuid
 }
 
 model projects {
@@ -44,7 +44,7 @@ model projects {
   createdAt   DateTime        @default(now()) @db.Timestamptz
   connectype  connectionTypes @default(ttn)
   location    String?         @db.VarChar(20)
-  user        users           @relation(fields: [userId], references: [id])
+  userProfile userprofiles    @relation(fields: [userId], references: [id])
   userId      String          @db.Uuid
   category    categories      @relation(fields: [categoryId], references: [id])
   categoryId  Int
@@ -63,7 +63,7 @@ model records {
   deviceId     Int
 }
 
-model users {
+model userprofiles {
   id         String       @id @db.Uuid
   name       String?      @unique @db.VarChar(20)
   createdAt  DateTime     @default(now()) @db.Timestamptz
@@ -71,6 +71,7 @@ model users {
   projects   projects[]
   devices    devices[]
   authtokens authtokens[]
+
 }
 
 enum categoryNames {
