@@ -11,12 +11,8 @@ env:
 on:
   push:
     branches: [main]
-    paths: &defaultPaths
-      - "src/**"
-      - "dev-tools/local-supabase/**"
   pull_request:
     branches: [main]
-    paths: *defaultPaths
 
 jobs:
   build:
