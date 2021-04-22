@@ -130,9 +130,9 @@ const ttn: FastifyPluginAsync = async (fastify) => {
           "device not found postgres error"
         );
       }
-      console.log(
-        new Date(received_at).toISOString().replace("T", " ").replace("Z", "")
-      );
+      // console.log(
+      //   new Date(received_at).toISOString().replace("T", " ").replace("Z", "")
+      // );
       const { data: record, error: recordError } = await fastify.supabase
         .from<definitions["records"]>("records")
         .insert([

@@ -21,6 +21,15 @@ export interface User {
   updated_at: Date;
 }
 
+export interface JWTPayload {
+  sub: string;
+  projectId: number;
+  description: string;
+  jti: string;
+  iss: string;
+  iat: number;
+}
+
 export interface AppMetadata {
   provider: string;
 }
@@ -133,6 +142,31 @@ export const logout: (options: {
     throw new Error(await response.text());
   }
   if (response.status === 204) {
+    return true;
+  } else {
+    throw new Error(await response.json());
+  }
+};
+
+export const deleteUser: (options: {
+  anonKey: string;
+  userToken: string;
+  url: URL;
+}) => Promise<boolean> = async ({ anonKey, userToken, url }) => {
+  const headers: HeadersInit = {
+    "Conten-Type": "application/json",
+    apikey: anonKey,
+    Authorization: `Bearer ${userToken}`,
+  };
+
+  const response = await fetch(url.href, {
+    method: "POST",
+    headers,
+  });
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+  if (response.status === 200) {
     return true;
   } else {
     throw new Error(await response.json());
