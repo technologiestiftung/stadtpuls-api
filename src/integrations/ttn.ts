@@ -6,6 +6,7 @@ import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 // lets see if the tests run
 // again
+// test test test
 declare module "fastify" {
   interface FastifyInstance {
     verifyJWT: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
