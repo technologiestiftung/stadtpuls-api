@@ -89,9 +89,6 @@ const ttn: FastifyPluginAsync = async (fastify) => {
     handler: async (request, reply) => {
       const decoded = (await request.jwtVerify()) as AuthToken;
       const token = request.headers.authorization?.split(" ")[1];
-      if (!token) {
-        throw fastify.httpErrors.unauthorized();
-      }
       const { data: authtokens, error } = await fastify.supabase
         .from<definitions["authtokens"]>("authtokens")
         .select("*")
@@ -109,7 +106,9 @@ const ttn: FastifyPluginAsync = async (fastify) => {
 
       const compared = await compare(token, authtokens[0].id);
       if (!compared) {
-        fastify.log.warn("using old token");
+        // this shouldn't happen since the token has to be deleted at this point
+        // and should already throw an error that it wasnt founds
+        fastify.log.error("using old token");
         throw fastify.httpErrors.unauthorized();
       }
       const { end_device_ids, received_at, uplink_message } = request.body;

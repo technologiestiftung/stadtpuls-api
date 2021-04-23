@@ -5,10 +5,8 @@ const jwtSecret = env.get(
   "mysecretneedsatleast32characters"
 ) as string;
 const port = parseInt(env.get("PORT", "4000") as string);
-const supabaseUrl = env.require("SUPABASE_URL") as string;
-const supabaseServiceRoleKey = env.require(
-  "SUPABASE_SERVICE_ROLE_KEY"
-) as string;
+const supabaseUrl = env.require("SUPABASE_URL");
+const supabaseServiceRoleKey = env.require("SUPABASE_SERVICE_ROLE_KEY");
 const issuer = env.get(
   "TOKEN_ISSUER",
   "technologiestiftung-berlin.de"
