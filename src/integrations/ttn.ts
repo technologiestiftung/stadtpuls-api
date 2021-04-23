@@ -4,10 +4,7 @@ import { compare } from "bcrypt";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
-// lets see if the tests run
-// again
-// test test test
-// test test test
+
 declare module "fastify" {
   interface FastifyInstance {
     verifyJWT: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
@@ -92,9 +89,6 @@ const ttn: FastifyPluginAsync = async (fastify) => {
     handler: async (request, reply) => {
       const decoded = (await request.jwtVerify()) as AuthToken;
       const token = request.headers.authorization?.split(" ")[1];
-      if (!token) {
-        throw fastify.httpErrors.unauthorized();
-      }
       const { data: authtokens, error } = await fastify.supabase
         .from<definitions["authtokens"]>("authtokens")
         .select("*")
@@ -112,7 +106,8 @@ const ttn: FastifyPluginAsync = async (fastify) => {
 
       const compared = await compare(token, authtokens[0].id);
       if (!compared) {
-        fastify.log.warn("using old token");
+        // this shouldn't since the token has to be deleted at this point
+        fastify.log.error("using old token");
         throw fastify.httpErrors.unauthorized();
       }
       const { end_device_ids, received_at, uplink_message } = request.body;
