@@ -106,7 +106,8 @@ const ttn: FastifyPluginAsync = async (fastify) => {
 
       const compared = await compare(token, authtokens[0].id);
       if (!compared) {
-        // this shouldn't since the token has to be deleted at this point
+        // this shouldn't happen since the token has to be deleted at this point
+        // and should already throw an error that it wasnt founds
         fastify.log.error("using old token");
         throw fastify.httpErrors.unauthorized();
       }
