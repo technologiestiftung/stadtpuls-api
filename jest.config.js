@@ -10,6 +10,7 @@ module.exports = merge(inPjsConfig, {
   testPathIgnorePatterns: [
     "<rootDir>/src/__test-utils/*",
     "<rootDir>/dev-tools/*",
+    "<rootDir>/dist/*",
   ],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
