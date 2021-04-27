@@ -1,4 +1,4 @@
-FROM kong:2.1
+FROM kong:2.4
 
 COPY kong.yml /var/lib/kong/kong.yml
 
