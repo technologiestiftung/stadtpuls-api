@@ -81,3 +81,43 @@ values
         generate_series (0, 10)
     )
   );
+
+with first_value as (
+  select round((random() * 100 + 20)::numeric, 2) as first_value
+),
+tss as (
+  select
+    row_number() over() as id,
+    ts,
+    (random() - 0.5) * 0.1 + 1 as change
+  from
+    generate_series(
+      '2020-12-01'::timestamptz,
+      '2021-02-01'::timestamptz,
+      '1 hour'::interval
+    ) as ts
+) 
+insert into
+  records ("deviceId", "recordedAt", "measurements")
+select
+  (
+    (
+      select
+        id
+      from
+        devices
+      order by
+        random()
+      limit
+        1
+    ), 
+    (
+      ts
+    ),
+    (
+      array[ 
+        round( first_value*exp(sum(log(change)) over(order by id))::numeric, 2)
+      ]
+    )
+  )
+from tss, first_value;
