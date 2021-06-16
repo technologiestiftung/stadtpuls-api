@@ -92,8 +92,8 @@ tss as (
     (random() - 0.5) * 0.1 + 1 as change
   from
     generate_series(
-      '2020-12-01'::timestamptz,
-      '2021-02-01'::timestamptz,
+      (select now() - interval '60 days')::timestamptz,
+      (select now())::timestamptz,
       '1 hour'::interval
     ) as ts
 ) 
