@@ -1,5 +1,5 @@
 services:
-  - name: next-iot-hub
+  - name: stadtpuls
     type: web
     env: docker
     region: frankfurt

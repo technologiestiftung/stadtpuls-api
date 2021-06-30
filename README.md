@@ -1,6 +1,6 @@
-# Next Iot Hub API
+# Stadtpuls API
 
-This is an fastify based API layer that is used by [technologiestiftung/next-iot-hub](https://github.com/technologiestiftung/next-iot-hub)(currently private). It does:
+This is an fastify based API layer that is used by [technologiestiftung/stadtpuls-frontend](https://github.com/technologiestiftung/stadtpuls-frontend). It does:
 
 * Issuing and maintaining authtokens for verified users
 * Recieving POST requests from external sources (currently The Things Network ttn) posting them on the users behalf
@@ -29,10 +29,10 @@ To get the project ready you need to do some tasks.
 
 * create a supabase project
 * get your service key and `postgresql://…` connection string
-* add the connection string to your DATABASE_URL  in `dev-tools/next-iot-hub-db/.env`
+* add the connection string to your DATABASE_URL  in `dev-tools/stadtpuls-db/.env`
 * add your service role key to `.env`
 * provision the dev database
-  * with prisma `cd dev-tools/next-iot-hub-db/ && npx prisma db push --preview-feature` (in production you should use `prisma migrate`)
+  * with prisma `cd dev-tools/stadtpuls-db/ && npx prisma db push --preview-feature` (in production you should use `prisma migrate`)
   * use the scripts `dev-tools/local-supabase/docker/postgres/docker-entrypoint-initdb.d/` to give your DB the final touches. Watch out: 00-initial-schema.sql, 01-auth-schema.sql and 20-public-tables.sql are covered by the supabase setup and prisma. You don't need these when working with the cloud. These scripts
     * create replication of users into the public users table (like mentioned in their [docs](https://supabase.io/docs/guides/auth#create-a-publicusers-table))
     * disable realtime for all non public tables (see also the link above on the why to do this)

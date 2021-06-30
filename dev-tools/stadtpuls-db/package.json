@@ -1,10 +1,10 @@
 {
-  "name": "@technologiesitftung/next-iot-hub-db",
+  "name": "@technologiesitftung/stadtpuls-db",
   "version": "0.1.0",
   "private": true,
   "description": "> TODO: description",
   "author": "ff6347 <fabianmoronzirfas@protonmail.ch>",
-  "homepage": "https://github.com/technologiestiftung/next-iot-hub-api/tree/main/packages/next-iot-hub-db#readme",
+  "homepage": "https://github.com/technologiestiftung/stadtpuls-api/tree/main/packages/stadtpuls-db#readme",
   "license": "MIT",
   "main": "dist/index.js",
   "directories": {
@@ -19,13 +19,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/technologiestiftung/next-iot-hub-api.git"
+    "url": "git+https://github.com/technologiestiftung/stadtpuls-api.git"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
-    "url": "https://github.com/technologiestiftung/next-iot-hub-api/issues"
+    "url": "https://github.com/technologiestiftung/stadtpuls-api/issues"
   },
   "devDependencies": {
     "eslint": "7.24.0",

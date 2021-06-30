@@ -40,7 +40,7 @@ export function Profile({
                 console.log(session);
                 if (!session)
                   throw new Error('Could not get superbase session');
-                // fetch('https://next-iot-hub.onrender.com/api/v2/authtokens', {
+                // fetch('https://stadtpuls.onrender.com/api/v2/authtokens', {
                 //   headers: {
                 //     'Content-Type': 'application/json',
                 //     Authorization: `Bearer ${session.access_token}`,
@@ -51,7 +51,7 @@ export function Profile({
                 //     projectId: 23,
                 //   }),
                 // })
-                // fetch('https://next-iot-hub.onrender.com/api/v2/authtokens', {
+                // fetch('https://stadtpuls.onrender.com/api/v2/authtokens', {
                 //   headers: {
                 //     'Content-Type': 'application/json',
                 //     Authorization: `Bearer ${session.access_token}`,
@@ -63,7 +63,7 @@ export function Profile({
                 //   }),
                 // })
                 fetch(
-                  'https://next-iot-hub.onrender.com/api/v2/authtokens?projectId=1',
+                  'https://stadtpuls.onrender.com/api/v2/authtokens?projectId=1',
                   {
                     headers: {
                       Authorization: `Bearer ${session.access_token}`,

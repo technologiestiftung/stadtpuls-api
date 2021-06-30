@@ -1,8 +1,8 @@
-version: '3.4'
+version: "3.4"
 
 services:
-  technologiestiftungnextiothubapi:
-    image: technologiestiftungnextiothubapi
+  technologiestiftungnextstadtpulsapi:
+    image: technologiestiftungstadtpulsapi
     build:
       context: .
       dockerfile: ./Dockerfile
