@@ -29,7 +29,6 @@ interface TTNPostBody {
     };
   };
   end_device_ids: {
-    dev_eui: "string";
     device_id: "string";
     application_ids: {
       application_id: "string";
@@ -42,14 +41,7 @@ const postTTNBodySchema = S.object()
   .title("Validation for data coming from TTN")
   .additionalProperties(true)
 
-  .prop(
-    "end_device_ids",
-    S.object()
-      .prop("device_id", S.string())
-      .required()
-      .prop("dev_eui", S.string())
-      .required()
-  )
+  .prop("end_device_ids", S.object().prop("device_id", S.string()).required())
   .required()
   .additionalProperties(true)
   .prop("received_at", S.string().format(S.FORMATS.DATE_TIME))
@@ -112,13 +104,13 @@ const ttn: FastifyPluginAsync = async (fastify) => {
         throw fastify.httpErrors.unauthorized();
       }
       const { end_device_ids, received_at, uplink_message } = request.body;
-      const { dev_eui } = end_device_ids;
+      const { device_id } = end_device_ids;
       const { decoded_payload, locations } = uplink_message;
       const { measurements } = decoded_payload;
       const { data: devices, error: deviceError } = await fastify.supabase
         .from("devices")
         .select("*")
-        .eq("externalId", dev_eui)
+        .eq("externalId", device_id)
         .eq("projectId", decoded.projectId)
         .eq("userId", decoded.sub);
       if (!devices || devices.length === 0) {

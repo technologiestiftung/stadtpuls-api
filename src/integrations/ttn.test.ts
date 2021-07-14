@@ -21,7 +21,6 @@ const issuer = "tsb";
 const ttnPayload = {
   end_device_ids: {
     device_id: "123",
-    dev_eui: "0909120192",
   },
   received_at: new Date().toISOString(),
   uplink_message: {
@@ -271,7 +270,7 @@ describe("tests for the ttn integration", () => {
           name: "test",
           userId,
           projectId: projects[0].id,
-          externalId: ttnPayload.end_device_ids.dev_eui,
+          externalId: ttnPayload.end_device_ids.device_id,
         },
       ]);
     if (!devices) {
