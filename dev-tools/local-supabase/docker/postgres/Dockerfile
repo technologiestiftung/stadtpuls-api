@@ -1,4 +1,4 @@
-FROM supabase/postgres:0.14.0
+FROM supabase/postgres:13.3.0
 
 COPY docker-entrypoint-initdb.d/ /docker-entrypoint-initdb.d/
 
