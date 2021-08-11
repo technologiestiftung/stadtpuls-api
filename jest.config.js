@@ -1,9 +1,39 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const path = require("path");
-require("dotenv").config({
-  path: path.resolve(__dirname, "./dev-tools/local-supabase/.env"),
-});
+const fs = require("fs");
+const isCi = require("is-ci");
+if (!isCi) {
+  const envFilePath = path.resolve(__dirname, "./.env.test");
+
+  if (!fs.existsSync(envFilePath)) {
+    console.error(
+      `Please create the file ${envFilePath} with the following variables:
+
+
+      SUPABASE_URL=
+      SUPABASE_ANON_KEY=
+      SUPABASE_SERVICE_ROLE_KEY=
+      Database_URL=postgres://postgres:postgres@localhost:5432/postgres
+      JWT_SECRET=
+      PORT=4000
+      ISSUER=
+
+You can find them all in
+dev-tools/local-supabase/docker/kong/kong.yml
+and
+dev-tools/local-supabase/docker/docker-compose.yml
+
+      `
+    );
+    process.exit(1);
+  }
+
+  require("dotenv").config({
+    path: envFilePath,
+  });
+}
+
 const { merge } = require("@inpyjamas/scripts/dist/utlities");
 const inPjsConfig = require("@inpyjamas/scripts/jest");
 module.exports = merge(inPjsConfig, {
