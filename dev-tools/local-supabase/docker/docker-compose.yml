@@ -79,4 +79,4 @@ services:
       POSTGRES_PORT: 5432
 networks:
   default:
-    driver: custom-driver
+    driver: bridge
