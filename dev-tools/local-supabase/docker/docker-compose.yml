@@ -117,8 +117,6 @@ services:
     image: inbucket/inbucket:stable
     ports:
       - 9000:9000
-# networks:
-#   default:
-#     driver: bridge
-
-network_mode: "host"
+networks:
+  default:
+    driver: host
