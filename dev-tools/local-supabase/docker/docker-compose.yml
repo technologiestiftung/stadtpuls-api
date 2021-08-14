@@ -117,6 +117,6 @@ services:
     image: inbucket/inbucket:stable
     ports:
       - 9000:9000
-networks:
-  default:
-    driver: host
+# networks:
+#   default:
+#     driver: host
