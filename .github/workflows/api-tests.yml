@@ -42,10 +42,11 @@ jobs:
         run: docker-compose -f dev-tools/local-supabase/docker/docker-compose.yml up --detach --build --force-recreate
       - run: npm ci
       - run: npm test
-      - run: npm run build --if-present
       - name: Setup tmate session
+        if: ${{ failure() }}
         uses: mxschmitt/action-tmate@v3
         # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
         timeout-minutes: 15
         with:
           limit-access-to-actor: true
+      - run: npm run build --if-present
