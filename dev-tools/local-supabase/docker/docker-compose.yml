@@ -112,11 +112,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_PORT: 5432
-  # mail:
-  #   # container_name: supabase-mail
-  #   image: inbucket/inbucket:stable
-  #   ports:
-  #     - 9000:9000
+  mail:
+    # container_name: supabase-mail
+    image: inbucket/inbucket:stable
+    ports:
+      - 9000:9000
 # networks:
 #   default:
 #     driver: bridge
