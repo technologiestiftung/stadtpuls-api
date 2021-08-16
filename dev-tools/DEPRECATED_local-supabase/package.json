@@ -1,0 +1,17 @@
+{
+  "name": "local-supabase",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prisma:init": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres prisma db push --preview-feature --skip-generate --accept-data-loss --schema=../next-iot-hub-db/prisma/schema.prisma",
+    "prisma:migrate": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres prisma migrate dev --create-only --name init --schema=../next-iot-hub-db/prisma/schema.prisma"
+  },
+  "author": "Fabian Morón Zirfas <fabianmoronzirfas@protonmail.ch> (https://fabianmoronzirfas.me)",
+  "license": "MIT",
+  "devDependencies": {
+    "prisma": "2.21.2",
+    "supabase": "0.3.8"
+  },
+  "dependencies": {}
+}
