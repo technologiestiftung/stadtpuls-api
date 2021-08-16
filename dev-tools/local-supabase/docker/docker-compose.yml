@@ -13,6 +13,7 @@ services:
     ports:
       - 8000:8000/tcp
   auth:
+    restart: on-failure
     network_mode: "bridge"
     # container_name: supabase-auth
     image: supabase/gotrue:v2.0.8
