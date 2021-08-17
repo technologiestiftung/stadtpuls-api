@@ -108,3 +108,4 @@ packages/next-iot-hub-dev-client/build/
 .env.v3
 src/mockServiceWorker.js
 dev-tools/supabase/.vscode/
+LAB_NOTES.md
