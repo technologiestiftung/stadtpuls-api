@@ -47,7 +47,7 @@ DROP TABLE IF EXISTS "public"."devices";
 -- Table Definition
 CREATE TABLE "public"."devices" (
     "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "externalId" varchar(20) NOT NULL,
+    "externalId" varchar(36) NOT NULL,
     "name" varchar(20),
     "projectId" int4 NOT NULL,
     "userId" uuid NOT NULL
