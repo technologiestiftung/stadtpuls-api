@@ -1,10 +1,10 @@
 {
-  "name": "@technologiestiftung/next-iot-hub-api",
+  "name": "@technologiestiftung/stadtpuls-api",
   "private": true,
   "version": "0.1.0",
   "description": "> TODO: description",
   "author": "ff6347 <fabianmoronzirfas@protonmail.ch>",
-  "homepage": "https://github.com/technologiestiftung/next-iot-hub-api/tree/main/packages/next-iot-hub-api#readme",
+  "homepage": "https://github.com/technologiestiftung/stadtpuls-api/tree/main/packages/stadtpuls-api#readme",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/technologiestiftung/next-iot-hub-api.git"
+    "url": "git+https://github.com/technologiestiftung/stadtpuls-api.git"
   },
   "scripts": {
     "test": "inpyjamas-scripts test",
@@ -30,10 +30,12 @@
     "build": "etsc",
     "esbuild": "esbuild --platform=node --target=es2020 --format=cjs src/*.ts src/**/*.ts src/**/*.ts --outdir=dist",
     "prepare": "npm run build",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "test:supabase:start": "docker compose --remove-orphan -f ./dev-tools/local-supabase/docker/docker-compose.yml up -d ",
+    "test:supabase:stop": "docker compose -f ./dev-tools/local-supabase/docker/docker-compose.yml down"
   },
   "bugs": {
-    "url": "https://github.com/technologiestiftung/next-iot-hub-api/issues"
+    "url": "https://github.com/technologiestiftung/stadtpuls-api/issues"
   },
   "devDependencies": {
     "@inpyjamas/scripts": "0.1.11-alpha",
@@ -46,6 +48,7 @@
     "esbuild-node-tsc": "1.3.0",
     "eslint": "7.24.0",
     "faker": "5.5.3",
+    "is-ci": "3.0.0",
     "msw": "0.28.1",
     "node-fetch": "2.6.1",
     "nodemon": "2.0.7",
@@ -54,9 +57,9 @@
   },
   "dependencies": {
     "@humanwhocodes/env": "2.2.0",
-    "@technologiestiftung/fastify-supabase": "0.1.0",
+    "@technologiestiftung/fastify-supabase": "0.1.2",
     "bcrypt": "5.0.1",
-    "fastify": "3.14.2",
+    "fastify": "3.20.2",
     "fastify-auth": "1.1.0",
     "fastify-blipp": "3.0.0",
     "fastify-cors": "5.2.0",

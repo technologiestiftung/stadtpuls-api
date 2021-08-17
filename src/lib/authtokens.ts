@@ -1,4 +1,5 @@
-import { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyPluginAsync } from "fastify";
+
 import { v4 as uuidv4 } from "uuid";
 import { SignOptions } from "jsonwebtoken";
 import fp from "fastify-plugin";
