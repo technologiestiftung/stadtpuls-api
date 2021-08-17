@@ -1,3 +1,7 @@
 {
-  "recommendations": ["humao.rest-client", "ms-azuretools.vscode-docker"]
+  "recommendations": [
+    "humao.rest-client",
+    "ms-azuretools.vscode-docker",
+    "mtxr.sqltools"
+  ]
 }
