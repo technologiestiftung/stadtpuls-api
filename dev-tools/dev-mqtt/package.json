@@ -10,7 +10,7 @@
   "keywords": [],
   "description": "",
   "dependencies": {
-    "mqtt": "4.2.6"
+    "mqtt": "4.2.8"
   },
   "devDependencies": {
     "@inpyjamas/scripts": "0.1.11-alpha",
