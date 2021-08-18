@@ -72,7 +72,7 @@ describe("tests for the ttn integration", () => {
     }
   });
 
-  test("should be rejected due to no no GET route", async () => {
+  test("should be rejected due to no GET route", async () => {
     const server = buildServer({
       jwtSecret,
       supabaseUrl,

@@ -62,8 +62,8 @@ const postTTNBodySchema = S.object()
           .prop(
             "user",
             S.object()
-              .prop("latitude", S.number())
-              .prop("longitude", S.number())
+              .prop("latitude", S.number().minimum(-90).maximum(90))
+              .prop("longitude", S.number().minimum(-180).maximum(180))
           )
           .additionalProperties(true)
       )
