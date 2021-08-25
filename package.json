@@ -8,13 +8,6 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
   "publishConfig": {
     "access": "restricted"
   },
@@ -23,7 +16,7 @@
     "url": "git+https://github.com/technologiestiftung/stadtpuls-api.git"
   },
   "scripts": {
-    "test": "inpyjamas-scripts test",
+    "test": "inpyjamas-scripts test -- --runInBand",
     "generate:types": "ts-node -r dotenv/config scripts/create-supabase-types.ts",
     "prebuild": "rimraf dist",
     "postbuild": "tsc --emitDeclarationOnly --outDir dist",
