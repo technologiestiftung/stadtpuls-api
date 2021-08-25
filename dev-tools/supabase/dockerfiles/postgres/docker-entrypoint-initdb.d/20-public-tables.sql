@@ -57,7 +57,7 @@ DROP TABLE IF EXISTS "public"."projects";
 
 DROP TYPE IF EXISTS "public"."connectionTypes";
 
-CREATE TYPE "public"."connectionTypes" AS ENUM ('ttn', 'other');
+CREATE TYPE "public"."connectionTypes" AS ENUM ('ttn', 'http', 'other');
 
 -- Table Definition
 CREATE TABLE "public"."projects" (
