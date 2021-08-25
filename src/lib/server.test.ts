@@ -53,6 +53,14 @@ describe("server tests", () => {
   });
 
   afterAll(async () => {
+    const { id, token } = await login({
+      anonKey: supabaseAnonKey,
+      email,
+      password,
+      url: new URL(`${supabaseUrl}/auth/v1/token?grant_type=password`),
+    });
+    userId = id;
+    userToken = token;
     const success = await deleteUser({
       anonKey: supabaseAnonKey,
       userToken,

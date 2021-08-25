@@ -18,17 +18,12 @@ import { deleteUser, login, logout, signup } from "../__test-utils";
 import { definitions } from "../common/supabase";
 const issuer = "tsb";
 
-const ttnPayload = {
-  end_device_ids: {
-    device_id: "123",
-  },
-  received_at: new Date().toISOString(),
-  uplink_message: {
-    decoded_payload: { measurements: [1, 2, 3] },
-    locations: { user: { latitude: 13, longitude: 52, altitude: 23 } },
-  },
+const httpPayload = {
+  latitude: 52.483107,
+  longitude: 13.390679,
+  altitude: 30,
+  measurements: [1, 2, 3],
 };
-
 describe("tests for the http integration", () => {
   beforeEach(async () => {
     const { id, token } = await login({
@@ -63,6 +58,14 @@ describe("tests for the http integration", () => {
   });
 
   afterAll(async () => {
+    const { id, token } = await login({
+      anonKey: supabaseAnonKey,
+      email,
+      password,
+      url: new URL(`${supabaseUrl}/auth/v1/token?grant_type=password`),
+    });
+    userId = id;
+    userToken = token;
     const success = await deleteUser({
       anonKey: supabaseAnonKey,
       userToken,
@@ -71,6 +74,24 @@ describe("tests for the http integration", () => {
     if (!success) {
       throw new Error("could not delete user");
     }
+  });
+
+  test("should be rejected due to no GET route", async () => {
+    const server = buildServer({
+      jwtSecret,
+      supabaseUrl,
+      supabaseServiceRoleKey,
+      logger: false,
+      issuer,
+    });
+    const response = await server.inject({
+      method: "GET",
+      url: "/api/v2/devices/1/records",
+    });
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toMatchInlineSnapshot(
+      `"{\\"message\\":\\"Route GET:/api/v2/devices/1/records not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
+    );
   });
 
   test("should be rejected due to no POST body", async () => {
