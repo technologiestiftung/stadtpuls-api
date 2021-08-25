@@ -70,7 +70,7 @@ export const signup: (options: {
   anonKey,
 }) => {
   const headers: HeadersInit = {
-    "Conten-Type": "application/json",
+    "Content-Type": "application/json",
     apikey: anonKey,
   };
   const body = JSON.stringify({ email, password });
@@ -102,7 +102,7 @@ export const login: (options: {
   anonKey,
 }) => {
   const headers: HeadersInit = {
-    "Conten-Type": "application/json",
+    "Content-Type": "application/json",
     apikey: anonKey,
   };
   const body = JSON.stringify({ email, password });
@@ -129,7 +129,7 @@ export const logout: (options: {
   anonKey: string;
 }) => Promise<boolean> = async ({ url, userToken, anonKey }) => {
   const headers: HeadersInit = {
-    "Conten-Type": "application/json",
+    "Content-Type": "application/json",
     apikey: anonKey,
     Authorization: `Bearer ${userToken}`,
   };
@@ -154,7 +154,7 @@ export const deleteUser: (options: {
   url: URL;
 }) => Promise<boolean> = async ({ anonKey, userToken, url }) => {
   const headers: HeadersInit = {
-    "Conten-Type": "application/json",
+    "Content-Type": "application/json",
     apikey: anonKey,
     Authorization: `Bearer ${userToken}`,
   };
@@ -169,6 +169,7 @@ export const deleteUser: (options: {
   if (response.status === 200) {
     return true;
   } else {
+    console.error("could not delete user");
     throw new Error(await response.json());
   }
 };
