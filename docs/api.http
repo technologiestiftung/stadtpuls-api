@@ -10,6 +10,19 @@
 
 @baseurl = {{apihost}}/{{ mount }}/{{ version }}
 
+@user_token = {{$dotenv %USER_TOKEN }}
+
+@user_id = {{$dotenv %USER_ID}}
+
+@supabase_url = {{ $dotenv %SUPABASE_URL }}
+
+@anon_key = {{ $dotenv %SUPABASE_ANON_KEY }}
+
+@service_role_key = {{ $dotenv %SUPABASE_SERVICE_ROLE_KEY }}
+
+@auth_token = {{ $dotenv %AUTH_TOKEN }}
+@device_id = 35
+
 ### Healthcheck
 GET {{ baseurl }}
 
@@ -22,12 +35,95 @@ Content-Type: application/json
 {"userId":"123"}
 
 
-### rest with anon key
+### postgrest with anon key
 
-GET http://localhost:8000/rest/v1/
-apikey: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYwMzk2ODgzNCwiZXhwIjoyNTUwNjUzNjM0LCJyb2xlIjoiYW5vbiJ9.36fUebxgx1mcBo4s19v0SzqmzunP--hm_hep0uLX0ew
+GET {{supabase_url}}/rest/v1/
+apikey: {{anon_key}}
 
 
-### rest with service role key
-GET http://localhost:8000/rest/v1/
-apikey: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYwMzk2ODgzNCwiZXhwIjoyNTUwNjUzNjM0LCJyb2xlIjoic2VydmljZV9yb2xlIn0.necIJaiP7X2T2QjGeV-FhpkizcNTX8HjDDBAxpgQTEI
+### postgrest with service role key
+GET {{supabase_url}}/rest/v1/
+apikey: {{service_role_key}}
+
+
+
+### Create a user in supabase
+# should return a token for later use
+# add it to the .env file
+
+POST {{supabase_url }}/auth/v1/signup
+apikey: {{anon_key}}
+Content-Type: application/json
+
+{"email": "hash@ff6347.email",
+"password": "bb489bc1-96a1-437a-be06-4f10d9aada69"}
+
+### Create a project in supabase
+
+POST {{supabase_url}}/rest/v1/projects
+apikey: {{anon_key}}
+Authorization: Bearer {{user_token}}
+Content-Type: application/json
+Prefer: return=representation
+
+{ "name": "testing", "connectype": "other", "categoryId": 1, "userId":
+"{{user_id}}" }
+
+# [
+#   {
+#     "id": 47,
+#     "name": "testing",
+#     "description": null,
+#     "createdAt": "2021-08-19T09:47:51.54038+00:00",
+#     "connectype": "other",
+#     "location": null,
+#     "userId": "xxxxxx",
+#     "categoryId": 1
+#   }
+# ]
+
+### Create a device in supabase
+
+POST {{supabase_url}}/rest/v1/devices
+apikey: {{anon_key}}
+Authorization: Bearer {{user_token}}
+Content-Type: application/json
+Prefer: return=representation
+
+{ "projectId": "47", "name": "http-client", "externalId":"123", "userId":"{{user_id}}" }
+
+# [
+#   {
+#     "id": 35,
+#     "externalId": "123",
+#     "name": "http-client",
+#     "projectId": 47,
+#     "userId": "xxxxxx"
+#   }
+# ]
+
+### Create an authToken in this API
+
+POST {{baseurl}}/authtokens
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+{"projectId": "47", "description": "testing http"}
+
+# {
+#   "comment": "Should do create a token",
+#   "method": "POST",
+#   "url": "/api/v2/authtokens",
+#   "data": {
+#     "token": "123"
+#   }
+# }
+
+### post records using HTTP integration  in this API
+
+POST {{ baseurl }}/devices/{{device_id}}/records
+Authorization: Bearer {{ auth_token }}
+Content-Type: application/json
+
+{"latitude":52.483107, "longitude":13.390679, "altitude":30,"measurements": [1,2,3]}
+
