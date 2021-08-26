@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import fs from "fs";
 import path from "path";
 const swaggerToTS = require("openapi-typescript").default;
 
-import https from "https";
+import http from "http";
 const anonKey = process.env.SUPABASE_ANON_KEY;
 const supabaseUrl = process.env.SUPABASE_URL;
 let spec = "";
@@ -13,7 +14,7 @@ const url = new URL(`${supabaseUrl}/rest/v1/?apikey=${anonKey}`);
 //   path: url.pathname,
 //   method: "GET",
 // };
-const req = https.request(url, (res) => {
+const req = http.request(url, (res) => {
   console.log(`statusCode: ${res.statusCode}`);
 
   res.on("data", (d) => {
