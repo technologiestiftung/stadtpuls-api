@@ -3,7 +3,7 @@ import fastify, { HTTPMethods } from "fastify";
 
 describe("all routes object", () => {
   // eslint-disable-next-line jest/no-disabled-tests
-  test.skip("should create fastiy plugin and actally have some routes attached to the fastify instance", async () => {
+  test.skip("should create fastiy plugin and actually have some routes attached to the fastify instance", async () => {
     const server = fastify();
     const routes: { url: string; method: HTTPMethods | HTTPMethods[] }[] = [];
     server.addHook("onRoute", ({ url, method, ..._rest }) => {

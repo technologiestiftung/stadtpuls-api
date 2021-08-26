@@ -16,31 +16,10 @@ let userToken: string;
 let userId: string;
 const email = faker.internet.email();
 const password = faker.internet.password();
-import { deleteUser, JWTPayload, login, logout, signup } from "../__test-utils";
+import { deleteUser, JWTPayload, login, signup } from "../__test-utils";
 import { definitions } from "../common/supabase";
 const issuer = "tsb";
 describe("server tests", () => {
-  beforeEach(async () => {
-    const { id, token } = await login({
-      anonKey: supabaseAnonKey,
-      email,
-      password,
-      url: new URL(`${supabaseUrl}/auth/v1/token?grant_type=password`),
-    });
-    userId = id;
-    userToken = token;
-  });
-  afterEach(async () => {
-    const success = await logout({
-      userToken,
-      anonKey: supabaseAnonKey,
-      url: new URL(`${supabaseUrl}/auth/v1/logout`),
-    });
-    if (!success) {
-      throw new Error("could not log out");
-    }
-  });
-
   beforeAll(async () => {
     const { id, token } = await signup({
       anonKey: supabaseAnonKey,
