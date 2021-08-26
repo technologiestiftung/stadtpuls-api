@@ -15,6 +15,11 @@
     "type": "git",
     "url": "git+https://github.com/technologiestiftung/stadtpuls-api.git"
   },
+  "files": [
+    "src",
+    "dist",
+    "docs"
+  ],
   "scripts": {
     "test": "inpyjamas-scripts test -- --runInBand",
     "generate:types": "ts-node -r dotenv/config scripts/create-supabase-types.ts",
