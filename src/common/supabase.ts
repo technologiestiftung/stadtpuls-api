@@ -16,11 +16,11 @@ export interface paths {
     get: {
       parameters: {
         query: {
+          niceId?: parameters["rowFilter.authtokens.niceId"];
           id?: parameters["rowFilter.authtokens.id"];
           description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
-          niceId?: parameters["rowFilter.authtokens.niceId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -71,11 +71,11 @@ export interface paths {
     delete: {
       parameters: {
         query: {
+          niceId?: parameters["rowFilter.authtokens.niceId"];
           id?: parameters["rowFilter.authtokens.id"];
           description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
-          niceId?: parameters["rowFilter.authtokens.niceId"];
         };
         header: {
           /** Preference */
@@ -90,11 +90,11 @@ export interface paths {
     patch: {
       parameters: {
         query: {
+          niceId?: parameters["rowFilter.authtokens.niceId"];
           id?: parameters["rowFilter.authtokens.id"];
           description?: parameters["rowFilter.authtokens.description"];
           projectId?: parameters["rowFilter.authtokens.projectId"];
           userId?: parameters["rowFilter.authtokens.userId"];
-          niceId?: parameters["rowFilter.authtokens.niceId"];
         };
         body: {
           /** authtokens */
@@ -516,14 +516,14 @@ export interface paths {
       };
     };
   };
-  "/users": {
+  "/userprofiles": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.users.id"];
-          name?: parameters["rowFilter.users.name"];
-          createdAt?: parameters["rowFilter.users.createdAt"];
-          role?: parameters["rowFilter.users.role"];
+          id?: parameters["rowFilter.userprofiles.id"];
+          name?: parameters["rowFilter.userprofiles.name"];
+          createdAt?: parameters["rowFilter.userprofiles.createdAt"];
+          role?: parameters["rowFilter.userprofiles.role"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -545,7 +545,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["users"][];
+          schema: definitions["userprofiles"][];
         };
         /** Partial Content */
         206: unknown;
@@ -554,8 +554,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** users */
-          users?: definitions["users"];
+          /** userprofiles */
+          userprofiles?: definitions["userprofiles"];
         };
         query: {
           /** Filtering Columns */
@@ -574,10 +574,10 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.users.id"];
-          name?: parameters["rowFilter.users.name"];
-          createdAt?: parameters["rowFilter.users.createdAt"];
-          role?: parameters["rowFilter.users.role"];
+          id?: parameters["rowFilter.userprofiles.id"];
+          name?: parameters["rowFilter.userprofiles.name"];
+          createdAt?: parameters["rowFilter.userprofiles.createdAt"];
+          role?: parameters["rowFilter.userprofiles.role"];
         };
         header: {
           /** Preference */
@@ -592,14 +592,14 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.users.id"];
-          name?: parameters["rowFilter.users.name"];
-          createdAt?: parameters["rowFilter.users.createdAt"];
-          role?: parameters["rowFilter.users.role"];
+          id?: parameters["rowFilter.userprofiles.id"];
+          name?: parameters["rowFilter.userprofiles.name"];
+          createdAt?: parameters["rowFilter.userprofiles.createdAt"];
+          role?: parameters["rowFilter.userprofiles.role"];
         };
         body: {
-          /** users */
-          users?: definitions["users"];
+          /** userprofiles */
+          userprofiles?: definitions["userprofiles"];
         };
         header: {
           /** Preference */
@@ -609,6 +609,25 @@ export interface paths {
       responses: {
         /** No Content */
         204: never;
+      };
+    };
+  };
+  "/rpc/update_email": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            new_email: string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
       };
     };
   };
@@ -650,6 +669,7 @@ export interface paths {
 
 export interface definitions {
   authtokens: {
+    niceId: number;
     /**
      * Note:
      * This is a Primary Key.<pk/>
@@ -663,10 +683,9 @@ export interface definitions {
     projectId: number;
     /**
      * Note:
-     * This is a Foreign Key to `users.id`.<fk table='users' column='id'/>
+     * This is a Foreign Key to `userprofiles.id`.<fk table='userprofiles' column='id'/>
      */
-    userId?: string;
-    niceId: number;
+    userId: string;
   };
   categories: {
     /**
@@ -698,9 +717,9 @@ export interface definitions {
     projectId: number;
     /**
      * Note:
-     * This is a Foreign Key to `users.id`.<fk table='users' column='id'/>
+     * This is a Foreign Key to `userprofiles.id`.<fk table='userprofiles' column='id'/>
      */
-    userId?: string;
+    userId: string;
   };
   projects: {
     /**
@@ -711,11 +730,11 @@ export interface definitions {
     name: string;
     description?: string;
     createdAt: string;
-    connectype: "ttn" | "other";
+    connectype: "ttn" | "http" | "other";
     location?: string;
     /**
      * Note:
-     * This is a Foreign Key to `users.id`.<fk table='users' column='id'/>
+     * This is a Foreign Key to `userprofiles.id`.<fk table='userprofiles' column='id'/>
      */
     userId: string;
     /**
@@ -741,7 +760,7 @@ export interface definitions {
      */
     deviceId: number;
   };
-  users: {
+  userprofiles: {
     /**
      * Note:
      * This is a Primary Key.<pk/>
@@ -776,11 +795,11 @@ export interface parameters {
   limit: string;
   /** authtokens */
   "body.authtokens": definitions["authtokens"];
+  "rowFilter.authtokens.niceId": string;
   "rowFilter.authtokens.id": string;
   "rowFilter.authtokens.description": string;
   "rowFilter.authtokens.projectId": string;
   "rowFilter.authtokens.userId": string;
-  "rowFilter.authtokens.niceId": string;
   /** categories */
   "body.categories": definitions["categories"];
   "rowFilter.categories.id": string;
@@ -812,12 +831,12 @@ export interface parameters {
   "rowFilter.records.latitude": string;
   "rowFilter.records.altitude": string;
   "rowFilter.records.deviceId": string;
-  /** users */
-  "body.users": definitions["users"];
-  "rowFilter.users.id": string;
-  "rowFilter.users.name": string;
-  "rowFilter.users.createdAt": string;
-  "rowFilter.users.role": string;
+  /** userprofiles */
+  "body.userprofiles": definitions["userprofiles"];
+  "rowFilter.userprofiles.id": string;
+  "rowFilter.userprofiles.name": string;
+  "rowFilter.userprofiles.createdAt": string;
+  "rowFilter.userprofiles.role": string;
 }
 
 export interface operations {}
