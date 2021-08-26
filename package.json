@@ -21,7 +21,7 @@
     "docs"
   ],
   "scripts": {
-    "test": "inpyjamas-scripts test -- --runInBand",
+    "test": "inpyjamas-scripts test",
     "generate:types": "ts-node -r dotenv/config scripts/create-supabase-types.ts",
     "prebuild": "rimraf dist",
     "postbuild": "tsc --emitDeclarationOnly --outDir dist",
