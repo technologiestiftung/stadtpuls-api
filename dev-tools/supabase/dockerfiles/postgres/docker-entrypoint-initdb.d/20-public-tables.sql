@@ -35,8 +35,7 @@ DROP TABLE IF EXISTS "public"."devices";
 -- Table Definition
 CREATE TABLE "public"."devices" (
     "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    -- TODO: [STADTPULS-326] Should the externalId be not null?
-    "externalId" varchar(36) NOT NULL,
+    "externalId" varchar(36),
     "name" varchar(20),
     "projectId" int4 NOT NULL,
     "userId" uuid NOT NULL
