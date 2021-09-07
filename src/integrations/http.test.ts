@@ -229,4 +229,36 @@ describe("tests for the http integration", () => {
     await betterDeleteUser(user.token);
     // end boilerplate
   });
+  // test should throw an PostgrestError
+  // how can we mock the call to supabase.from("authtokens")
+  // eslint-disable-next-line jest/no-disabled-tests
+  test.skip("should throw an internal server error 500", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const project = await createProject({
+      userId: user.id,
+    });
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+      projectId: project.id,
+    });
+    const device = await createDevice({
+      userId: user.id,
+      projectId: project.id,
+    });
+
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v2/devices/${device.id}/records`,
+      payload: httpPayload,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.statusCode).toBe(500);
+    // start boilerplate delete user
+    await betterDeleteUser(user.token);
+    // end boilerplate
+  });
 });
