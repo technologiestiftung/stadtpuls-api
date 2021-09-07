@@ -82,9 +82,5 @@ packages/next-iot-hub-dev-client/build/
 src/mockServiceWorker.js
 dev-tools/supabase/.vscode/
 LAB_NOTES.md
-# allows us to fast delete/reset the postgres db
+thunder-tests
 dev-tools/supabase/dockerfiles/postgres/pg-data
-thunder-tests/thunderActivity.db
-thunder-tests/thunderclient.db
-thunder-tests/thunderCollection.db
-thunder-tests/thunderEnvironment.db
