@@ -87,8 +87,6 @@ const http: FastifyPluginAsync = async (fastify) => {
           "device not found postgres error"
         );
       }
-      //TODO: Get lat lon from IP if there is no ip provided
-      // should only happen when no former record has a location
 
       const measurements = request.body.measurements;
       const latitude = request.body.latitude;
