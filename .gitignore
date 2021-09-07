@@ -109,3 +109,5 @@ packages/next-iot-hub-dev-client/build/
 src/mockServiceWorker.js
 dev-tools/supabase/.vscode/
 LAB_NOTES.md
+thunder-tests
+dev-tools/supabase/dockerfiles/postgres/pg-data
