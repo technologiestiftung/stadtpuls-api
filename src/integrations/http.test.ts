@@ -10,6 +10,7 @@ import {
   supabaseServiceRoleKey,
   supabaseAnonKey,
   supabaseUrl,
+  authtokenEndpoint,
 } from "../__test-utils";
 
 const issuer = "tsb";
@@ -106,7 +107,7 @@ describe("tests for the http integration", () => {
   });
 
   test("should find no authtoken", async () => {
-    // start boilerplate
+    // start boilerplate1
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
     const project = await createProject({
@@ -127,7 +128,7 @@ describe("tests for the http integration", () => {
     // 6. tries to create a record
     // 7. checks should be rejected
     // maybe this should be a separate test suite?
-    const url = `/api/v2/authtokens`;
+    const url = authtokenEndpoint;
 
     const getResponse = await server.inject({
       method: "GET",

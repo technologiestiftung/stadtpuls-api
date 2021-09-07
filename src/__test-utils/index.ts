@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fetch from "node-fetch";
 import { definitions } from "../common/supabase";
+
 export const jwtSecret =
   process.env.JWT_SECRET ||
   "super-secret-jwt-token-with-at-least-32-characters-long";
@@ -10,7 +11,7 @@ export const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "123";
 export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
 export const supabaseUrl = "http://localhost:8000";
-
+export const authtokenEndpoint = `/api/v2/authtokens`;
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 export interface ApiAuthResponsePayload {
@@ -239,7 +240,13 @@ export const createDevice: (options: {
   userId: string;
   projectId: number;
   name?: string;
-}) => Promise<definitions["devices"]> = async ({ userId, projectId, name }) => {
+  externalId?: string;
+}) => Promise<definitions["devices"]> = async ({
+  userId,
+  projectId,
+  name,
+  externalId,
+}) => {
   const { data: devices, error: dError } = await supabase
     .from<definitions["devices"]>("devices")
     .insert([
@@ -247,6 +254,7 @@ export const createDevice: (options: {
         name: name ? name : faker.random.word(),
         userId,
         projectId,
+        externalId,
       },
     ]);
   if (!devices) {
@@ -261,7 +269,7 @@ export const createAuthToken: (opts: {
 }) => Promise<string> = async ({ server, userToken, projectId }) => {
   const responseToken = await server.inject({
     method: "POST",
-    url: `/api/v2/authtokens`,
+    url: authtokenEndpoint,
     headers: {
       authorization: `Bearer ${userToken}`,
       apikey: supabaseAnonKey,
