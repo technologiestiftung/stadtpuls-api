@@ -79,17 +79,17 @@ curl http://localhost:4000/api/v2
 To make calls to protected routes you will need a supabase user token (created by supabase when you signup or login). The following routes can be called with supabase user tokens:
 
 ```plain
-GET	/api/v2/authtokens
-POST	/api/v2/authtokens
-DELETE	/api/v2/authtokens
+GET	/api/v<API_VERSION>/authtokens
+POST	/api/v<API_VERSION>/authtokens
+DELETE	/api/v<API_VERSION>/authtokens
 ```
 
 
 The following routes need an auth token created by this API.
 
 ```plain
-POST	/api/v2/integrations/ttn/v3
-POST	/api/v2/devices/:deviceId/records
+POST	/api/v<API_VERSION>/integrations/ttn/v3
+POST	/api/v<API_VERSION>/devices/:deviceId/records
 ```
 
 ### Create an Auth Token
@@ -119,10 +119,10 @@ You will get an response that contains an `access_token` property. That can be u
 
 ```bash
 # get all existing tokens
-curl --location --request GET 'http://localhost:4000/api/v2/authtokens?projectId=61' \
+curl --location --request GET 'http://localhost:4000/api/v3/authtokens?projectId=61' \
 --header 'Authorization: Bearer <YOUR SUPABASE ACCESS TOKEN>'
 # create a new token
-curl --location --request POST 'http://localhost:4000/api/v2/authtokens' \
+curl --location --request POST 'http://localhost:4000/api/v3/authtokens' \
 --header 'Authorization: Bearer <YOUR SUPABASE ACCESS TOKEN>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -130,7 +130,7 @@ curl --location --request POST 'http://localhost:4000/api/v2/authtokens' \
     "description": "my fancy token"
 }'
 # delete a token
-curl --location --request DELETE 'http://localhost:4000/api/v2/authtokens' \
+curl --location --request DELETE 'http://localhost:4000/api/v3/authtokens' \
 --header 'Authorization: Bearer <YOUR SUPABASE ACCESS TOKEN>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -146,7 +146,7 @@ Once you created a new token via POST you can move on to posting records.
 To post data via HTTP you need to optain an auth token like described above. Then you can POST data.
 
 ```bash
-curl --location --request POST 'http://localhost:4000/api/v2/devices/14/records' \
+curl --location --request POST 'http://localhost:4000/api/v3/devices/14/records' \
 --header 'Authorization: Bearer <YOUR AUTH TOKEN>' \
 --header 'Content-Type: application/json' \
 --data-raw '{

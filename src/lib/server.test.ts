@@ -11,6 +11,7 @@ import {
   createProject,
   signupUser,
   createAuthToken,
+  apiVersion,
 } from "../__test-utils";
 
 const apikey = supabaseAnonKey;
@@ -26,9 +27,12 @@ describe("server tests", () => {
   test("should run the server and inject routes", async () => {
     const server = buildServer(buildServerOpts);
 
-    const response = await server.inject({ method: "GET", url: "/api/v2" });
+    const response = await server.inject({
+      method: "GET",
+      url: `/api/v${apiVersion}`,
+    });
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"comment\\":\\"healthcheck\\",\\"method\\":\\"GET\\",\\"url\\":\\"/api/v2\\"}"`
+      `"{\\"comment\\":\\"healthcheck\\",\\"method\\":\\"GET\\",\\"url\\":\\"/api/v3\\"}"`
     );
   });
 
@@ -37,7 +41,7 @@ describe("server tests", () => {
 
     const response = await server.inject({
       method: "GET",
-      url: "/api/v2/authtokens",
+      url: `/api/v${apiVersion}/authtokens`,
       headers: { apikey },
     });
     expect(response.statusCode).toBe(400);
@@ -51,7 +55,7 @@ describe("server tests", () => {
     const user = await signupUser();
     const project = await createProject({ userId: user.id });
 
-    const url = `/api/v2/authtokens?projectId=${project.id}`;
+    const url = `/api/v${apiVersion}/authtokens?projectId=${project.id}`;
     const response = await server.inject({
       method: "GET",
       url,
@@ -73,7 +77,7 @@ describe("server tests", () => {
     const user = await signupUser();
     const project = await createProject({ userId: user.id });
 
-    const url = `/api/v2/authtokens`;
+    const url = `/api/v${apiVersion}/authtokens`;
     const response = await server.inject({
       method: "POST",
       url,
@@ -102,7 +106,7 @@ describe("server tests", () => {
       userId: user.id,
     });
 
-    const url = `/api/v2/authtokens`;
+    const url = `/api/v${apiVersion}/authtokens`;
     const response = await server.inject({
       method: "POST",
       url,
@@ -153,7 +157,7 @@ describe("server tests", () => {
       userId: user.id,
     });
 
-    const url = `/api/v2/authtokens`;
+    const url = `/api/v${apiVersion}/authtokens`;
     const postResponse1 = await server.inject({
       method: "POST",
       url,
@@ -214,7 +218,7 @@ describe("server tests", () => {
       projectId: project.id,
     });
 
-    const url = `/api/v2/authtokens`;
+    const url = `/api/v${apiVersion}/authtokens`;
 
     const getResponse = await server.inject({
       method: "GET",
@@ -255,7 +259,7 @@ describe("server tests", () => {
   test("should not find a project", async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const url = `/api/v2/authtokens`;
+    const url = `/api/v${apiVersion}/authtokens`;
     const response = await server.inject({
       method: "POST",
       url,
@@ -282,7 +286,7 @@ describe("server tests", () => {
 
     const project = await createProject({ userId: user.id });
 
-    const url = `/api/v2/authtokens`;
+    const url = `/api/v${apiVersion}/authtokens`;
     const response = await server.inject({
       method: "DELETE",
       url,
@@ -314,7 +318,7 @@ describe("server tests", () => {
     });
     const user = await signupUser();
 
-    const url = `/api/v2/authtokens`;
+    const url = `/api/v${apiVersion}/authtokens`;
     const response = await server.inject({
       method: "DELETE",
       url,

@@ -4,7 +4,7 @@
 @port = 4000
 @mount = api
 
-@version = v2
+@version = v3
 
 @apihost = http://{{ host }}:{{ port }}
 
@@ -113,7 +113,7 @@ Authorization: Bearer {{user_token}}
 # {
 #   "comment": "Should do create a token",
 #   "method": "POST",
-#   "url": "/api/v2/authtokens",
+#   "url": "/api/v3/authtokens",
 #   "data": {
 #     "token": "123"
 #   }
