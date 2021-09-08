@@ -77,7 +77,6 @@ dist
 .tern-port
 .vscode/settings.json
 quokka-playground
-packages/next-iot-hub-dev-client/build/
 .env.v3
 src/mockServiceWorker.js
 dev-tools/supabase/.vscode/

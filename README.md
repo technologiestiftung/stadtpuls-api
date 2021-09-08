@@ -19,10 +19,8 @@ To get the project ready you need to do some tasks.
 
 * create a supabase project
 * get your service key and `postgresql://…` connection string
-* add the connection string to your DATABASE_URL  in `dev-tools/next-iot-hub-db/.env`
 * add your service role key to `.env`
 * provision the dev database
-  * with prisma `cd dev-tools/next-iot-hub-db/ && npx prisma db push --preview-feature` (in production you should use `prisma migrate`)
   * use the scripts `dev-tools/supabase/dockerfiles/postgres/docker-entrypoint-initdb.d/` to give your DB the final touches. Watch out: 00-initial-schema.sql, 01-auth-schema.sql and 02-storage-schema.sql are covered by supabase. You don't need these when working with the cloud. These scripts
     * create replication of users into the public users table (like mentioned in their [docs](https://supabase.io/docs/guides/auth#create-a-publicusers-table))
     * disable realtime for all non public tables (see also the link above on the why to do this)

@@ -2,7 +2,7 @@
   "name": "@technologiestiftung/stadtpuls-api",
   "private": true,
   "version": "0.1.0",
-  "description": "> TODO: description",
+  "description": "An API for the stadtpuls.com project",
   "author": "ff6347 <fabianmoronzirfas@protonmail.ch>",
   "homepage": "https://github.com/technologiestiftung/stadtpuls-api/tree/main/packages/stadtpuls-api#readme",
   "license": "MIT",
@@ -47,7 +47,6 @@
     "eslint": "7.24.0",
     "faker": "5.5.3",
     "is-ci": "3.0.0",
-    "msw": "0.28.1",
     "node-fetch": "2.6.1",
     "nodemon": "2.0.7",
     "openapi-typescript": "3.2.2",
@@ -68,8 +67,5 @@
     "fluent-json-schema": "3.0.1",
     "make-promises-safe": "5.1.0",
     "uuid": "8.3.2"
-  },
-  "msw": {
-    "workerDirectory": "src"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@technologiestiftung/next-iot-hub-dev-mqtt",
+  "name": "@technologiestiftung/stadtpuls-api-mqtt",
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {

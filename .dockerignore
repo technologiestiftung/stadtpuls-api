@@ -1,6 +1,8 @@
 **/.classpath
 **/.dockerignore
 **/.env
+**/.env.test
+**/.env.example
 **/.git
 **/.gitignore
 **/.project
@@ -23,3 +25,17 @@
 **/values.dev.yaml
 README.md
 dev-tools/**
+**/docs
+**/.github
+**/.vscode
+**/coverage
+**/dist
+**/quokka-playground
+**/scripts
+**/.nvmrc
+**/.eslintrc.js
+**/.jest.*
+**/docker-build-and-push.sh
+**/render.yml
+**/renovate.json
+**/nodemon.json
