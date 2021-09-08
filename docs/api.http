@@ -56,41 +56,21 @@ apikey: {{anon_key}}
 Content-Type: application/json
 
 {"email": "hash@ff6347.email",
-"password": "bb489bc1-96a1-437a-be06-4f10d9aada69"}
+"password": "123password"}
 
 ### Create a project in supabase
 
-POST {{supabase_url}}/rest/v1/projects
-apikey: {{anon_key}}
-Authorization: Bearer {{user_token}}
-Content-Type: application/json
-Prefer: return=representation
 
-{ "name": "testing", "connectype": "other", "categoryId": 1, "userId":
-"{{user_id}}" }
-
-# [
-#   {
-#     "id": 47,
-#     "name": "testing",
-#     "description": null,
-#     "createdAt": "2021-08-19T09:47:51.54038+00:00",
-#     "connectype": "other",
-#     "location": null,
-#     "userId": "xxxxxx",
-#     "categoryId": 1
-#   }
-# ]
 
 ### Create a device in supabase
 
-POST {{supabase_url}}/rest/v1/devices
+POST {{supabase_url}}/rest/v1/sensors
 apikey: {{anon_key}}
 Authorization: Bearer {{user_token}}
 Content-Type: application/json
 Prefer: return=representation
 
-{ "projectId": "47", "name": "http-client", "externalId":"123", "userId":"{{user_id}}" }
+{ "name": "http-client",  "user_id":"{{user_id}}" , "category_id": 1}
 
 # [
 #   {
