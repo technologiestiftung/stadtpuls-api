@@ -41,7 +41,7 @@ export function Profile({
                 if (!session)
                   throw new Error('Could not get superbase session');
 
-                fetch('http://localhost:4000/api/v2/authtokens?projectId=1', {
+                fetch('http://localhost:4000/api/v3/authtokens?projectId=1', {
                   headers: {
                     Authorization: `Bearer ${session.access_token}`,
                   },

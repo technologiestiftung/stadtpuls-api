@@ -11,6 +11,7 @@ import {
   supabaseAnonKey,
   supabaseServiceRoleKey,
   supabaseUrl,
+  apiVersion,
 } from "../__test-utils";
 
 const issuer = "tsb";
@@ -37,18 +38,18 @@ describe("tests for the ttn integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "GET",
-      url: "/api/v2/integrations/ttn/v3",
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
     });
     expect(response.statusCode).toBe(404);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"message\\":\\"Route GET:/api/v2/integrations/ttn/v3 not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
+      `"{\\"message\\":\\"Route GET:/api/v3/integrations/ttn/v3 not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
     );
   });
   test("should be rejected due to no body", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
@@ -59,7 +60,7 @@ describe("tests for the ttn integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
       payload: {},
     });
     expect(response.statusCode).toBe(400);
@@ -71,7 +72,7 @@ describe("tests for the ttn integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
       payload: ttnPayload,
     });
     expect(response.statusCode).toBe(401);
@@ -92,7 +93,7 @@ describe("tests for the ttn integration", () => {
 
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
       payload: ttnPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -145,7 +146,7 @@ describe("tests for the ttn integration", () => {
     });
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
       payload: ttnPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -179,7 +180,7 @@ describe("tests for the ttn integration", () => {
     // end boilerplate
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
       payload: ttnPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,

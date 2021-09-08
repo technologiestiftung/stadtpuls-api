@@ -17,6 +17,6 @@ Object {
     "token": Any<String>,
   },
   "method": "POST",
-  "url": "/api/v2/authtokens",
+  "url": "/api/v3/authtokens",
 }
 `;

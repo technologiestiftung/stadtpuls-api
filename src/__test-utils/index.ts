@@ -1,4 +1,5 @@
 import faker from "faker";
+import config from "config";
 import { createClient } from "@supabase/supabase-js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fetch from "node-fetch";
@@ -8,10 +9,11 @@ export const jwtSecret =
   process.env.JWT_SECRET ||
   "super-secret-jwt-token-with-at-least-32-characters-long";
 export const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "123";
+export const apiVersion = config.get("apiVersion");
 export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
 export const supabaseUrl = "http://localhost:8000";
-export const authtokenEndpoint = `/api/v2/authtokens`;
+export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 export interface ApiAuthResponsePayload {

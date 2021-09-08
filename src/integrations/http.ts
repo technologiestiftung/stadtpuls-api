@@ -4,6 +4,7 @@ import { compare } from "bcrypt";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
+import config from "config";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -22,6 +23,8 @@ interface HTTPPostParams {
   deviceId: string;
 }
 
+const apiVersion = config.get("apiVersion");
+const mountPoint = config.get<string>("mountPoint");
 const postHTTPBodySchema = S.object()
   .id("/integration/http")
   .title("Validation for data coming in via HTTP")
@@ -39,7 +42,7 @@ const postHTTPParamsSchema = S.object()
 
 const http: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: HTTPPostBody; Params: HTTPPostParams }>({
-    url: "/api/v2/devices/:deviceId/records",
+    url: `/${mountPoint}/v${apiVersion}/devices/:deviceId/records`,
     schema: { body: postHTTPBodySchema, params: postHTTPParamsSchema },
     method: "POST",
     preHandler: fastify.auth([fastify.verifyJWT]),

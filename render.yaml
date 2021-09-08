@@ -1,5 +1,5 @@
 services:
-  - name: stadtpuls-api
+  - name: stadtpuls-api-v3
     type: web
     env: docker
     region: frankfurt

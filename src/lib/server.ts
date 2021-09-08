@@ -1,4 +1,5 @@
 import "make-promises-safe";
+import config from "config";
 import fastify, {
   FastifyInstance,
   FastifyReply,
@@ -17,6 +18,8 @@ import routesAuth from "./authtokens";
 import ttn from "../integrations/ttn";
 import http from "../integrations/http";
 
+const apiVersion = config.get<number>("apiVersion");
+const mountPoint = config.get<string>("mountPoint");
 export const buildServer: (options: {
   jwtSecret: string;
   supabaseUrl: string;
@@ -32,8 +35,10 @@ export const buildServer: (options: {
 }) => {
   const routeOptions = {
     endpoint: "authtokens",
-    mount: "api",
-    apiVersion: "v2",
+    mount: mountPoint,
+
+    apiVersion: `v${apiVersion}`,
+
     issuer,
   };
   const server = fastify({ logger, ignoreTrailingSlash: true });

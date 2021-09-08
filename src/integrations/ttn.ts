@@ -4,6 +4,7 @@ import { compare } from "bcrypt";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
+import config from "config";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -36,6 +37,9 @@ interface TTNPostBody {
   };
   simulated: boolean;
 }
+const apiVersion = config.get<number>("apiVersion");
+const mountPoint = config.get<string>("mountPoint");
+
 const postTTNBodySchema = S.object()
   .id("/integrations/ttn/v3")
   .title("Validation for data coming from TTN")
@@ -72,9 +76,10 @@ const postTTNBodySchema = S.object()
   .required()
   .additionalProperties(true);
 // console.log(JSON.stringify(postTTNBodySchema.valueOf(), null, 2));
+
 const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
-    url: "/api/v2/integrations/ttn/v3",
+    url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
     method: "POST",
     schema: { body: postTTNBodySchema },
     preHandler: fastify.auth([fastify.verifyJWT]),

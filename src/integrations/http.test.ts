@@ -11,6 +11,7 @@ import {
   supabaseAnonKey,
   supabaseUrl,
   authtokenEndpoint,
+  apiVersion,
 } from "../__test-utils";
 
 const issuer = "tsb";
@@ -33,11 +34,11 @@ describe("tests for the http integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "GET",
-      url: "/api/v2/devices/1/records",
+      url: `/api/v${apiVersion}/devices/1/records`,
     });
     expect(response.statusCode).toBe(404);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"message\\":\\"Route GET:/api/v2/devices/1/records not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
+      `"{\\"message\\":\\"Route GET:/api/v3/devices/1/records not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
     );
   });
 
@@ -45,7 +46,7 @@ describe("tests for the http integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/devices/1/records",
+      url: `/api/v${apiVersion}/devices/1/records`,
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
@@ -57,7 +58,7 @@ describe("tests for the http integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/devices/1/records",
+      url: `/api/v${apiVersion}/devices/1/records`,
       payload: {},
     });
     expect(response.statusCode).toBe(400);
@@ -70,7 +71,7 @@ describe("tests for the http integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/devices/1/records",
+      url: `/api/v${apiVersion}/devices/1/records`,
       payload: httpPayload,
     });
     expect(response.statusCode).toBe(401);
@@ -91,7 +92,7 @@ describe("tests for the http integration", () => {
     // end boilerplate
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/devices/1/records",
+      url: `/api/v${apiVersion}/devices/1/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -155,7 +156,7 @@ describe("tests for the http integration", () => {
     });
     const response2 = await server.inject({
       method: "POST",
-      url: "/api/v2/devices/1/records",
+      url: `/api/v${apiVersion}/devices/1/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -187,7 +188,7 @@ describe("tests for the http integration", () => {
 
     const response = await server.inject({
       method: "POST",
-      url: `/api/v2/devices/abc/records`,
+      url: `/api/v${apiVersion}/devices/abc/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -218,7 +219,7 @@ describe("tests for the http integration", () => {
 
     const response = await server.inject({
       method: "POST",
-      url: `/api/v2/devices/${device.id}/records`,
+      url: `/api/v${apiVersion}/devices/${device.id}/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -250,7 +251,7 @@ describe("tests for the http integration", () => {
 
     const response = await server.inject({
       method: "POST",
-      url: `/api/v2/devices/${device.id}/records`,
+      url: `/api/v${apiVersion}/devices/${device.id}/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
