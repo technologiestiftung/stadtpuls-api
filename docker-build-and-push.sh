@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
-GITHUB_REPOSITORY="technologiestiftung/next-iot-hub-api"
+GITHUB_REPOSITORY="technologiestiftung/stadtpuls-api"
 GITHUB_REF="latest"
 PUSHIT=FALSE
 
