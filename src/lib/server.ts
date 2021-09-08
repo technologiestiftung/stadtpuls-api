@@ -36,7 +36,7 @@ export const buildServer: (options: {
     apiVersion: "v2",
     issuer,
   };
-  const server = fastify({ logger });
+  const server = fastify({ logger, ignoreTrailingSlash: true });
 
   server.register(fastifyBlipp);
   server.register(fastifyHelmet);
