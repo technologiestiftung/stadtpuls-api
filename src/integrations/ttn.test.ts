@@ -2,7 +2,7 @@ import buildServer from "../lib/server";
 
 import {
   authtokenEndpoint,
-  betterDeleteUser,
+  deleteUser,
   createAuthToken,
   createDevice,
   createProject,
@@ -103,7 +103,7 @@ describe("tests for the ttn integration", () => {
       `"{\\"statusCode\\":404,\\"error\\":\\"Not Found\\",\\"message\\":\\"device not found\\"}"`
     );
     // end boilerplate teardown test
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
   });
   test("should find no authtoken", async () => {
     // start boilerplate setup test
@@ -156,7 +156,7 @@ describe("tests for the ttn integration", () => {
       `"{\\"statusCode\\":401,\\"error\\":\\"Unauthorized\\",\\"message\\":\\"Unauthorized\\"}"`
     );
     // end boilerplate teardown test
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
   });
 
   test("should pass", async () => {
@@ -187,6 +187,6 @@ describe("tests for the ttn integration", () => {
     });
     expect(response.statusCode).toBe(201);
     // end boilerplate teardown test
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
   });
 });

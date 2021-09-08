@@ -174,29 +174,16 @@ export const logout: (options: {
   }
 };
 
-export const betterDeleteUser: (userToken: string) => Promise<void> = async (
+export const deleteUser: (userToken: string) => Promise<boolean> = async (
   userToken
 ) => {
-  const success = await deleteUser({
-    userToken,
-    url: new URL(`${supabaseUrl}/rest/v1/rpc/delete_user`),
-    anonKey: supabaseAnonKey,
-  });
-  if (!success) {
-    throw new Error("Could not delete user");
-  }
-};
-export const deleteUser: (options: {
-  anonKey: string;
-  userToken: string;
-  url: URL;
-}) => Promise<boolean> = async ({ anonKey, userToken, url }) => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
-    apikey: anonKey,
+    apikey: supabaseAnonKey,
     Authorization: `Bearer ${userToken}`,
   };
 
+  const url = new URL(`${supabaseUrl}/rest/v1/rpc/delete_user`);
   const response = await fetch(url.href, {
     method: "POST",
     headers,
@@ -204,12 +191,11 @@ export const deleteUser: (options: {
   if (!response.ok) {
     throw new Error(await response.text());
   }
-  if (response.status === 200) {
-    return true;
-  } else {
-    console.error("could not delete user");
-    throw new Error(await response.json());
+  if (response.status !== 200) {
+    console.error(await response.json());
+    throw new Error("Could not delete user");
   }
+  return true;
 };
 
 export const createProject: (options: {

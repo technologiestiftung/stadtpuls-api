@@ -1,7 +1,7 @@
 import buildServer from "../lib/server";
 
 import {
-  betterDeleteUser,
+  deleteUser,
   createProject,
   createAuthToken,
   signupUser,
@@ -102,7 +102,7 @@ describe("tests for the http integration", () => {
       `"{\\"statusCode\\":404,\\"error\\":\\"Not Found\\",\\"message\\":\\"device not found\\"}"`
     );
     // start boilerplate
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
     // end boilerplate
   });
 
@@ -166,7 +166,7 @@ describe("tests for the http integration", () => {
       `"{\\"statusCode\\":401,\\"error\\":\\"Unauthorized\\",\\"message\\":\\"Unauthorized\\"}"`
     );
     // start boilerplate
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
     // end boilerplate
   });
 
@@ -195,7 +195,7 @@ describe("tests for the http integration", () => {
     });
     expect(response.statusCode).toBe(400);
     // start boilerplate
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
     // end boilerplate
   });
   test("should pass", async () => {
@@ -226,7 +226,7 @@ describe("tests for the http integration", () => {
     });
     expect(response.statusCode).toBe(201);
     // start boilerplate delete user
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
     // end boilerplate
   });
   // test should throw an PostgrestError
@@ -258,7 +258,7 @@ describe("tests for the http integration", () => {
     });
     expect(response.statusCode).toBe(500);
     // start boilerplate delete user
-    await betterDeleteUser(user.token);
+    await deleteUser(user.token);
     // end boilerplate
   });
 });

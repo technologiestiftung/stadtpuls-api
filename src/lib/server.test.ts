@@ -16,7 +16,7 @@ let userToken: string;
 let userId: string;
 const email = faker.internet.email();
 const password = faker.internet.password();
-import { deleteUser, JWTPayload, login, signup } from "../__test-utils";
+import { JWTPayload, login, signup, deleteUser } from "../__test-utils";
 import { definitions } from "../common/supabase";
 const issuer = "tsb";
 describe("server tests", () => {
@@ -40,11 +40,8 @@ describe("server tests", () => {
     });
     userId = id;
     userToken = token;
-    const success = await deleteUser({
-      anonKey: supabaseAnonKey,
-      userToken,
-      url: new URL(`${supabaseUrl}/rest/v1/rpc/delete_user`),
-    });
+
+    const success = await deleteUser(userToken);
     if (!success) {
       throw new Error("could not delete user");
     }
