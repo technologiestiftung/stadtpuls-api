@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 services:
   kong:
     container_name: supabase-kong
@@ -34,19 +34,19 @@ services:
       GOTRUE_SMTP_PASS: ${SMTP_PASS}
       GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
 
-      GOTRUE_DISABLE_SIGNUP: 'false'
+      GOTRUE_DISABLE_SIGNUP: "false"
       GOTRUE_SITE_URL: http://localhost:8000
       GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
       GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
       GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
-      GOTRUE_MAILER_AUTOCONFIRM: 'true'
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
       GOTRUE_LOG_LEVEL: DEBUG
       GOTRUE_OPERATOR_TOKEN: ${OPERATOR_TOKEN}
-      DATABASE_URL: 'postgres://postgres:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/postgres?sslmode=disable'
+      DATABASE_URL: "postgres://postgres:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/postgres?sslmode=disable"
 
   rest:
     container_name: supabase-rest
-    image: postgrest/postgrest:nightly-2021-03-05-19-03-d3a8b5f
+    image: postgrest/postgrest:latest
     ports:
       - ${REST_PORT}:3000
     depends_on:
@@ -75,32 +75,32 @@ services:
       PORT: ${REALTIME_PORT}
       HOSTNAME: localhost
       # Disable JWT Auth locally. The JWT_SECRET will be ignored.
-      SECURE_CHANNELS: 'false'
+      SECURE_CHANNELS: "false"
       JWT_SECRET: ${JWT_SECRET}
 
   storage:
     image: supabase/storage-api:v0.9.1
     ports:
-      - '5000:5000'
+      - "5000:5000"
     depends_on:
-    - db
-    - rest
+      - db
+      - rest
     restart: always
     environment:
-        ANON_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.sUHErUOiKZ3nHQIxy-7jND6B80Uzf9G4NtMLmL6HXPQ
-        SERVICE_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwNzUzMiwiZXhwIjoxNjkwMjc5NTMyLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoic2VydmljZV9yb2xlIn0.hfdXFZV5PdvUdo2xK0vStb1i97GJukSkRqfwd4YIh2M
-        PROJECT_REF: bjwdssmqcnupljrqypxz # can be any random string
-        POSTGREST_URL: http://rest:3000
-        PGRST_JWT_SECRET: ${JWT_SECRET}
-        DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/postgres
-        PGOPTIONS: "-c search_path=storage"
-        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
-        REGION: ${STORAGE_REGION} # region where your bucket is located
-        GLOBAL_S3_BUCKET: ${STORAGE_S3_BUCKET}  # name of s3 bucket where you want to store objects
-        # AWS_ACCESS_KEY_ID: replace-with-your-aws-key
-        # AWS_SECRET_ACCESS_KEY: replace-with-your-aws-secret
-        STORAGE_BACKEND: ${STORAGE_BACKEND}
-        FILE_STORAGE_BACKEND_PATH: /var/data/storage
+      ANON_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.sUHErUOiKZ3nHQIxy-7jND6B80Uzf9G4NtMLmL6HXPQ
+      SERVICE_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwNzUzMiwiZXhwIjoxNjkwMjc5NTMyLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoic2VydmljZV9yb2xlIn0.hfdXFZV5PdvUdo2xK0vStb1i97GJukSkRqfwd4YIh2M
+      PROJECT_REF: bjwdssmqcnupljrqypxz # can be any random string
+      POSTGREST_URL: http://rest:3000
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/postgres
+      PGOPTIONS: "-c search_path=storage"
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
+      REGION: ${STORAGE_REGION} # region where your bucket is located
+      GLOBAL_S3_BUCKET: ${STORAGE_S3_BUCKET} # name of s3 bucket where you want to store objects
+      # AWS_ACCESS_KEY_ID: replace-with-your-aws-key
+      # AWS_SECRET_ACCESS_KEY: replace-with-your-aws-secret
+      STORAGE_BACKEND: ${STORAGE_BACKEND}
+      FILE_STORAGE_BACKEND_PATH: /var/data/storage
   db:
     container_name: supabase-db
     build:
@@ -116,3 +116,5 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: ${POSTGRES_PORT}
+    volumes:
+      - ./dockerfiles/postgres/pg-data:/var/lib/postgresql/data

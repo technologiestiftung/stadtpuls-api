@@ -13,8 +13,9 @@ import fastifyAuth from "fastify-auth";
 
 import fastifySupabase from "@technologiestiftung/fastify-supabase";
 
-import routes from "./authtokens";
+import routesAuth from "./authtokens";
 import ttn from "../integrations/ttn";
+import http from "../integrations/http";
 
 export const buildServer: (options: {
   jwtSecret: string;
@@ -35,7 +36,7 @@ export const buildServer: (options: {
     apiVersion: "v2",
     issuer,
   };
-  const server = fastify({ logger });
+  const server = fastify({ logger, ignoreTrailingSlash: true });
 
   server.register(fastifyBlipp);
   server.register(fastifyHelmet);
@@ -56,8 +57,9 @@ export const buildServer: (options: {
       await request.jwtVerify();
     }
   );
-  server.register(routes, routeOptions);
+  server.register(routesAuth, routeOptions);
   server.register(ttn);
+  server.register(http);
 
   [
     "/",

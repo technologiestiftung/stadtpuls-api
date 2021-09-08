@@ -1,16 +1,16 @@
 import buildServer from "../lib/server";
 
 import {
-  authtokenEndpoint,
   deleteUser,
-  createAuthToken,
-  createDevice,
   createProject,
-  jwtSecret,
+  createAuthToken,
   signupUser,
-  supabaseAnonKey,
+  createDevice,
+  jwtSecret,
   supabaseServiceRoleKey,
+  supabaseAnonKey,
   supabaseUrl,
+  authtokenEndpoint,
 } from "../__test-utils";
 
 const issuer = "tsb";
@@ -22,62 +22,62 @@ const buildServerOpts = {
   issuer,
 };
 
-const ttnPayload = {
-  end_device_ids: {
-    device_id: "123",
-  },
-  received_at: new Date().toISOString(),
-  uplink_message: {
-    decoded_payload: { measurements: [1, 2, 3] },
-    locations: { user: { latitude: 13, longitude: 52, altitude: 23 } },
-  },
+const httpPayload = {
+  latitude: 52.483107,
+  longitude: 13.390679,
+  altitude: 30,
+  measurements: [1, 2, 3],
 };
-describe("tests for the ttn integration", () => {
+describe("tests for the http integration", () => {
   test("should be rejected due to no GET route", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "GET",
-      url: "/api/v2/integrations/ttn/v3",
+      url: "/api/v2/devices/1/records",
     });
     expect(response.statusCode).toBe(404);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"message\\":\\"Route GET:/api/v2/integrations/ttn/v3 not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
+      `"{\\"message\\":\\"Route GET:/api/v2/devices/1/records not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
     );
   });
-  test("should be rejected due to no body", async () => {
+
+  test("should be rejected due to no POST body", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: "/api/v2/devices/1/records",
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
       `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should be object\\"}"`
     );
   });
+
   test("should be rejected due to no wrong body", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
+      url: "/api/v2/devices/1/records",
       payload: {},
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should have required property 'end_device_ids'\\"}"`
+      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should have required property 'measurements'\\"}"`
     );
   });
+
   test("should be rejected due to no token", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
-      payload: ttnPayload,
+      url: "/api/v2/devices/1/records",
+      payload: httpPayload,
     });
     expect(response.statusCode).toBe(401);
   });
+
   test("should find no device", async () => {
-    // start boilerplate setup test
+    // start boilerplate
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
     const project = await createProject({
@@ -89,11 +89,10 @@ describe("tests for the ttn integration", () => {
       projectId: project.id,
     });
     // end boilerplate
-
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
-      payload: ttnPayload,
+      url: "/api/v2/devices/1/records",
+      payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -102,13 +101,14 @@ describe("tests for the ttn integration", () => {
     expect(response.body).toMatchInlineSnapshot(
       `"{\\"statusCode\\":404,\\"error\\":\\"Not Found\\",\\"message\\":\\"device not found\\"}"`
     );
-    // end boilerplate teardown test
+    // start boilerplate
     await deleteUser(user.token);
+    // end boilerplate
   });
-  test("should find no authtoken", async () => {
-    // start boilerplate setup test
-    const server = buildServer(buildServerOpts);
 
+  test("should find no authtoken", async () => {
+    // start boilerplate1
+    const server = buildServer(buildServerOpts);
     const user = await signupUser();
     const project = await createProject({
       userId: user.id,
@@ -118,6 +118,16 @@ describe("tests for the ttn integration", () => {
       userToken: user.token,
       projectId: project.id,
     });
+    // end boilerplate
+    // this test:
+    // 1. creates a server
+    // 2. creates a user
+    // 3. creates a project
+    // 4. creates an auth token
+    // 5. deletes the auth token
+    // 6. tries to create a record
+    // 7. checks should be rejected
+    // maybe this should be a separate test suite?
     const url = authtokenEndpoint;
 
     const getResponse = await server.inject({
@@ -129,7 +139,7 @@ describe("tests for the ttn integration", () => {
       },
     });
 
-    const parsedGetRes = JSON.parse(getResponse.body);
+    const response1 = JSON.parse(getResponse.body);
 
     await server.inject({
       method: "DELETE",
@@ -140,25 +150,54 @@ describe("tests for the ttn integration", () => {
       },
       payload: {
         projectId: project.id,
-        tokenId: parsedGetRes.data[0].niceId,
+        tokenId: response1.data[0].niceId,
       },
     });
-    const response = await server.inject({
+    const response2 = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
-      payload: ttnPayload,
+      url: "/api/v2/devices/1/records",
+      payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
     });
-    expect(response.statusCode).toBe(401);
-    expect(response.body).toMatchInlineSnapshot(
+    expect(response2.statusCode).toBe(401);
+    expect(response2.body).toMatchInlineSnapshot(
       `"{\\"statusCode\\":401,\\"error\\":\\"Unauthorized\\",\\"message\\":\\"Unauthorized\\"}"`
     );
-    // end boilerplate teardown test
+    // start boilerplate
     await deleteUser(user.token);
+    // end boilerplate
   });
 
+  test("should fail due to deviceId param is not a number", async () => {
+    // start boilerplate
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const project = await createProject({
+      userId: user.id,
+    });
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+      projectId: project.id,
+    });
+
+    // end boilerplate
+
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v2/devices/abc/records`,
+      payload: httpPayload,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.statusCode).toBe(400);
+    // start boilerplate
+    await deleteUser(user.token);
+    // end boilerplate
+  });
   test("should pass", async () => {
     // start boilerplate setup test
     const server = buildServer(buildServerOpts);
@@ -166,27 +205,60 @@ describe("tests for the ttn integration", () => {
     const project = await createProject({
       userId: user.id,
     });
-    await createDevice({
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+      projectId: project.id,
+    });
+    const device = await createDevice({
       userId: user.id,
       projectId: project.id,
-      externalId: ttnPayload.end_device_ids.device_id,
+    });
+    // end boilerplate
+
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v2/devices/${device.id}/records`,
+      payload: httpPayload,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.statusCode).toBe(201);
+    // start boilerplate delete user
+    await deleteUser(user.token);
+    // end boilerplate
+  });
+  // test should throw an PostgrestError
+  // how can we mock the call to supabase.from("authtokens")
+  // eslint-disable-next-line jest/no-disabled-tests
+  test.skip("should throw an internal server error 500", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const project = await createProject({
+      userId: user.id,
     });
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
       projectId: project.id,
     });
-    // end boilerplate
+    const device = await createDevice({
+      userId: user.id,
+      projectId: project.id,
+    });
+
     const response = await server.inject({
       method: "POST",
-      url: "/api/v2/integrations/ttn/v3",
-      payload: ttnPayload,
+      url: `/api/v2/devices/${device.id}/records`,
+      payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
     });
-    expect(response.statusCode).toBe(201);
-    // end boilerplate teardown test
+    expect(response.statusCode).toBe(500);
+    // start boilerplate delete user
     await deleteUser(user.token);
+    // end boilerplate
   });
 });

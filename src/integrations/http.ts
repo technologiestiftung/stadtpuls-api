@@ -11,72 +11,37 @@ declare module "fastify" {
   }
 }
 
-interface TTNPostBody {
-  [key: string]: unknown;
-  received_at: string;
-  uplink_message: {
-    decoded_payload: {
-      bytes: number[];
-      measurements: number[];
-    };
-    locations?: {
-      user?: {
-        latitude: number;
-        longitude: number;
-        altitude?: number;
-        source: "SOURCE_REGISTRY" | string;
-      };
-    };
-  };
-  end_device_ids: {
-    device_id: "string";
-    application_ids: {
-      application_id: "string";
-    };
-  };
-  simulated: boolean;
+interface HTTPPostBody {
+  latitude?: number;
+  longitude?: number;
+  altitude?: number;
+  measurements: number[];
 }
-const postTTNBodySchema = S.object()
-  .id("/integrations/ttn/v3")
-  .title("Validation for data coming from TTN")
-  .additionalProperties(true)
 
-  .prop("end_device_ids", S.object().prop("device_id", S.string()).required())
-  .required()
-  .additionalProperties(true)
-  .prop("received_at", S.string().format(S.FORMATS.DATE_TIME))
-  .required()
-  .prop(
-    "uplink_message",
-    S.object()
-      .prop(
-        "decoded_payload",
-        S.object().prop("measurements", S.array().items(S.number()).required())
-      )
-      .required()
-      .additionalProperties(true)
+interface HTTPPostParams {
+  deviceId: string;
+}
 
-      .prop(
-        "locations",
-        S.object()
-          .prop(
-            "user",
-            S.object()
-              .prop("latitude", S.number().minimum(-90).maximum(90))
-              .prop("longitude", S.number().minimum(-180).maximum(180))
-          )
-          .additionalProperties(true)
-      )
-      .additionalProperties(true)
-  )
-  .required()
-  .additionalProperties(true);
-// console.log(JSON.stringify(postTTNBodySchema.valueOf(), null, 2));
-const ttn: FastifyPluginAsync = async (fastify) => {
-  fastify.route<{ Body: TTNPostBody }>({
-    url: "/api/v2/integrations/ttn/v3",
+const postHTTPBodySchema = S.object()
+  .id("/integration/http")
+  .title("Validation for data coming in via HTTP")
+  .additionalProperties(false)
+  .prop("latitude", S.number().minimum(-90).maximum(90))
+  .prop("longitude", S.number().minimum(-180).maximum(180))
+  .prop("altitude", S.number().minimum(0).maximum(10000))
+  .prop("measurements", S.array().items(S.number()).required());
+
+const postHTTPParamsSchema = S.object()
+  .id("/integration/http/params")
+  .title("HTTP Params")
+  .additionalProperties(false)
+  .prop("deviceId", S.string().required());
+
+const http: FastifyPluginAsync = async (fastify) => {
+  fastify.route<{ Body: HTTPPostBody; Params: HTTPPostParams }>({
+    url: "/api/v2/devices/:deviceId/records",
+    schema: { body: postHTTPBodySchema, params: postHTTPParamsSchema },
     method: "POST",
-    schema: { body: postTTNBodySchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
       const decoded = (await request.jwtVerify()) as AuthToken;
@@ -103,14 +68,15 @@ const ttn: FastifyPluginAsync = async (fastify) => {
         fastify.log.error("using old token");
         throw fastify.httpErrors.unauthorized();
       }
-      const { end_device_ids, received_at, uplink_message } = request.body;
-      const { device_id } = end_device_ids;
-      const { decoded_payload, locations } = uplink_message;
-      const { measurements } = decoded_payload;
+      const deviceId = request.params.deviceId;
+      const id = parseInt(deviceId, 10);
+      if (!Number.isInteger(id)) {
+        throw fastify.httpErrors.badRequest();
+      }
       const { data: devices, error: deviceError } = await fastify.supabase
         .from("devices")
         .select("*")
-        .eq("externalId", device_id)
+        .eq("id", id)
         .eq("projectId", decoded.projectId)
         .eq("userId", decoded.sub);
       if (!devices || devices.length === 0) {
@@ -121,19 +87,23 @@ const ttn: FastifyPluginAsync = async (fastify) => {
           "device not found postgres error"
         );
       }
-      // console.log(
-      //   new Date(received_at).toISOString().replace("T", " ").replace("Z", "")
-      // );
+
+      const measurements = request.body.measurements;
+      const latitude = request.body.latitude;
+      const longitude = request.body.longitude;
+      const altitude = request.body.altitude;
+
+      const recordedAt = new Date().toISOString();
       const { data: record, error: recordError } = await fastify.supabase
         .from<definitions["records"]>("records")
         .insert([
           {
             measurements: `{${measurements.join(",")}}`,
-            recordedAt: received_at,
+            recordedAt: recordedAt,
             deviceId: devices[0].id,
-            latitude: locations?.user?.latitude,
-            longitude: locations?.user?.longitude,
-            altitude: locations?.user?.altitude,
+            latitude,
+            longitude,
+            altitude,
           },
         ]);
 
@@ -151,4 +121,4 @@ const ttn: FastifyPluginAsync = async (fastify) => {
   });
 };
 
-export default fp(ttn);
+export default fp(http);
