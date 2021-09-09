@@ -2,17 +2,14 @@
 
 exports[`server tests should GET an empty list of tokens for that user 1`] = `
 Object {
-  "comment": Any<String>,
   "data": Array [],
   "method": "GET",
   "url": Any<String>,
 }
 `;
 
-
-exports[`server tests should create a new token for that users project 1`] = `
+exports[`server tests should create a new token for that users 1`] = `
 Object {
-  "comment": Any<String>,
   "data": Object {
     "token": Any<String>,
   },
