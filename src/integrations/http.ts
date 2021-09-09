@@ -42,7 +42,7 @@ const postHTTPParamsSchema = S.object()
 
 const http: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: HTTPPostBody; Params: HTTPPostParams }>({
-    url: `/${mountPoint}/v${apiVersion}/devices/:deviceId/records`,
+    url: `/${mountPoint}/v${apiVersion}/sensors/:deviceId/records`,
     schema: { body: postHTTPBodySchema, params: postHTTPParamsSchema },
     method: "POST",
     preHandler: fastify.auth([fastify.verifyJWT]),
@@ -50,10 +50,9 @@ const http: FastifyPluginAsync = async (fastify) => {
       const decoded = (await request.jwtVerify()) as AuthToken;
       const token = request.headers.authorization?.split(" ")[1];
       const { data: authtokens, error } = await fastify.supabase
-        .from<definitions["authtokens"]>("authtokens")
+        .from<definitions["auth_tokens"]>("auth_tokens")
         .select("*")
-        .eq("userId", decoded.sub)
-        .eq("projectId", decoded.projectId);
+        .eq("user_id", decoded.sub);
       if (!authtokens || authtokens.length === 0) {
         fastify.log.warn("no token found");
         throw fastify.httpErrors.unauthorized();
@@ -76,13 +75,12 @@ const http: FastifyPluginAsync = async (fastify) => {
       if (!Number.isInteger(id)) {
         throw fastify.httpErrors.badRequest();
       }
-      const { data: devices, error: deviceError } = await fastify.supabase
-        .from("devices")
+      const { data: sensors, error: deviceError } = await fastify.supabase
+        .from<definitions["sensors"]>("sensors")
         .select("*")
         .eq("id", id)
-        .eq("projectId", decoded.projectId)
-        .eq("userId", decoded.sub);
-      if (!devices || devices.length === 0) {
+        .eq("user_id", decoded.sub);
+      if (!sensors || sensors.length === 0) {
         throw fastify.httpErrors.notFound("device not found");
       }
       if (deviceError) {
@@ -96,17 +94,30 @@ const http: FastifyPluginAsync = async (fastify) => {
       const longitude = request.body.longitude;
       const altitude = request.body.altitude;
 
+      const {
+        data: updatedSensors,
+        error: updateError,
+      } = await fastify.supabase
+        .from<definitions["sensors"]>("sensors")
+        .update({
+          latitude,
+          longitude,
+          altitude,
+        })
+        .eq("id", sensors[0].id);
+      if (updateError) {
+        fastify.log.error("Error while updating lat, lon, alt", updateError);
+      }
+      fastify.log.info("updated lat, lon, alt", updatedSensors);
+
       const recordedAt = new Date().toISOString();
       const { data: record, error: recordError } = await fastify.supabase
         .from<definitions["records"]>("records")
         .insert([
           {
             measurements: `{${measurements.join(",")}}`,
-            recordedAt: recordedAt,
-            deviceId: devices[0].id,
-            latitude,
-            longitude,
-            altitude,
+            recorded_at: recordedAt,
+            sensor_id: sensors[0].id,
           },
         ]);
 
