@@ -26,11 +26,14 @@ CREATE TABLE "public"."user_profiles" (
 --
 --
 -- auth tokens
+DROP TYPE IF EXISTS "public"."token_scope";
+CREATE TYPE "public"."token_scope" AS ENUM ('sudo', 'read', 'write');
 DROP TABLE IF EXISTS "public"."auth_tokens";
 CREATE TABLE "public"."auth_tokens" (
     "nice_id" int4 GENERATED ALWAYS AS IDENTITY,
     "id" text NOT NULL,
     "description" varchar(200) NOT NULL,
+    "scope" "public"."token_scope" NOT NULL DEFAULT 'sudo'::"token_scope",
     "user_id" uuid NOT NULL REFERENCES "public"."user_profiles" (id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY ("id")
 );
