@@ -1,8 +1,5 @@
 import nock from "nock";
 
-/* eslint-disable jest/no-disabled-tests */
-import { PostgrestError } from "@supabase/postgrest-js/src/lib/types";
-
 import {
   authtokenEndpoint,
   buildServerOpts,
