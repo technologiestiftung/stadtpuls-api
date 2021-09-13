@@ -118,7 +118,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
           .select(selection)
           .eq("user_id", decoded.sub);
       }
-
       const { data: authtokens, error } = await res;
 
       if (error) {
@@ -157,7 +156,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
 
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
       const options: SignOptions = { algorithm: "HS256" };
-      const payload: AuthToken = {
+      const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: "sudo",
         description,
@@ -167,7 +166,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       const token = fastify.jwt.sign(payload, options);
       const hashedToken = await hash(token, 10);
 
-      await fastify.supabase
+      const { data: authTokens, error } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
         .insert([
           {
@@ -177,12 +176,17 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
             user_id: decoded.sub,
           },
         ]);
-      // }
 
+      if (error) {
+        throw fastify.httpErrors.internalServerError();
+      }
+      if (authTokens === null || authTokens.length === 0) {
+        throw fastify.httpErrors.internalServerError();
+      }
       reply.status(201).send({
         method: `${request.method}`,
         url: `${request.url}`,
-        data: { token },
+        data: { token, nice_id: authTokens[0].nice_id },
       });
     },
   });
@@ -221,7 +225,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       }
 
       const options: SignOptions = { algorithm: "HS256" };
-      const payload: AuthToken = {
+      const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: scope ? scope : currentTokens[0].scope,
         description: description ? description : currentTokens[0].description,
@@ -231,21 +235,24 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       const token = fastify.jwt.sign(payload, options);
       const hashedToken = await hash(token, 10);
 
-      await fastify.supabase
+      const { data: newTokens } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
-        .upsert([
-          {
-            id: hashedToken,
-            description,
-            scope: scope ? scope : "sudo",
-          },
-        ]);
-      // }
+        .update({
+          id: hashedToken,
+          description,
+          scope: scope ? scope : "sudo",
+        })
+        .eq("user_id", decoded.sub)
+        .eq("nice_id", nice_id);
+
+      if (newTokens === null || newTokens.length === 0) {
+        throw fastify.httpErrors.internalServerError();
+      }
 
       reply.status(201).send({
         method: `${request.method}`,
         url: `${request.url}`,
-        data: { token },
+        data: { token, nice_id: newTokens[0].nice_id },
       });
     },
   });
