@@ -7,4 +7,5 @@ export interface AuthToken {
   jti: string;
   iss: string;
   scope: Scope;
+  iat: number;
 }
