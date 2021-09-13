@@ -4,6 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fetch from "node-fetch";
 import { definitions } from "../common/supabase";
+import { TTNPostBody } from "../integrations/ttn";
+export type Sensor = definitions["sensors"];
 
 export const jwtSecret =
   process.env.JWT_SECRET ||
@@ -239,6 +241,9 @@ export const createSensor: (options: {
         user_id,
         external_id,
         category_id: 1,
+        latitude: parseFloat(faker.address.latitude()),
+        longitude: parseFloat(faker.address.longitude()),
+        altitude: faker.datatype.number({ min: 0, max: 100, precision: 0.1 }),
       },
     ]);
   if (!sensors) {
@@ -270,4 +275,32 @@ export const createAuthToken: (opts: {
 
   const resBody = JSON.parse(responseToken.body);
   return getFullResponse ? resBody.data : resBody.data.token;
+};
+
+export const createTTNPayload: (
+  overrides?: TTNPostBody | Record<string, unknown>
+) => TTNPostBody = (overrides) => {
+  return {
+    simulated: true,
+    end_device_ids: {
+      application_ids: {
+        application_id: "foo",
+      },
+
+      device_id: "123",
+    },
+    received_at: new Date().toISOString(),
+    uplink_message: {
+      decoded_payload: { measurements: [1, 2, 3], bytes: [1, 2, 3] },
+      locations: {
+        user: {
+          latitude: 13,
+          longitude: 52,
+          altitude: 23,
+          source: "SOURCE_REGISTRY",
+        },
+      },
+    },
+    ...overrides,
+  };
 };

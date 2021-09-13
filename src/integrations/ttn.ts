@@ -12,7 +12,7 @@ declare module "fastify" {
   }
 }
 
-interface TTNPostBody {
+export interface TTNPostBody {
   [key: string]: unknown;
   received_at: string;
   uplink_message: {
@@ -30,9 +30,9 @@ interface TTNPostBody {
     };
   };
   end_device_ids: {
-    device_id: "string";
+    device_id: string;
     application_ids: {
-      application_id: "string";
+      application_id: string;
     };
   };
   simulated: boolean;
