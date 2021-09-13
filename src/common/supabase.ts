@@ -12,15 +12,15 @@ export interface paths {
       };
     };
   };
-  "/authtokens": {
+  "/auth_tokens": {
     get: {
       parameters: {
         query: {
-          niceId?: parameters["rowFilter.authtokens.niceId"];
-          id?: parameters["rowFilter.authtokens.id"];
-          description?: parameters["rowFilter.authtokens.description"];
-          projectId?: parameters["rowFilter.authtokens.projectId"];
-          userId?: parameters["rowFilter.authtokens.userId"];
+          nice_id?: parameters["rowFilter.auth_tokens.nice_id"];
+          id?: parameters["rowFilter.auth_tokens.id"];
+          description?: parameters["rowFilter.auth_tokens.description"];
+          scope?: parameters["rowFilter.auth_tokens.scope"];
+          user_id?: parameters["rowFilter.auth_tokens.user_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -42,7 +42,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["authtokens"][];
+          schema: definitions["auth_tokens"][];
         };
         /** Partial Content */
         206: unknown;
@@ -51,8 +51,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** authtokens */
-          authtokens?: definitions["authtokens"];
+          /** auth_tokens */
+          auth_tokens?: definitions["auth_tokens"];
         };
         query: {
           /** Filtering Columns */
@@ -71,11 +71,11 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          niceId?: parameters["rowFilter.authtokens.niceId"];
-          id?: parameters["rowFilter.authtokens.id"];
-          description?: parameters["rowFilter.authtokens.description"];
-          projectId?: parameters["rowFilter.authtokens.projectId"];
-          userId?: parameters["rowFilter.authtokens.userId"];
+          nice_id?: parameters["rowFilter.auth_tokens.nice_id"];
+          id?: parameters["rowFilter.auth_tokens.id"];
+          description?: parameters["rowFilter.auth_tokens.description"];
+          scope?: parameters["rowFilter.auth_tokens.scope"];
+          user_id?: parameters["rowFilter.auth_tokens.user_id"];
         };
         header: {
           /** Preference */
@@ -90,15 +90,15 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          niceId?: parameters["rowFilter.authtokens.niceId"];
-          id?: parameters["rowFilter.authtokens.id"];
-          description?: parameters["rowFilter.authtokens.description"];
-          projectId?: parameters["rowFilter.authtokens.projectId"];
-          userId?: parameters["rowFilter.authtokens.userId"];
+          nice_id?: parameters["rowFilter.auth_tokens.nice_id"];
+          id?: parameters["rowFilter.auth_tokens.id"];
+          description?: parameters["rowFilter.auth_tokens.description"];
+          scope?: parameters["rowFilter.auth_tokens.scope"];
+          user_id?: parameters["rowFilter.auth_tokens.user_id"];
         };
         body: {
-          /** authtokens */
-          authtokens?: definitions["authtokens"];
+          /** auth_tokens */
+          auth_tokens?: definitions["auth_tokens"];
         };
         header: {
           /** Preference */
@@ -204,224 +204,14 @@ export interface paths {
       };
     };
   };
-  "/devices": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.devices.id"];
-          externalId?: parameters["rowFilter.devices.externalId"];
-          name?: parameters["rowFilter.devices.name"];
-          projectId?: parameters["rowFilter.devices.projectId"];
-          userId?: parameters["rowFilter.devices.userId"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["devices"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** devices */
-          devices?: definitions["devices"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.devices.id"];
-          externalId?: parameters["rowFilter.devices.externalId"];
-          name?: parameters["rowFilter.devices.name"];
-          projectId?: parameters["rowFilter.devices.projectId"];
-          userId?: parameters["rowFilter.devices.userId"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.devices.id"];
-          externalId?: parameters["rowFilter.devices.externalId"];
-          name?: parameters["rowFilter.devices.name"];
-          projectId?: parameters["rowFilter.devices.projectId"];
-          userId?: parameters["rowFilter.devices.userId"];
-        };
-        body: {
-          /** devices */
-          devices?: definitions["devices"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/projects": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.projects.id"];
-          name?: parameters["rowFilter.projects.name"];
-          description?: parameters["rowFilter.projects.description"];
-          createdAt?: parameters["rowFilter.projects.createdAt"];
-          connectype?: parameters["rowFilter.projects.connectype"];
-          location?: parameters["rowFilter.projects.location"];
-          userId?: parameters["rowFilter.projects.userId"];
-          categoryId?: parameters["rowFilter.projects.categoryId"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["projects"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** projects */
-          projects?: definitions["projects"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.projects.id"];
-          name?: parameters["rowFilter.projects.name"];
-          description?: parameters["rowFilter.projects.description"];
-          createdAt?: parameters["rowFilter.projects.createdAt"];
-          connectype?: parameters["rowFilter.projects.connectype"];
-          location?: parameters["rowFilter.projects.location"];
-          userId?: parameters["rowFilter.projects.userId"];
-          categoryId?: parameters["rowFilter.projects.categoryId"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.projects.id"];
-          name?: parameters["rowFilter.projects.name"];
-          description?: parameters["rowFilter.projects.description"];
-          createdAt?: parameters["rowFilter.projects.createdAt"];
-          connectype?: parameters["rowFilter.projects.connectype"];
-          location?: parameters["rowFilter.projects.location"];
-          userId?: parameters["rowFilter.projects.userId"];
-          categoryId?: parameters["rowFilter.projects.categoryId"];
-        };
-        body: {
-          /** projects */
-          projects?: definitions["projects"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
   "/records": {
     get: {
       parameters: {
         query: {
           id?: parameters["rowFilter.records.id"];
-          recordedAt?: parameters["rowFilter.records.recordedAt"];
+          recorded_at?: parameters["rowFilter.records.recorded_at"];
           measurements?: parameters["rowFilter.records.measurements"];
-          longitude?: parameters["rowFilter.records.longitude"];
-          latitude?: parameters["rowFilter.records.latitude"];
-          altitude?: parameters["rowFilter.records.altitude"];
-          deviceId?: parameters["rowFilter.records.deviceId"];
+          sensor_id?: parameters["rowFilter.records.sensor_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -473,12 +263,9 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.records.id"];
-          recordedAt?: parameters["rowFilter.records.recordedAt"];
+          recorded_at?: parameters["rowFilter.records.recorded_at"];
           measurements?: parameters["rowFilter.records.measurements"];
-          longitude?: parameters["rowFilter.records.longitude"];
-          latitude?: parameters["rowFilter.records.latitude"];
-          altitude?: parameters["rowFilter.records.altitude"];
-          deviceId?: parameters["rowFilter.records.deviceId"];
+          sensor_id?: parameters["rowFilter.records.sensor_id"];
         };
         header: {
           /** Preference */
@@ -494,12 +281,9 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.records.id"];
-          recordedAt?: parameters["rowFilter.records.recordedAt"];
+          recorded_at?: parameters["rowFilter.records.recorded_at"];
           measurements?: parameters["rowFilter.records.measurements"];
-          longitude?: parameters["rowFilter.records.longitude"];
-          latitude?: parameters["rowFilter.records.latitude"];
-          altitude?: parameters["rowFilter.records.altitude"];
-          deviceId?: parameters["rowFilter.records.deviceId"];
+          sensor_id?: parameters["rowFilter.records.sensor_id"];
         };
         body: {
           /** records */
@@ -516,14 +300,23 @@ export interface paths {
       };
     };
   };
-  "/userprofiles": {
+  "/sensors": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.userprofiles.id"];
-          name?: parameters["rowFilter.userprofiles.name"];
-          createdAt?: parameters["rowFilter.userprofiles.createdAt"];
-          role?: parameters["rowFilter.userprofiles.role"];
+          created_at?: parameters["rowFilter.sensors.created_at"];
+          id?: parameters["rowFilter.sensors.id"];
+          external_id?: parameters["rowFilter.sensors.external_id"];
+          name?: parameters["rowFilter.sensors.name"];
+          description?: parameters["rowFilter.sensors.description"];
+          connection_type?: parameters["rowFilter.sensors.connection_type"];
+          location?: parameters["rowFilter.sensors.location"];
+          longitude?: parameters["rowFilter.sensors.longitude"];
+          latitude?: parameters["rowFilter.sensors.latitude"];
+          altitude?: parameters["rowFilter.sensors.altitude"];
+          category_id?: parameters["rowFilter.sensors.category_id"];
+          icon_id?: parameters["rowFilter.sensors.icon_id"];
+          user_id?: parameters["rowFilter.sensors.user_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -545,7 +338,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["userprofiles"][];
+          schema: definitions["sensors"][];
         };
         /** Partial Content */
         206: unknown;
@@ -554,8 +347,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** userprofiles */
-          userprofiles?: definitions["userprofiles"];
+          /** sensors */
+          sensors?: definitions["sensors"];
         };
         query: {
           /** Filtering Columns */
@@ -574,10 +367,19 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.userprofiles.id"];
-          name?: parameters["rowFilter.userprofiles.name"];
-          createdAt?: parameters["rowFilter.userprofiles.createdAt"];
-          role?: parameters["rowFilter.userprofiles.role"];
+          created_at?: parameters["rowFilter.sensors.created_at"];
+          id?: parameters["rowFilter.sensors.id"];
+          external_id?: parameters["rowFilter.sensors.external_id"];
+          name?: parameters["rowFilter.sensors.name"];
+          description?: parameters["rowFilter.sensors.description"];
+          connection_type?: parameters["rowFilter.sensors.connection_type"];
+          location?: parameters["rowFilter.sensors.location"];
+          longitude?: parameters["rowFilter.sensors.longitude"];
+          latitude?: parameters["rowFilter.sensors.latitude"];
+          altitude?: parameters["rowFilter.sensors.altitude"];
+          category_id?: parameters["rowFilter.sensors.category_id"];
+          icon_id?: parameters["rowFilter.sensors.icon_id"];
+          user_id?: parameters["rowFilter.sensors.user_id"];
         };
         header: {
           /** Preference */
@@ -592,14 +394,23 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.userprofiles.id"];
-          name?: parameters["rowFilter.userprofiles.name"];
-          createdAt?: parameters["rowFilter.userprofiles.createdAt"];
-          role?: parameters["rowFilter.userprofiles.role"];
+          created_at?: parameters["rowFilter.sensors.created_at"];
+          id?: parameters["rowFilter.sensors.id"];
+          external_id?: parameters["rowFilter.sensors.external_id"];
+          name?: parameters["rowFilter.sensors.name"];
+          description?: parameters["rowFilter.sensors.description"];
+          connection_type?: parameters["rowFilter.sensors.connection_type"];
+          location?: parameters["rowFilter.sensors.location"];
+          longitude?: parameters["rowFilter.sensors.longitude"];
+          latitude?: parameters["rowFilter.sensors.latitude"];
+          altitude?: parameters["rowFilter.sensors.altitude"];
+          category_id?: parameters["rowFilter.sensors.category_id"];
+          icon_id?: parameters["rowFilter.sensors.icon_id"];
+          user_id?: parameters["rowFilter.sensors.user_id"];
         };
         body: {
-          /** userprofiles */
-          userprofiles?: definitions["userprofiles"];
+          /** sensors */
+          sensors?: definitions["sensors"];
         };
         header: {
           /** Preference */
@@ -609,6 +420,128 @@ export interface paths {
       responses: {
         /** No Content */
         204: never;
+      };
+    };
+  };
+  "/user_profiles": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.user_profiles.id"];
+          name?: parameters["rowFilter.user_profiles.name"];
+          display_name?: parameters["rowFilter.user_profiles.display_name"];
+          created_at?: parameters["rowFilter.user_profiles.created_at"];
+          role?: parameters["rowFilter.user_profiles.role"];
+          url?: parameters["rowFilter.user_profiles.url"];
+          description?: parameters["rowFilter.user_profiles.description"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["user_profiles"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** user_profiles */
+          user_profiles?: definitions["user_profiles"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.user_profiles.id"];
+          name?: parameters["rowFilter.user_profiles.name"];
+          display_name?: parameters["rowFilter.user_profiles.display_name"];
+          created_at?: parameters["rowFilter.user_profiles.created_at"];
+          role?: parameters["rowFilter.user_profiles.role"];
+          url?: parameters["rowFilter.user_profiles.url"];
+          description?: parameters["rowFilter.user_profiles.description"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.user_profiles.id"];
+          name?: parameters["rowFilter.user_profiles.name"];
+          display_name?: parameters["rowFilter.user_profiles.display_name"];
+          created_at?: parameters["rowFilter.user_profiles.created_at"];
+          role?: parameters["rowFilter.user_profiles.role"];
+          url?: parameters["rowFilter.user_profiles.url"];
+          description?: parameters["rowFilter.user_profiles.description"];
+        };
+        body: {
+          /** user_profiles */
+          user_profiles?: definitions["user_profiles"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/rpc/handle_deleted_user": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: any };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
       };
     };
   };
@@ -668,24 +601,20 @@ export interface paths {
 }
 
 export interface definitions {
-  authtokens: {
-    niceId: number;
+  auth_tokens: {
+    nice_id: number;
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
     id: string;
     description: string;
+    scope: "sudo" | "read" | "write";
     /**
      * Note:
-     * This is a Foreign Key to `projects.id`.<fk table='projects' column='id'/>
+     * This is a Foreign Key to `user_profiles.id`.<fk table='user_profiles' column='id'/>
      */
-    projectId: number;
-    /**
-     * Note:
-     * This is a Foreign Key to `userprofiles.id`.<fk table='userprofiles' column='id'/>
-     */
-    userId: string;
+    user_id: string;
   };
   categories: {
     /**
@@ -697,51 +626,10 @@ export interface definitions {
       | "Temperatur"
       | "CO2"
       | "Luftfeuchtigkeit"
-      | "Druck"
-      | "PAXCounter"
+      | "Luftdruck"
+      | "Unit Counter"
       | "Lautstärke";
     description: string;
-  };
-  devices: {
-    /**
-     * Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    externalId: string;
-    name?: string;
-    /**
-     * Note:
-     * This is a Foreign Key to `projects.id`.<fk table='projects' column='id'/>
-     */
-    projectId: number;
-    /**
-     * Note:
-     * This is a Foreign Key to `userprofiles.id`.<fk table='userprofiles' column='id'/>
-     */
-    userId: string;
-  };
-  projects: {
-    /**
-     * Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    name: string;
-    description?: string;
-    createdAt: string;
-    connectype: "ttn" | "http" | "other";
-    location?: string;
-    /**
-     * Note:
-     * This is a Foreign Key to `userprofiles.id`.<fk table='userprofiles' column='id'/>
-     */
-    userId: string;
-    /**
-     * Note:
-     * This is a Foreign Key to `categories.id`.<fk table='categories' column='id'/>
-     */
-    categoryId: number;
   };
   records: {
     /**
@@ -749,26 +637,49 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: number;
-    recordedAt: string;
+    recorded_at: string;
     measurements?: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `sensors.id`.<fk table='sensors' column='id'/>
+     */
+    sensor_id: number;
+  };
+  sensors: {
+    created_at: string;
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    external_id?: string;
+    name?: string;
+    description?: string;
+    connection_type: "http" | "ttn" | "other";
+    location?: string;
     longitude?: number;
     latitude?: number;
     altitude?: number;
+    category_id: number;
+    icon_id?: number;
     /**
      * Note:
-     * This is a Foreign Key to `devices.id`.<fk table='devices' column='id'/>
+     * This is a Foreign Key to `user_profiles.id`.<fk table='user_profiles' column='id'/>
      */
-    deviceId: number;
+    user_id: string;
   };
-  userprofiles: {
+  user_profiles: {
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
     id: string;
     name?: string;
-    createdAt: string;
-    role?: "maker";
+    display_name?: string;
+    created_at: string;
+    role?: "maker" | "taker";
+    url?: string;
+    description?: string;
   };
 }
 
@@ -793,50 +704,48 @@ export interface parameters {
   offset: string;
   /** Limiting and Pagination */
   limit: string;
-  /** authtokens */
-  "body.authtokens": definitions["authtokens"];
-  "rowFilter.authtokens.niceId": string;
-  "rowFilter.authtokens.id": string;
-  "rowFilter.authtokens.description": string;
-  "rowFilter.authtokens.projectId": string;
-  "rowFilter.authtokens.userId": string;
+  /** auth_tokens */
+  "body.auth_tokens": definitions["auth_tokens"];
+  "rowFilter.auth_tokens.nice_id": string;
+  "rowFilter.auth_tokens.id": string;
+  "rowFilter.auth_tokens.description": string;
+  "rowFilter.auth_tokens.scope": string;
+  "rowFilter.auth_tokens.user_id": string;
   /** categories */
   "body.categories": definitions["categories"];
   "rowFilter.categories.id": string;
   "rowFilter.categories.name": string;
   "rowFilter.categories.description": string;
-  /** devices */
-  "body.devices": definitions["devices"];
-  "rowFilter.devices.id": string;
-  "rowFilter.devices.externalId": string;
-  "rowFilter.devices.name": string;
-  "rowFilter.devices.projectId": string;
-  "rowFilter.devices.userId": string;
-  /** projects */
-  "body.projects": definitions["projects"];
-  "rowFilter.projects.id": string;
-  "rowFilter.projects.name": string;
-  "rowFilter.projects.description": string;
-  "rowFilter.projects.createdAt": string;
-  "rowFilter.projects.connectype": string;
-  "rowFilter.projects.location": string;
-  "rowFilter.projects.userId": string;
-  "rowFilter.projects.categoryId": string;
   /** records */
   "body.records": definitions["records"];
   "rowFilter.records.id": string;
-  "rowFilter.records.recordedAt": string;
+  "rowFilter.records.recorded_at": string;
   "rowFilter.records.measurements": string;
-  "rowFilter.records.longitude": string;
-  "rowFilter.records.latitude": string;
-  "rowFilter.records.altitude": string;
-  "rowFilter.records.deviceId": string;
-  /** userprofiles */
-  "body.userprofiles": definitions["userprofiles"];
-  "rowFilter.userprofiles.id": string;
-  "rowFilter.userprofiles.name": string;
-  "rowFilter.userprofiles.createdAt": string;
-  "rowFilter.userprofiles.role": string;
+  "rowFilter.records.sensor_id": string;
+  /** sensors */
+  "body.sensors": definitions["sensors"];
+  "rowFilter.sensors.created_at": string;
+  "rowFilter.sensors.id": string;
+  "rowFilter.sensors.external_id": string;
+  "rowFilter.sensors.name": string;
+  "rowFilter.sensors.description": string;
+  "rowFilter.sensors.connection_type": string;
+  "rowFilter.sensors.location": string;
+  "rowFilter.sensors.longitude": string;
+  "rowFilter.sensors.latitude": string;
+  "rowFilter.sensors.altitude": string;
+  "rowFilter.sensors.category_id": string;
+  "rowFilter.sensors.icon_id": string;
+  "rowFilter.sensors.user_id": string;
+  /** user_profiles */
+  "body.user_profiles": definitions["user_profiles"];
+  "rowFilter.user_profiles.id": string;
+  "rowFilter.user_profiles.name": string;
+  "rowFilter.user_profiles.display_name": string;
+  "rowFilter.user_profiles.created_at": string;
+  "rowFilter.user_profiles.role": string;
+  "rowFilter.user_profiles.url": string;
+  "rowFilter.user_profiles.description": string;
 }
 
 export interface operations {}

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`authtokens POST tests should create a new token for that users 1`] = `
+Object {
+  "data": Object {
+    "nice_id": Any<Number>,
+    "token": Any<String>,
+  },
+  "method": "POST",
+  "url": "/api/v3/authtokens",
+}
+`;

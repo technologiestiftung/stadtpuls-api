@@ -16,6 +16,17 @@ export const supabaseUrl = "http://localhost:8000";
 export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
+export const buildServerOpts = {
+  jwtSecret,
+  supabaseUrl,
+  supabaseServiceRoleKey,
+  logger: false,
+  issuer: "tsb",
+};
+export interface CreateTokenFullResponse {
+  token: string;
+  nice_id: number;
+}
 export interface ApiAuthResponsePayload {
   access_token: string;
   token_type: string;
@@ -80,7 +91,7 @@ export const signupUser: () => Promise<{
 }> = async () => {
   const { id, token } = await signup({
     anonKey: supabaseAnonKey,
-    email: faker.internet.email(),
+    email: `${faker.random.word()}+${faker.internet.email()}`,
     password: faker.internet.password(),
     url: new URL(`${supabaseUrl}/auth/v1/signup`),
   });
@@ -102,7 +113,6 @@ export const signup: (options: {
     apikey: anonKey,
   };
   const body = JSON.stringify({ email, password });
-
   const response = await fetch(url.href, {
     method: "POST",
     headers,
@@ -200,61 +210,52 @@ export const deleteUser: (userToken: string) => Promise<boolean> = async (
   return true;
 };
 
+/**
+ *
+ * @deprecated
+ */
 export const createProject: (options: {
   name?: string;
   userId: string;
   categoryId?: number;
-}) => Promise<definitions["projects"]> = async ({
-  name,
-  userId,
-  categoryId,
-}) => {
-  const { data: projects, error } = await supabase
-    .from<definitions["projects"]>("projects")
-    .insert([
-      {
-        name: name ? name : faker.internet.domainName(),
-        userId,
-        categoryId: categoryId || 1,
-      },
-    ]);
-  if (!projects) {
-    throw error;
-  }
-  return projects[0];
+}) => Promise<void> = async () => {
+  return;
 };
 
-export const createDevice: (options: {
-  userId: string;
-  projectId: number;
+export const createSensor: (options: {
+  user_id: string;
   name?: string;
-  externalId?: string;
-}) => Promise<definitions["devices"]> = async ({
-  userId,
-  projectId,
+  external_id?: string;
+}) => Promise<definitions["sensors"]> = async ({
+  user_id,
   name,
-  externalId,
+  external_id,
 }) => {
-  const { data: devices, error: dError } = await supabase
-    .from<definitions["devices"]>("devices")
+  const { data: sensors, error: dError } = await supabase
+    .from<definitions["sensors"]>("sensors")
     .insert([
       {
         name: name ? name : faker.random.word(),
-        userId,
-        projectId,
-        externalId,
+        user_id,
+        external_id,
+        category_id: 1,
       },
     ]);
-  if (!devices) {
+  if (!sensors) {
     throw dError;
   }
-  return devices[0];
+  return sensors[0];
 };
+
 export const createAuthToken: (opts: {
   server: FastifyInstance;
   userToken: string;
-  projectId: number;
-}) => Promise<string> = async ({ server, userToken, projectId }) => {
+  getFullResponse?: boolean;
+}) => Promise<string | CreateTokenFullResponse> = async ({
+  server,
+  userToken,
+  getFullResponse = false,
+}) => {
   const responseToken = await server.inject({
     method: "POST",
     url: authtokenEndpoint,
@@ -263,11 +264,10 @@ export const createAuthToken: (opts: {
       apikey: supabaseAnonKey,
     },
     payload: {
-      projectId: projectId,
       description: faker.random.words(5),
     },
   });
 
   const resBody = JSON.parse(responseToken.body);
-  return resBody.data.token;
+  return getFullResponse ? resBody.data : resBody.data.token;
 };

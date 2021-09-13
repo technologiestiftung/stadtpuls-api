@@ -4,8 +4,7 @@ import {
   authtokenEndpoint,
   deleteUser,
   createAuthToken,
-  createDevice,
-  createProject,
+  createSensor,
   jwtSecret,
   signupUser,
   supabaseAnonKey,
@@ -81,13 +80,10 @@ describe("tests for the ttn integration", () => {
     // start boilerplate setup test
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
+
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
     // end boilerplate
 
@@ -111,19 +107,16 @@ describe("tests for the ttn integration", () => {
     const server = buildServer(buildServerOpts);
 
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
+
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
     const url = authtokenEndpoint;
 
     const getResponse = await server.inject({
       method: "GET",
-      url: `${url}?projectId=${project.id}`,
+      url: `${url}`,
       headers: {
         authorization: `Bearer ${user.token}`,
         apikey: supabaseAnonKey,
@@ -140,8 +133,7 @@ describe("tests for the ttn integration", () => {
         apikey: supabaseAnonKey,
       },
       payload: {
-        projectId: project.id,
-        tokenId: parsedGetRes.data[0].niceId,
+        nice_id: parsedGetRes.data[0].nice_id,
       },
     });
     const response = await server.inject({
@@ -164,18 +156,14 @@ describe("tests for the ttn integration", () => {
     // start boilerplate setup test
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
-    await createDevice({
-      userId: user.id,
-      projectId: project.id,
-      externalId: ttnPayload.end_device_ids.device_id,
+
+    await createSensor({
+      user_id: user.id,
+      external_id: ttnPayload.end_device_ids.device_id,
     });
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
     // end boilerplate
     const response = await server.inject({
