@@ -12,9 +12,7 @@
       "request": "launch",
       "restart": true,
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node"
     },
     {
@@ -22,15 +20,8 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [
-        "-r",
-        "ts-node/register",
-        "-r",
-        "dotenv/config"
-      ],
-      "args": [
-        "${workspaceRoot}/src/index.ts"
-      ],
+      "runtimeArgs": ["-r", "ts-node/register", "-r", "dotenv/config"],
+      "args": ["${workspaceRoot}/src/index.ts"],
       "skipFiles": [
         "${workspaceFolder}/node_modules/**/*.js",
         "<node_internals>/**/*.js"
@@ -42,6 +33,31 @@
       "request": "launch",
       "preLaunchTask": "docker-run: debug",
       "platform": "node"
+    },
+    {
+      "name": "Jest Debug tests watch mode",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/inpyjamas-scripts",
+      "args": [
+        "test",
+        "-p ${input:pattern}",
+        // "--runInBand",
+        // "--no-cache",
+        "--watch"
+      ],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "pattern",
+      "description": "Please enter a pattern",
+      "default": "",
+      "type": "promptString"
     }
   ]
 }

@@ -19,6 +19,7 @@ export interface paths {
           nice_id?: parameters["rowFilter.auth_tokens.nice_id"];
           id?: parameters["rowFilter.auth_tokens.id"];
           description?: parameters["rowFilter.auth_tokens.description"];
+          scope?: parameters["rowFilter.auth_tokens.scope"];
           user_id?: parameters["rowFilter.auth_tokens.user_id"];
           /** Filtering Columns */
           select?: parameters["select"];
@@ -73,6 +74,7 @@ export interface paths {
           nice_id?: parameters["rowFilter.auth_tokens.nice_id"];
           id?: parameters["rowFilter.auth_tokens.id"];
           description?: parameters["rowFilter.auth_tokens.description"];
+          scope?: parameters["rowFilter.auth_tokens.scope"];
           user_id?: parameters["rowFilter.auth_tokens.user_id"];
         };
         header: {
@@ -91,6 +93,7 @@ export interface paths {
           nice_id?: parameters["rowFilter.auth_tokens.nice_id"];
           id?: parameters["rowFilter.auth_tokens.id"];
           description?: parameters["rowFilter.auth_tokens.description"];
+          scope?: parameters["rowFilter.auth_tokens.scope"];
           user_id?: parameters["rowFilter.auth_tokens.user_id"];
         };
         body: {
@@ -606,6 +609,7 @@ export interface definitions {
      */
     id: string;
     description: string;
+    scope: "sudo" | "read" | "write";
     /**
      * Note:
      * This is a Foreign Key to `user_profiles.id`.<fk table='user_profiles' column='id'/>
@@ -705,6 +709,7 @@ export interface parameters {
   "rowFilter.auth_tokens.nice_id": string;
   "rowFilter.auth_tokens.id": string;
   "rowFilter.auth_tokens.description": string;
+  "rowFilter.auth_tokens.scope": string;
   "rowFilter.auth_tokens.user_id": string;
   /** categories */
   "body.categories": definitions["categories"];

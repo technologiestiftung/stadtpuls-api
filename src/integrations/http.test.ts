@@ -2,10 +2,9 @@ import buildServer from "../lib/server";
 
 import {
   deleteUser,
-  createProject,
   createAuthToken,
   signupUser,
-  createDevice,
+  createSensor,
   jwtSecret,
   supabaseServiceRoleKey,
   supabaseAnonKey,
@@ -34,31 +33,34 @@ describe("tests for the http integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "GET",
-      url: `/api/v${apiVersion}/devices/1/records`,
+      url: `/api/v${apiVersion}/sensors/1/records`,
     });
     expect(response.statusCode).toBe(404);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"message\\":\\"Route GET:/api/v3/devices/1/records not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
+      `"{\\"message\\":\\"Route GET:/api/v3/sensors/1/records not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
     );
   });
 
   test("should be rejected due to no POST body", async () => {
     const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    await createSensor({ user_id: user.id });
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/1/records`,
+      url: `/api/v${apiVersion}/sensors/1/records`,
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
       `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should be object\\"}"`
     );
+    await deleteUser(user.token);
   });
 
   test("should be rejected due to no wrong body", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/1/records`,
+      url: `/api/v${apiVersion}/sensors/1/records`,
       payload: {},
     });
     expect(response.statusCode).toBe(400);
@@ -71,7 +73,7 @@ describe("tests for the http integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/1/records`,
+      url: `/api/v${apiVersion}/sensors/1/records`,
       payload: httpPayload,
     });
     expect(response.statusCode).toBe(401);
@@ -81,18 +83,15 @@ describe("tests for the http integration", () => {
     // start boilerplate
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
+
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
     // end boilerplate
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/1/records`,
+      url: `/api/v${apiVersion}/sensors/1/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -111,13 +110,10 @@ describe("tests for the http integration", () => {
     // start boilerplate1
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
+
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
     // end boilerplate
     // this test:
@@ -133,7 +129,7 @@ describe("tests for the http integration", () => {
 
     const getResponse = await server.inject({
       method: "GET",
-      url: `${url}?projectId=${project.id}`,
+      url: `${url}`,
       headers: {
         authorization: `Bearer ${user.token}`,
         apikey: supabaseAnonKey,
@@ -150,13 +146,12 @@ describe("tests for the http integration", () => {
         apikey: supabaseAnonKey,
       },
       payload: {
-        projectId: project.id,
-        tokenId: response1.data[0].niceId,
+        nice_id: response1.data[0].nice_id,
       },
     });
     const response2 = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/1/records`,
+      url: `/api/v${apiVersion}/sensors/1/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -175,20 +170,17 @@ describe("tests for the http integration", () => {
     // start boilerplate
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
+
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
 
     // end boilerplate
 
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/abc/records`,
+      url: `/api/v${apiVersion}/sensors/abc/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -203,23 +195,19 @@ describe("tests for the http integration", () => {
     // start boilerplate setup test
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
+
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
-    const device = await createDevice({
-      userId: user.id,
-      projectId: project.id,
+    const device = await createSensor({
+      user_id: user.id,
     });
     // end boilerplate
 
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/${device.id}/records`,
+      url: `/api/v${apiVersion}/sensors/${device.id}/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -236,22 +224,18 @@ describe("tests for the http integration", () => {
   test.skip("should throw an internal server error 500", async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const project = await createProject({
-      userId: user.id,
-    });
+
     const authToken = await createAuthToken({
       server,
       userToken: user.token,
-      projectId: project.id,
     });
-    const device = await createDevice({
-      userId: user.id,
-      projectId: project.id,
+    const device = await createSensor({
+      user_id: user.id,
     });
 
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/devices/${device.id}/records`,
+      url: `/api/v${apiVersion}/sensors/${device.id}/records`,
       payload: httpPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
