@@ -16,6 +16,17 @@ export const supabaseUrl = "http://localhost:8000";
 export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
+export const buildServerOpts = {
+  jwtSecret,
+  supabaseUrl,
+  supabaseServiceRoleKey,
+  logger: false,
+  issuer: "tsb",
+};
+export interface CreateTokenFullResponse {
+  token: string;
+  nice_id: number;
+}
 export interface ApiAuthResponsePayload {
   access_token: string;
   token_type: string;
@@ -235,10 +246,16 @@ export const createSensor: (options: {
   }
   return sensors[0];
 };
+
 export const createAuthToken: (opts: {
   server: FastifyInstance;
   userToken: string;
-}) => Promise<string> = async ({ server, userToken }) => {
+  getFullResponse?: boolean;
+}) => Promise<string | CreateTokenFullResponse> = async ({
+  server,
+  userToken,
+  getFullResponse = false,
+}) => {
   const responseToken = await server.inject({
     method: "POST",
     url: authtokenEndpoint,
@@ -252,5 +269,5 @@ export const createAuthToken: (opts: {
   });
 
   const resBody = JSON.parse(responseToken.body);
-  return resBody.data.token;
+  return getFullResponse ? resBody.data : resBody.data.token;
 };
