@@ -79,9 +79,9 @@ CREATE TABLE "public"."sensors" (
     "description" varchar(200),
     "connection_type" "public"."connection_types" NOT NULL DEFAULT 'http'::"connection_types",
     "location" varchar(50),
-    "longitude" float4,
-    "latitude" float4,
-    "altitude" float4,
+    "longitude" float8,
+    "latitude" float8,
+    "altitude" float8,
     "category_id" int4 NOT NULL,
     "icon_id" int4,
     "user_id" uuid NOT NULL REFERENCES "public"."user_profiles" (id) ON DELETE CASCADE ON UPDATE CASCADE
