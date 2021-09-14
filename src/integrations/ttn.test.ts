@@ -11,6 +11,8 @@ import {
   supabaseServiceRoleKey,
   supabaseUrl,
   apiVersion,
+  Sensor,
+  createTTNPayload,
 } from "../__test-utils";
 
 const issuer = "tsb";
@@ -21,23 +23,14 @@ const buildServerOpts = {
   logger: false,
   issuer,
 };
-
-const ttnPayload = {
-  end_device_ids: {
-    device_id: "123",
-  },
-  received_at: new Date().toISOString(),
-  uplink_message: {
-    decoded_payload: { measurements: [1, 2, 3] },
-    locations: { user: { latitude: 13, longitude: 52, altitude: 23 } },
-  },
-};
+const endpoint = `/api/v${apiVersion}/integrations/ttn/v3`;
+const ttnPayload = createTTNPayload();
 describe("tests for the ttn integration", () => {
   test("should be rejected due to no GET route", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "GET",
-      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      url: endpoint,
     });
     expect(response.statusCode).toBe(404);
     expect(response.body).toMatchInlineSnapshot(
@@ -48,7 +41,7 @@ describe("tests for the ttn integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      url: endpoint,
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
@@ -59,7 +52,7 @@ describe("tests for the ttn integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      url: endpoint,
       payload: {},
     });
     expect(response.statusCode).toBe(400);
@@ -71,7 +64,7 @@ describe("tests for the ttn integration", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      url: endpoint,
       payload: ttnPayload,
     });
     expect(response.statusCode).toBe(401);
@@ -89,7 +82,7 @@ describe("tests for the ttn integration", () => {
 
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      url: endpoint,
       payload: ttnPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -138,7 +131,7 @@ describe("tests for the ttn integration", () => {
     });
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      url: endpoint,
       payload: ttnPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -168,7 +161,7 @@ describe("tests for the ttn integration", () => {
     // end boilerplate
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      url: endpoint,
       payload: ttnPayload,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -176,6 +169,84 @@ describe("tests for the ttn integration", () => {
     });
     expect(response.statusCode).toBe(201);
     // end boilerplate teardown test
+    await deleteUser(user.token);
+  });
+
+  test("should change the lat/lon/alt of a sensor via payload of record", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const authToken = await createAuthToken({ server, userToken: user.token });
+    const sensor = await createSensor({
+      user_id: user.id,
+      external_id: ttnPayload.end_device_ids.device_id,
+    });
+    const response = await server.inject({
+      method: "POST",
+      url: endpoint,
+      payload: ttnPayload,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const { data: verifySensor } = await server.supabase
+      .from<Sensor>("sensors")
+      .select("*")
+      .eq("id", sensor.id)
+      .single();
+    expect(verifySensor).not.toBeNull();
+    expect(response.statusCode).toBe(201);
+    expect((verifySensor as Sensor).latitude).toBe(
+      ttnPayload.uplink_message.locations?.user?.latitude
+    );
+    expect((verifySensor as Sensor).longitude).toBe(
+      ttnPayload.uplink_message.locations?.user?.longitude
+    );
+    expect((verifySensor as Sensor).altitude).toBe(
+      ttnPayload.uplink_message.locations?.user?.altitude
+    );
+    await deleteUser(user.token);
+  });
+
+  test("should change only lat of a sensor via payload of record", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const authToken = await createAuthToken({ server, userToken: user.token });
+    const sensor = await createSensor({
+      user_id: user.id,
+      external_id: ttnPayload.end_device_ids.device_id,
+    });
+    const payload = createTTNPayload({
+      uplink_message: {
+        decoded_payload: {
+          measurements: [1, 2, 3],
+        },
+        locations: {
+          user: {
+            latitude: 1,
+          },
+        },
+      },
+    });
+    const response = await server.inject({
+      method: "POST",
+      url: endpoint,
+      payload,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const { data: verifySensor } = await server.supabase
+      .from<Sensor>("sensors")
+      .select("*")
+      .eq("id", sensor.id)
+      .single();
+    expect(verifySensor).not.toBeNull();
+    expect(response.statusCode).toBe(201);
+    expect((verifySensor as Sensor).latitude).toBe(
+      payload.uplink_message.locations?.user?.latitude
+    );
+    expect((verifySensor as Sensor).longitude).toBe(sensor.longitude);
+    expect((verifySensor as Sensor).altitude).toBe(sensor.altitude);
     await deleteUser(user.token);
   });
 });

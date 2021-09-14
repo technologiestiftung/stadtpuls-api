@@ -11,6 +11,7 @@ import {
   supabaseUrl,
   authtokenEndpoint,
   apiVersion,
+  Sensor,
 } from "../__test-utils";
 
 const issuer = "tsb";
@@ -166,7 +167,7 @@ describe("tests for the http integration", () => {
     // end boilerplate
   });
 
-  test("should fail due to deviceId param is not a number", async () => {
+  test("should fail due to sensorId param is not a number", async () => {
     // start boilerplate
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
@@ -245,5 +246,36 @@ describe("tests for the http integration", () => {
     // start boilerplate delete user
     await deleteUser(user.token);
     // end boilerplate
+  });
+
+  test("should change the lat/lon/alt of a sensor via payload of record", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const authToken = await createAuthToken({ server, userToken: user.token });
+    const sensor = await createSensor({
+      user_id: user.id,
+    });
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v${apiVersion}/sensors/${sensor.id}/records`,
+      payload: httpPayload,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const {
+      data: verifySensor,
+      error: _error,
+    } = await server.supabase
+      .from<Sensor>("sensors")
+      .select("*")
+      .eq("id", sensor.id)
+      .single();
+    expect(verifySensor).not.toBeNull();
+    expect(response.statusCode).toBe(201);
+    expect((verifySensor as Sensor).latitude).toBe(httpPayload.latitude);
+    expect((verifySensor as Sensor).longitude).toBe(httpPayload.longitude);
+    expect((verifySensor as Sensor).altitude).toBe(httpPayload.altitude);
+    await deleteUser(user.token);
   });
 });
