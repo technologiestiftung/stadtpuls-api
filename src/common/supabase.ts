@@ -532,7 +532,7 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          args: { [key: string]: any };
+          args: { [key: string]: unknown };
         };
         header: {
           /** Preference */
@@ -549,7 +549,7 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          args: { [key: string]: any };
+          args: { [key: string]: unknown };
         };
         header: {
           /** Preference */
@@ -566,7 +566,7 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          args: { [key: string]: any };
+          args: { [key: string]: unknown };
         };
         header: {
           /** Preference */
@@ -730,3 +730,5 @@ export interface parameters {
 }
 
 export interface operations {}
+
+export interface external {}
