@@ -545,25 +545,6 @@ export interface paths {
       };
     };
   };
-  "/rpc/update_email": {
-    post: {
-      parameters: {
-        body: {
-          args: {
-            new_email: string;
-          };
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferParams"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: unknown;
-      };
-    };
-  };
   "/rpc/delete_user": {
     post: {
       parameters: {
