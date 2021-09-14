@@ -16,7 +16,7 @@ CREATE TABLE "public"."user_profiles" (
     "created_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "role" "public"."role" DEFAULT 'maker'::"role",
     "url" varchar(100),
-    "description" varchar(500),
+    "description" varchar(200),
     PRIMARY KEY ("id")
 );
 --
@@ -75,7 +75,7 @@ CREATE TABLE "public"."sensors" (
     "created_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "external_id" varchar(36),
-    "name" varchar(20) constraint name_length_min_3_check check(char_length(name) >= 3) constraint special_character_check check ("name" ~* '^[a-zA-Z0-9_-]*$'),
+    "name" varchar(50) constraint name_length_min_3_check check(char_length(name) >= 3),
     "description" varchar(200),
     "connection_type" "public"."connection_types" NOT NULL DEFAULT 'http'::"connection_types",
     "location" varchar(50),
