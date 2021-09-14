@@ -237,7 +237,7 @@ export const createSensor: (options: {
     .from<definitions["sensors"]>("sensors")
     .insert([
       {
-        name: name ? name : faker.random.words(3),
+        name: name ? name : faker.random.words(2),
         user_id,
         external_id,
         category_id: 1,
