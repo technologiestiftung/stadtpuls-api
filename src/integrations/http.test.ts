@@ -263,7 +263,10 @@ describe("tests for the http integration", () => {
         Authorization: `Bearer ${authToken}`,
       },
     });
-    const { data: verifySensor, error } = await server.supabase
+    const {
+      data: verifySensor,
+      error: _error,
+    } = await server.supabase
       .from<Sensor>("sensors")
       .select("*")
       .eq("id", sensor.id)
