@@ -40,15 +40,34 @@ const postHTTPParamsSchema = S.object()
   .additionalProperties(false)
   .prop("deviceId", S.string().required());
 
+const postHTTPHeaderSchema = S.object()
+  .id("/integration/http/header")
+  .title("HTTP Header")
+  .additionalProperties(true)
+  .oneOf([
+    S.object().prop("Authorization", S.string().required()),
+    S.object().prop("authorization", S.string().required()),
+  ]);
+
 const http: FastifyPluginAsync = async (fastify) => {
-  fastify.route<{ Body: HTTPPostBody; Params: HTTPPostParams }>({
+  fastify.route<{
+    Body: HTTPPostBody;
+    Params: HTTPPostParams;
+  }>({
     url: `/${mountPoint}/v${apiVersion}/sensors/:deviceId/records`,
-    schema: { body: postHTTPBodySchema, params: postHTTPParamsSchema },
+    schema: {
+      body: postHTTPBodySchema,
+      params: postHTTPParamsSchema,
+      headers: postHTTPHeaderSchema,
+    },
     method: "POST",
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
       const decoded = (await request.jwtVerify()) as AuthToken;
-      const token = request.headers.authorization?.split(" ")[1];
+      if (request.headers.authorization === undefined) {
+        throw fastify.httpErrors.unauthorized();
+      }
+      const token = request.headers.authorization.split(" ")[1];
       const { data: authtokens, error } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
         .select("*")

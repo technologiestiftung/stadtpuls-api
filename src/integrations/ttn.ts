@@ -40,6 +40,14 @@ export interface TTNPostBody {
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
 
+const postTTNHeaderSchema = S.object()
+  .id("/integration/zzn/header")
+  .title("HTTP Header")
+  .additionalProperties(true)
+  .oneOf([
+    S.object().prop("Authorization", S.string().required()),
+    S.object().prop("authorization", S.string().required()),
+  ]);
 const postTTNBodySchema = S.object()
   .id("/integrations/ttn/v3")
   .title("Validation for data coming from TTN")
@@ -81,9 +89,12 @@ const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
     url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
     method: "POST",
-    schema: { body: postTTNBodySchema },
+    schema: { body: postTTNBodySchema, headers: postTTNHeaderSchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
+      if (request.headers.authorization === undefined) {
+        throw fastify.httpErrors.unauthorized();
+      }
       const decoded = (await request.jwtVerify()) as AuthToken;
       const token = request.headers.authorization?.split(" ")[1];
       const { data: authtokens, error } = await fastify.supabase
