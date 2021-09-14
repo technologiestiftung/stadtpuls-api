@@ -70,17 +70,17 @@ describe("tests for the http integration", () => {
     );
   });
 
-  test("should be rejected due to no token", async () => {
+  test("should be rejected due to no authorization header", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
       url: `/api/v${apiVersion}/sensors/1/records`,
       payload: httpPayload,
     });
-    expect(response.statusCode).toBe(401);
+    expect(response.statusCode).toBe(400);
   });
 
-  test("should find no device", async () => {
+  test("should find no sensor", async () => {
     // start boilerplate
     const server = buildServer(buildServerOpts);
     const user = await signupUser();

@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import fs from "fs";
 import path from "path";
-const swaggerToTS = require("openapi-typescript").default;
+import openapiTS from "openapi-typescript";
 
-import http from "http";
 const anonKey = process.env.SUPABASE_ANON_KEY;
 const supabaseUrl = process.env.SUPABASE_URL;
-let spec = "";
+
 const url = new URL(`${supabaseUrl}/rest/v1/?apikey=${anonKey}`);
 // const options = {
 //   hostname: url.host,
@@ -14,32 +12,46 @@ const url = new URL(`${supabaseUrl}/rest/v1/?apikey=${anonKey}`);
 //   path: url.pathname,
 //   method: "GET",
 // };
-const req = http.request(url, (res) => {
-  console.log(`statusCode: ${res.statusCode}`);
 
-  res.on("data", (d) => {
-    // process.stdout.write(d);
-    spec += d;
-  });
-  res.on("end", () => {
-    // console.log(spec);
+async function main() {
+  const output = await openapiTS(url.toString());
+  fs.writeFile(
+    path.resolve(process.cwd(), "./src/common/supabase.ts"),
+    output,
+    "utf8",
+    (err) => {
+      if (err) throw err;
+    }
+  );
+}
 
-    const input = JSON.parse(spec); // Input can be any JS object (OpenAPI format)
-    const output = swaggerToTS(input); // Outputs TypeScript defs as a string (to be parsed, or written to a file)
-    // console.log(output);
-    fs.writeFile(
-      path.resolve(process.cwd(), "./src/common/supabase.ts"),
-      output,
-      "utf8",
-      (err) => {
-        if (err) throw err;
-      }
-    );
-  });
-});
+main().catch(console.error);
+// const req = http.request(url, (res) => {
+//   console.log(`statusCode: ${res.statusCode}`);
 
-req.on("error", (error) => {
-  console.error(error);
-});
+//   res.on("data", (d) => {
+//     // process.stdout.write(d);
+//     spec += d;
+//   });
+//   res.on("end", () => {
+//     // console.log(spec);
 
-req.end();
+//     const input = JSON.parse(spec); // Input can be any JS object (OpenAPI format)
+//     const output = swaggerToTS(input); // Outputs TypeScript defs as a string (to be parsed, or written to a file)
+//     // console.log(output);
+//     fs.writeFile(
+//       path.resolve(process.cwd(), "./src/common/supabase.ts"),
+//       output,
+//       "utf8",
+//       (err) => {
+//         if (err) throw err;
+//       }
+//     );
+//   });
+// });
+
+// req.on("error", (error) => {
+//   console.error(error);
+// });
+
+// req.end();

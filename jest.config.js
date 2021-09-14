@@ -53,7 +53,7 @@ module.exports = merge(inPjsConfig, {
   setupFilesAfterEnv: ["./jest.setup.js"],
   coverageThreshold: {
     global: {
-      branches: 70,
+      branches: 65,
       functions: 75,
       lines: 75,
       statements: 75,

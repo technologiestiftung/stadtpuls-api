@@ -532,26 +532,7 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          args: { [key: string]: any };
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferParams"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: unknown;
-      };
-    };
-  };
-  "/rpc/update_email": {
-    post: {
-      parameters: {
-        body: {
-          args: {
-            new_email: string;
-          };
+          args: { [key: string]: unknown };
         };
         header: {
           /** Preference */
@@ -568,7 +549,7 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          args: { [key: string]: any };
+          args: { [key: string]: unknown };
         };
         header: {
           /** Preference */
@@ -585,7 +566,7 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          args: { [key: string]: any };
+          args: { [key: string]: unknown };
         };
         header: {
           /** Preference */
@@ -749,3 +730,5 @@ export interface parameters {
 }
 
 export interface operations {}
+
+export interface external {}

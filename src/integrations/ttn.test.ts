@@ -60,14 +60,14 @@ describe("tests for the ttn integration", () => {
       `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should have required property 'end_device_ids'\\"}"`
     );
   });
-  test("should be rejected due to no token", async () => {
+  test("should be rejected due to no authorization header", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
       url: endpoint,
       payload: ttnPayload,
     });
-    expect(response.statusCode).toBe(401);
+    expect(response.statusCode).toBe(400);
   });
   test("should find no device", async () => {
     // start boilerplate setup test
