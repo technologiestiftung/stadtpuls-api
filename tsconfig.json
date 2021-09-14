@@ -1,5 +1,5 @@
 {
-  "exclude": ["dist", "scripts", "dev-tools"],
+  "exclude": ["dist", "scripts", "dev-tools", "quokka-playground"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
