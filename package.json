@@ -54,14 +54,16 @@
     "node-fetch": "2.6.1",
     "nodemon": "2.0.12",
     "openapi-typescript": "4.0.2",
-    "ts-node": "10.2.1"
+    "ts-node": "10.2.1",
+    "typescript": "4.4.3"
   },
   "dependencies": {
     "@humanwhocodes/env": "2.2.0",
+    "@supabase/supabase-js": "1.22.6",
     "@technologiestiftung/fastify-supabase": "0.1.2",
     "bcrypt": "5.0.1",
     "config": "3.3.6",
-    "fastify": "3.21.0",
+    "fastify": "3.20.2",
     "fastify-auth": "1.1.0",
     "fastify-blipp": "3.1.0",
     "fastify-cors": "6.0.2",
