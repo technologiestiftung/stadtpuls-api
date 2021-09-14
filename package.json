@@ -36,7 +36,7 @@
     "url": "https://github.com/technologiestiftung/stadtpuls-api/issues"
   },
   "devDependencies": {
-    "@inpyjamas/scripts": "0.1.11-alpha",
+    "@inpyjamas/scripts": "0.1.12-alpha",
     "@types/bcrypt": "3.0.1",
     "@types/config": "0.0.39",
     "@types/faker": "5.5.3",
