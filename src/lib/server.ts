@@ -78,6 +78,7 @@ export const buildServer: (options: {
     server.route({
       method: ["GET"],
       url: path,
+      logLevel: "warn",
       handler: async (request, reply) => {
         reply.send({
           comment: "healthcheck",
