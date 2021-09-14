@@ -11,6 +11,7 @@ import fastifyHelmet from "fastify-helmet";
 import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 import fastifyAuth from "fastify-auth";
+import fastifyRateLimit from "fastify-rate-limit";
 
 import fastifySupabase from "@technologiestiftung/fastify-supabase";
 
@@ -44,6 +45,9 @@ export const buildServer: (options: {
   const server = fastify({ logger, ignoreTrailingSlash: true });
 
   server.register(fastifyBlipp);
+  server.register(fastifyRateLimit, {
+    allowList: ["127.0.0.1"],
+  });
   server.register(fastifyHelmet);
   server.register(fastifyCors);
   server.register(fastifySensible);
