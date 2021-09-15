@@ -12,12 +12,16 @@ import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 import fastifyAuth from "fastify-auth";
 import fastifyRateLimit from "fastify-rate-limit";
+// import fastifyPostgres from "fastify-postgres";
 
 import fastifySupabase from "@technologiestiftung/fastify-supabase";
 
 import routesAuth from "./authtokens";
+import signup from "./signup";
+
 import ttn from "../integrations/ttn";
 import http from "../integrations/http";
+import { databaseUrl } from "./env";
 
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
@@ -34,13 +38,16 @@ export const buildServer: (options: {
   logger,
   issuer,
 }) => {
-  const routeOptions = {
+  const authtokensRouteOptions = {
     endpoint: "authtokens",
     mount: mountPoint,
-
     apiVersion: `v${apiVersion}`,
-
     issuer,
+  };
+  const singupRouteOptoins = {
+    endpoint: "signup",
+    mount: mountPoint,
+    apiVersion: `v${apiVersion}`,
   };
   const server = fastify({ logger, ignoreTrailingSlash: true });
 
@@ -52,6 +59,9 @@ export const buildServer: (options: {
   server.register(fastifyCors);
   server.register(fastifySensible);
   server.register(fastifyAuth);
+  // server.register(fastifyPostgres, {
+  //   connectionString: databaseUrl,
+  // });
   server.register(fastifyJwt, {
     secret: jwtSecret,
   });
@@ -66,14 +76,15 @@ export const buildServer: (options: {
       await request.jwtVerify();
     }
   );
-  server.register(routesAuth, routeOptions);
+  server.register(signup, singupRouteOptoins);
+  server.register(routesAuth, authtokensRouteOptions);
   server.register(ttn);
   server.register(http);
 
   [
     "/",
-    `/${routeOptions.mount}`,
-    `/${routeOptions.mount}/${routeOptions.apiVersion}`,
+    `/${authtokensRouteOptions.mount}`,
+    `/${authtokensRouteOptions.mount}/${authtokensRouteOptions.apiVersion}`,
   ].forEach((path) => {
     server.route({
       method: ["GET"],

@@ -23,6 +23,7 @@
 @auth_token = {{ $dotenv %AUTH_TOKEN }}
 @sensor_id = 73
 
+
 ### Healthcheck
 GET {{ baseurl }}
 
@@ -149,4 +150,28 @@ Authorization: Bearer {{ auth_token }}
 Content-Type: application/json
 
 {"latitude":52.483107, "longitude":13.390679, "altitude":33,"measurements": [1,2,3]}
+
+
+
+### Singup user flow with magic link
+
+POST {{ baseurl }}/signup
+Content-Type: application/json
+
+{
+  "name":"ff6345",
+  "email": "me@email.com"
+}
+
+
+
+# [
+#   {
+#     "id": 35,
+#     "externalId": "123",
+#     "name": "http-client",
+#     "projectId": 47,
+#     "userId": "xxxxxx"
+#   }
+# ]
 

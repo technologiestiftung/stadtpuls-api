@@ -1,3 +1,8 @@
+// Copyright (c) 2021 Technologiestiftung Berlin & Fabian Morón Zirfas
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import buildServer from "./server";
 import { verify } from "jsonwebtoken";
 import {

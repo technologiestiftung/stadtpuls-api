@@ -79,7 +79,7 @@ const http: FastifyPluginAsync = async (fastify) => {
 
       if (error) {
         fastify.log.error("postgres error");
-        throw fastify.httpErrors.internalServerError();
+        throw fastify.httpErrors.internalServerError(error.hint);
       }
 
       const compared = await compare(token, authtokens[0].id);

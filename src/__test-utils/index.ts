@@ -1,6 +1,6 @@
 import faker from "faker";
 import config from "config";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, PostgrestResponse } from "@supabase/supabase-js";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fetch from "node-fetch";
 import { definitions } from "../common/supabase";
@@ -87,16 +87,37 @@ interface SignupLoginResponse {
   id: string;
 }
 
-export const signupUser: () => Promise<{
+export const signupUser: (
+  name?: string
+) => Promise<{
   id: string;
   token: string;
-}> = async () => {
+  userProfile?: definitions["user_profiles"];
+}> = async (name) => {
   const { id, token } = await signup({
     anonKey: supabaseAnonKey,
     email: `${faker.random.word()}+${faker.internet.email()}`,
     password: faker.internet.password(),
     url: new URL(`${supabaseUrl}/auth/v1/signup`),
   });
+  if (name) {
+    const { data: userProfile, error } = await supabase
+      .from<definitions["user_profiles"]>("user_profiles")
+      .update({
+        name,
+      })
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+    if (userProfile === null) {
+      throw new Error("User profile not found");
+    }
+    return { id, token, userProfile };
+  }
   return { id, token };
 };
 export const signup: (options: {

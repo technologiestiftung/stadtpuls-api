@@ -122,7 +122,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
 
       if (error) {
         fastify.log.error(error);
-        throw fastify.httpErrors.internalServerError();
+        throw fastify.httpErrors.internalServerError(error.hint);
       }
 
       reply.status(200).send({
