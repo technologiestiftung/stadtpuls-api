@@ -6,12 +6,9 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import S from "fluent-json-schema";
-import { Client } from "pg";
-
 import { definitions } from "../common/supabase";
-import { databaseUrl } from "./env";
-
-const client = new Client(databaseUrl);
+import { getIdByEmail, checkEmail } from "./db-utils";
+import fastifyRateLimit from "fastify-rate-limit";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -56,6 +53,11 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
   fastify,
   { mount, apiVersion, endpoint }
 ) => {
+  fastify.register(fastifyRateLimit, {
+    max: 1,
+    timeWindow: "1 minute",
+    allowList: ["127.0.0.1"],
+  });
   fastify.route<{ Body: PostBody }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "POST",
@@ -88,15 +90,23 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
       }
       // so the profile is null
       // now we need to check if the mail is already taken
-      // const {
-      //   rows,
-      // } = await client.query("SELECT id FROM auth.users WHERE email=$1", [
-      //   email,
-      // ]);
-
-      // client.release();
-      // console.log(rows);
-
+      let isEmailTaken = true;
+      try {
+        isEmailTaken = await checkEmail(email);
+      } catch (error) {
+        fastify.log.error("pg db request error", error);
+        throw fastify.httpErrors.internalServerError();
+      }
+      if (isEmailTaken === true) {
+        fastify.log.info("Signup try with existing email. Aborting...");
+        // TODO: Should we respond with a hint of a taken email?
+        throw fastify.httpErrors.conflict(
+          `The email ${email} is already taken`
+        );
+      }
+      // me made it past the username test and the email test
+      // so we can create the user and send him his magic link
+      // and after wards change his username
       // send magic link first
 
       const {
@@ -112,30 +122,38 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
         throw fastify.httpErrors.internalServerError(signupError.message);
       }
 
-      // so what do we have in the session and user when there was no conflict?
-      await client.connect();
-      const {
-        rows,
-      } = await client.query("select id FROM auth.users WHERE email=$1", [
-        email,
-      ]);
+      try {
+        const { data: idData, error: idError } = await getIdByEmail(email);
+        if (idError) {
+          fastify.log.error(idError);
+          throw fastify.httpErrors.internalServerError();
+        }
+        if (idData === null) {
+          fastify.log.error(idData);
+          throw fastify.httpErrors.internalServerError();
+        }
+        const id = idData.id;
+        const { data: profile, error: nameUpsertError } = await fastify.supabase
+          .from<UserProfile>("user_profiles")
+          .update({
+            id,
+            name,
+          })
+          .eq("id", id);
 
-      // const {
-      //   data: profile,
-      //   error,
-      // } = await fastify.supabase.from<UserProfile>("user_profiles").insert({
-      //   name: username,
-      // });
-      // if (error) {
-      //   throw fastify.httpErrors.internalServerError(error.hint);
-      // }
-      await client.end();
+        if (nameUpsertError) {
+          throw fastify.httpErrors.internalServerError(nameUpsertError.hint);
+        }
 
-      reply.status(201).send({
-        method: `${request.method}`,
-        url: `${request.url}`,
-        data: { user, session },
-      });
+        reply.status(201).send({
+          method: `${request.method}`,
+          url: `${request.url}`,
+          data: { user, session },
+        });
+      } catch (error) {
+        fastify.log.error("db error", error);
+        throw fastify.httpErrors.internalServerError();
+      }
     },
   });
 };
