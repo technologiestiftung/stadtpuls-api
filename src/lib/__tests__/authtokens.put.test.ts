@@ -1,4 +1,4 @@
-import buildServer from "./server";
+import jwt from "jsonwebtoken";
 import {
   deleteUser,
   jwtSecret,
@@ -8,9 +8,9 @@ import {
   authtokenEndpoint,
   CreateTokenFullResponse,
   buildServerOpts,
-} from "../__test-utils";
-import jwt from "jsonwebtoken";
-import { AuthToken } from "../common/jwt";
+} from "../../__test-utils";
+import { AuthToken } from "../../common/jwt";
+import buildServer from "../server";
 
 describe("tests for authtokens PUT method", () => {
   test("should update an existing token and compare properties", async () => {

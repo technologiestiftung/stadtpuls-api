@@ -3,7 +3,6 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import buildServer from "./server";
 import { verify } from "jsonwebtoken";
 import {
   JWTPayload,
@@ -13,7 +12,8 @@ import {
   signupUser,
   apiVersion,
   buildServerOpts,
-} from "../__test-utils";
+} from "../../__test-utils";
+import buildServer from "../server";
 
 describe("authtokens POST tests", () => {
   test("should create a new token for that users", async () => {

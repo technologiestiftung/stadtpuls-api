@@ -1,4 +1,4 @@
-import buildServer from "./server";
+import buildServer from "../server";
 import {
   deleteUser,
   supabaseAnonKey,
@@ -8,7 +8,7 @@ import {
   buildServerOpts,
   jwtSecret,
   supabaseUrl,
-} from "../__test-utils";
+} from "../../__test-utils";
 
 describe("authtokens DELETE tests", () => {
   // eslint-disable-next-line jest/no-disabled-tests

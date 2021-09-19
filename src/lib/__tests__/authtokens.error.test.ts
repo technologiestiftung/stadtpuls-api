@@ -8,8 +8,8 @@ import {
   buildServerOpts,
   deleteUser,
   signupUser,
-} from "../__test-utils";
-import { buildServer } from "./server";
+} from "../../__test-utils";
+import { buildServer } from "../server";
 // import { PostgrestError } from "@supabase/supabase-js";
 // jest.mock("@supabase/supabase-js", () => ({
 //   createClient: jest.fn(),

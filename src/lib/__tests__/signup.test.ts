@@ -9,8 +9,8 @@ import {
   buildServerOpts,
   deleteUser,
   signupUser,
-} from "../__test-utils";
-import buildServer from "./server";
+} from "../../__test-utils";
+import buildServer from "../server";
 
 const signupUrl = `/api/v${apiVersion}/signup`;
 describe("signup POST tests", () => {
@@ -57,7 +57,7 @@ describe("signup POST tests", () => {
         name: userProfile?.name || "ff6347", //?
       },
     });
-    console.error(response); //?
+
     expect(response.statusCode).toBe(409);
     await deleteUser(token);
   });

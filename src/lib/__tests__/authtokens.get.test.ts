@@ -1,4 +1,4 @@
-import buildServer from "./server";
+import buildServer from "../server";
 import {
   deleteUser,
   supabaseAnonKey,
@@ -7,7 +7,7 @@ import {
   authtokenEndpoint,
   createAuthToken,
   CreateTokenFullResponse,
-} from "../__test-utils";
+} from "../../__test-utils";
 
 describe("authtokens GET tests", () => {
   test("should complain on GET with 401 due to missing token", async () => {
