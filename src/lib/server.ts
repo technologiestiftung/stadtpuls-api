@@ -21,7 +21,6 @@ import signup from "./signup";
 
 import ttn from "../integrations/ttn";
 import http from "../integrations/http";
-import { databaseUrl } from "./env";
 
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
