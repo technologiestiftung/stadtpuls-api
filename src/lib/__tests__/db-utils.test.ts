@@ -1,13 +1,94 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // Copyright (c) 2021 Technologiestiftung Berlin & Fabian Morón Zirfas
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-// import { urlToPoolConfig } from "../db-utils";
-import { databaseUrl } from "../env";
+import { checkEmail, getIdByEmail } from "../db-utils";
+import { Pool } from "pg";
+jest.mock("pg", () => {
+  const mQuery = jest.fn(() => ({
+    rows: [{ id: 1 }],
+  }));
+  const mClient = {
+    query: mQuery,
+    release: jest.fn(),
+  };
+  const mPool = {
+    connect: jest.fn(() => mClient),
+  };
+  return { Pool: jest.fn(() => mPool) };
+});
+
+let pool = new Pool();
+
 describe("tests for db utilites", () => {
-  test("postgres database url parser tests", () => {
-    // urlToPoolConfig(databaseUrl);
-    expect(true).toBe(true);
+  // eslint-disable-next-line jest/no-hooks
+  beforeAll(() => {
+    pool.connect();
+  });
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    jest.resetAllMocks();
+  });
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  test("db utils getIdByEmail test", async () => {
+    const err = new Error("test");
+    const client = await pool.connect();
+    client.query
+      //@ts-ignore
+      .mockImplementationOnce(() => {
+        return {
+          rows: [{ id: 1 }],
+        };
+      })
+      .mockImplementationOnce(() => {
+        return {
+          rows: [],
+        };
+      })
+      .mockImplementationOnce(() => {
+        throw err;
+      });
+
+    let result = await getIdByEmail("potiential@exists.com");
+    expect(result).toStrictEqual({ data: { id: 1 }, error: null });
+    result = await getIdByEmail("potiential@exists.com");
+    expect(result).toStrictEqual({ data: { id: undefined }, error: null });
+    result = await getIdByEmail("potiential@exists.com");
+    expect(result).toStrictEqual({ data: null, error: err });
+    client.release();
+  });
+
+  // eslint-disable-next-line jest/no-disabled-tests
+  test("db utils checkEmail test", async () => {
+    // const pool = new Pool();
+    const err = new Error("test");
+    const client = await pool.connect();
+    client.query
+      //@ts-ignore
+      .mockImplementationOnce(() => {
+        return {
+          rows: [{ id: 1 }],
+        };
+      })
+      .mockImplementationOnce(() => {
+        return {
+          rows: [],
+        };
+      })
+      .mockImplementationOnce(() => {
+        throw err;
+      });
+
+    let result = await checkEmail("potiential@exists.com");
+    expect(result).toBe(true);
+    result = await checkEmail("potiential@exists.com");
+    expect(result).toBe(false);
+    result = await checkEmail("potiential@exists.com");
+    expect(result).toStrictEqual({ data: null, error: err });
   });
 });
