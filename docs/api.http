@@ -159,7 +159,7 @@ POST {{ baseurl }}/signup
 Content-Type: application/json
 
 {
-  "name":"ff6345",
+  "name":"ff6347",
   "email": "me@email.com"
 }
 
