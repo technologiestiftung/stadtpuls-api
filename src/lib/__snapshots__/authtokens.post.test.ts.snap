@@ -10,3 +10,14 @@ Object {
   "url": "/api/v3/authtokens",
 }
 `;
+
+exports[`authtokens POST tests should get a list of tokens that match the created one for that users 1`] = `
+Object {
+  "data": Object {
+    "nice_id": Any<Number>,
+    "token": Any<String>,
+  },
+  "method": "POST",
+  "url": "/api/v3/authtokens",
+}
+`;

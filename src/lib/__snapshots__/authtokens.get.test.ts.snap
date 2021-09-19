@@ -7,3 +7,11 @@ Object {
   "url": Any<String>,
 }
 `;
+
+exports[`authtokens GET tests should GET only one token using a query 1`] = `
+Object {
+  "data": Array [],
+  "method": "GET",
+  "url": Any<String>,
+}
+`;
