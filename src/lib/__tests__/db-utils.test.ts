@@ -20,7 +20,7 @@ jest.mock("pg", () => {
   return { Pool: jest.fn(() => mPool) };
 });
 
-let pool = new Pool();
+const pool = new Pool();
 
 describe("tests for db utilites", () => {
   // eslint-disable-next-line jest/no-hooks
@@ -36,7 +36,7 @@ describe("tests for db utilites", () => {
     jest.clearAllMocks();
   });
   test("db utils getIdByEmail test", async () => {
-    const err = new Error("test");
+    const err = new Error("test getIdByEmail");
     const client = await pool.connect();
     client.query
       //@ts-ignore
@@ -66,7 +66,7 @@ describe("tests for db utilites", () => {
   // eslint-disable-next-line jest/no-disabled-tests
   test("db utils checkEmail test", async () => {
     // const pool = new Pool();
-    const err = new Error("test");
+    const err = new Error("test checkmail");
     const client = await pool.connect();
     client.query
       //@ts-ignore
@@ -84,11 +84,13 @@ describe("tests for db utilites", () => {
         throw err;
       });
 
-    let result = await checkEmail("potiential@exists.com");
+    let result = await checkEmail("potiential1@exists.com");
     expect(result).toBe(true);
-    result = await checkEmail("potiential@exists.com");
+    result = await checkEmail("potiential2@exists.com");
     expect(result).toBe(false);
-    result = await checkEmail("potiential@exists.com");
-    expect(result).toStrictEqual({ data: null, error: err });
+
+    await expect(checkEmail("potiential3@exists.com")).rejects.toThrow(
+      err.message
+    );
   });
 });
