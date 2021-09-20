@@ -9,7 +9,7 @@ Array [
     "mailbox": "me",
     "posix-millis": Any<Number>,
     "seen": false,
-    "size": 539,
+    "size": Any<Number>,
     "subject": "Your Magic Link",
     "to": Array [
       "<me@email.com>",

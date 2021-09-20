@@ -116,7 +116,7 @@ describe("signup POST tests", () => {
         mailbox: "me",
         "posix-millis": expect.any(Number),
         seen: false,
-        size: 539,
+        size: expect.any(Number),
         subject: "Your Magic Link",
         to: ["<me@email.com>"],
       },
