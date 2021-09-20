@@ -1,10 +1,18 @@
 import faker from "faker";
 import config from "config";
-import { createClient, PostgrestResponse } from "@supabase/supabase-js";
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { createClient } from "@supabase/supabase-js";
+import { FastifyInstance } from "fastify";
 import fetch from "node-fetch";
 import { definitions } from "../common/supabase";
 import { TTNPostBody } from "../integrations/ttn";
+import { signup } from "./signup";
+export { truncateTables } from "./truncate-tables";
+export { buildReply } from "./build-reply";
+export { buildRequest } from "./build-request";
+export { signup } from "./signup";
+export { login } from "./login";
+export { checkInbox, purgeInbox } from "./mail";
+
 export type Sensor = definitions["sensors"];
 
 export const jwtSecret =
@@ -16,6 +24,7 @@ export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
 export const supabaseUrl = "http://localhost:8000";
 export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
+export const databaseUrl = process.env.DATABASE_URL!;
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 export const buildServerOpts = {
@@ -63,40 +72,22 @@ export interface AppMetadata {
   provider: string;
 }
 
-export const buildReply: (
-  overrides?: Record<string, unknown>
-) => FastifyReply = (overrides) => {
-  const fastifyReply: unknown = {
-    code: 200,
-    status: jest.fn(() => fastifyReply),
-    send: jest.fn(() => fastifyReply),
-    ...overrides,
-  };
-  return fastifyReply as FastifyReply;
-};
-
-export const buildRequest: (
-  overrides?: Record<string, unknown>
-) => FastifyRequest = (overrides) => {
-  const req: unknown = { ...overrides };
-  return req as FastifyRequest;
-};
-
-interface SignupLoginResponse {
+export interface SignupLoginResponse {
   token: string;
   id: string;
 }
 
 export const signupUser: (
-  name?: string
+  name?: string,
+  email?: string
 ) => Promise<{
   id: string;
   token: string;
   userProfile?: definitions["user_profiles"];
-}> = async (name) => {
+}> = async (name, email) => {
   const { id, token } = await signup({
     anonKey: supabaseAnonKey,
-    email: `${faker.random.word()}+${faker.internet.email()}`,
+    email: email ? email : `${faker.random.word()}+${faker.internet.email()}`,
     password: faker.internet.password(),
     url: new URL(`${supabaseUrl}/auth/v1/signup`),
   });
@@ -120,70 +111,6 @@ export const signupUser: (
   }
   return { id, token };
 };
-export const signup: (options: {
-  email: string;
-  password: string;
-  url: URL;
-  anonKey: string;
-}) => Promise<SignupLoginResponse> = async ({
-  email,
-  password,
-  url,
-  anonKey,
-}) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    apikey: anonKey,
-  };
-  const body = JSON.stringify({ email, password });
-  const response = await fetch(url.href, {
-    method: "POST",
-    headers,
-    body,
-  });
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-  if (response.status === 200) {
-    const json = (await response.json()) as ApiAuthResponsePayload;
-    return { token: json.access_token, id: json.user.id };
-  } else {
-    throw new Error(await response.json());
-  }
-};
-export const login: (options: {
-  email: string;
-  password: string;
-  url: URL;
-  anonKey: string;
-}) => Promise<SignupLoginResponse> = async ({
-  email,
-  password,
-  url,
-  anonKey,
-}) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    apikey: anonKey,
-  };
-  const body = JSON.stringify({ email, password });
-
-  const response = await fetch(url.href, {
-    method: "POST",
-    headers,
-    body,
-  });
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-  if (response.status === 200) {
-    const json = (await response.json()) as ApiAuthResponsePayload;
-    return { token: json.access_token, id: json.user.id };
-  } else {
-    throw new Error(await response.json());
-  }
-};
-
 export const logout: (options: {
   userToken: string;
   url: URL;
