@@ -106,51 +106,59 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
       }
       // me made it past the username test and the email test
       // so we can create the user and send him his magic link
-      // and after wards change his username
+      // and afterwards change his username
       // send magic link first
 
-      const {
-        user,
-        error: signupError,
-        session,
-      } = await fastify.supabase.auth.signIn({
+      const { error: signupError } = await fastify.supabase.auth.signIn({
         email,
       });
 
+      // was there an error sending the magic link?
+      // if so we have an signupError is not null here
       if (signupError) {
         fastify.log.error(signupError);
         throw fastify.httpErrors.internalServerError(signupError.message);
       }
+      // No error on magic link sending. Nice so now we get the id of the user
+      // again for updating his user_profile
       // try {
-        if (idError) {
-          fastify.log.error(idError);
-          throw fastify.httpErrors.internalServerError();
-        }
-        if (idData === null) {
-          fastify.log.error(idData);
-          throw fastify.httpErrors.internalServerError();
-        }
-        const id = idData.id;
-        const {
-          data: _profile,
-          error: nameUpsertError,
-        } = await fastify.supabase
-          .from<UserProfile>("user_profiles")
-          .update({
-            id,
-            name,
-          })
-          .eq("id", id);
-
-        if (nameUpsertError) {
-          throw fastify.httpErrors.internalServerError(nameUpsertError.hint);
-        }
-
-        reply.status(201).send({
-          method: `${request.method}`,
-          url: `${request.url}`,
-          data: { user, session },
-        });
+      const { data: idData, error: idError } = await getIdByEmail(email);
+      // if we have an error here there was an issue connectiong to the database
+      // using the pg module
+      // log and throw an internal server error
+      if (idError) {
+        fastify.log.error(idError);
+        throw fastify.httpErrors.internalServerError();
+      }
+      // again if the id is null the user profile was not created
+      // this is another internal server error
+      if (idData === null) {
+        fastify.log.error(idData);
+        throw fastify.httpErrors.internalServerError();
+      }
+      // yay everything is fine. We have an id
+      // now we can update the user profile and add the username
+      const id = idData.id;
+      const { data: _profile, error: nameUpsertError } = await fastify.supabase
+        .from<UserProfile>("user_profiles")
+        .update({
+          id,
+          name,
+        })
+        .eq("id", id);
+      // is there an error adding the username to the profile?
+      // if so nameUpsertError is not null here
+      if (nameUpsertError) {
+        fastify.log.error(nameUpsertError);
+        throw fastify.httpErrors.internalServerError();
+      }
+      // awesome we made it to the end. Respond with 204
+      // Since we wait for the login with the magic link
+      // we dont have to send anything.
+      reply.status(201).send({
+        method: `${request.method}`,
+        url: `${request.url}`,
+      });
       // } catch (error) {
       //   fastify.log.error("db error", error);
       //   throw fastify.httpErrors.internalServerError();
