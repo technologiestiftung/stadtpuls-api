@@ -7,8 +7,11 @@ env:
   SUPABASE_SERVICE_ROLE_KEY: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwNzUzMiwiZXhwIjoxNjkwMjc5NTMyLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoic2VydmljZV9yb2xlIn0.hfdXFZV5PdvUdo2xK0vStb1i97GJukSkRqfwd4YIh2M"
   JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
   SUPABASE_URL: http://localhost:8000
-  PORT: "4000"
-  ISSUER: "technologiestiftung-berlin.de"
+  PORT: 4000
+  ISSUER: "stadtpuls.com"
+  DATABASE_URL: "postgres://postgres:your-super-secret-and-long-postgres-password@localhost:5432/postgres"
+  POSTGRES_PASSWORD: "your-super-secret-and-long-postgres-password"
+  POSTGRES_PORT: 5432
 
 on:
   push:
@@ -41,7 +44,7 @@ jobs:
       - name: Run supabase
         run: docker-compose --env-file dev-tools/supabase/.env.example --file dev-tools/supabase/docker-compose.yml up --detach --build --force-recreate
       - run: npm ci
-      - run: npm test
+      - run: npm test -- --runInBand
       # - name: Setup tmate session
       #   if: ${{ failure() }}
       #   uses: mxschmitt/action-tmate@v3
