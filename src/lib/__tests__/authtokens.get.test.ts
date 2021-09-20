@@ -7,9 +7,14 @@ import {
   authtokenEndpoint,
   createAuthToken,
   CreateTokenFullResponse,
+  truncateTables,
 } from "../../__test-utils";
 
 describe("authtokens GET tests", () => {
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
   test("should complain on GET with 401 due to missing token", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({

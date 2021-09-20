@@ -8,6 +8,7 @@ import {
   buildServerOpts,
   deleteUser,
   signupUser,
+  truncateTables,
 } from "../../__test-utils";
 import { buildServer } from "../server";
 // import { PostgrestError } from "@supabase/supabase-js";
@@ -21,6 +22,10 @@ describe("error handling", () => {
   //   afterAll(() => {
   //     jest.clearAllMocks();
   //   });
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
   test("should throw an error in GET due to returned postgres error", async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();

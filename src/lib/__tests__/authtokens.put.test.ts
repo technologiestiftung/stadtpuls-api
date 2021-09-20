@@ -8,11 +8,16 @@ import {
   authtokenEndpoint,
   CreateTokenFullResponse,
   buildServerOpts,
+  truncateTables,
 } from "../../__test-utils";
 import { AuthToken } from "../../common/jwt";
 import buildServer from "../server";
 
 describe("tests for authtokens PUT method", () => {
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
   test("should update an existing token and compare properties", async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();

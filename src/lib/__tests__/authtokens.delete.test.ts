@@ -8,9 +8,14 @@ import {
   buildServerOpts,
   jwtSecret,
   supabaseUrl,
+  truncateTables,
 } from "../../__test-utils";
 
 describe("authtokens DELETE tests", () => {
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
   // eslint-disable-next-line jest/no-disabled-tests
   test.skip("should get a internal server error", async () => {
     const server = buildServer({
