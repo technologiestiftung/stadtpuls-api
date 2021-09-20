@@ -82,7 +82,7 @@ CREATE TABLE "public"."sensors" (
     "longitude" float8,
     "latitude" float8,
     "altitude" float8,
-    "category_id" int4 NOT NULL,
+    "category_id" int4 NOT NULL REFERENCES "public"."categories" (id),
     "icon_id" int4,
     "user_id" uuid NOT NULL REFERENCES "public"."user_profiles" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
