@@ -99,7 +99,7 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
       }
       if (isEmailTaken === true) {
         fastify.log.info("Signup try with existing email. Aborting...");
-        // TODO: Should we respond with a hint of a taken email?
+        // TODO: [STADTPULS-394] Backend (User Signup Route) Should we respond with a hint if an email is taken?
         throw fastify.httpErrors.conflict(
           `The email ${email} is already taken`
         );
@@ -133,7 +133,10 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
           throw fastify.httpErrors.internalServerError();
         }
         const id = idData.id;
-        const { data: profile, error: nameUpsertError } = await fastify.supabase
+        const {
+          data: _profile,
+          error: nameUpsertError,
+        } = await fastify.supabase
           .from<UserProfile>("user_profiles")
           .update({
             id,
