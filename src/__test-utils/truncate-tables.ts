@@ -1,9 +1,5 @@
-import { Pool } from "pg";
-import { databaseUrl } from "../lib/env";
+import { pool } from "./index";
 
-export const pool = new Pool({
-  connectionString: databaseUrl,
-});
 export async function truncateTables(): Promise<void> {
   try {
     const client = await pool.connect();
@@ -14,6 +10,15 @@ export async function truncateTables(): Promise<void> {
     client.release();
   } catch (error) {
     console.error("DB error while truncating", error);
+    throw error;
+  }
+}
+
+export async function closePool(): Promise<void> {
+  try {
+    await pool.end();
+  } catch (error) {
+    console.error("DB error while closing pool", error);
     throw error;
   }
 }
