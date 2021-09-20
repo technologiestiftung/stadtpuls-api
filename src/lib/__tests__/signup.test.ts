@@ -111,7 +111,7 @@ describe("signup POST tests", () => {
     expect(messages).toMatchSnapshot([
       {
         date: expect.any(String),
-        from: "<info@stadtpuls.com>",
+        from: "<admin@inbucket.local>",
         id: expect.any(String),
         mailbox: "me",
         "posix-millis": expect.any(Number),
