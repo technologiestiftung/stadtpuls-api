@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import fetch, { Headers } from "node-fetch";
+import fetch from "node-fetch";
 interface Message {
   mailbox: string;
   id: string;
