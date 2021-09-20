@@ -14,6 +14,7 @@ import {
   signupUser,
   truncateTables,
 } from "../../__test-utils";
+import { closePool } from "../../__test-utils/truncate-tables";
 import buildServer from "../server";
 
 const signupUrl = `/api/v${apiVersion}/signup`;
@@ -21,8 +22,10 @@ describe("signup POST tests", () => {
   beforeEach(async () => {
     await truncateTables();
   });
+  // eslint-disable-next-line jest/no-hooks
   afterAll(async () => {
     await truncateTables();
+    await closePool();
   });
   test("should be rejected due to missing body", async () => {
     const server = buildServer(buildServerOpts);

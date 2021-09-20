@@ -3,20 +3,26 @@ import {
   deleteUser,
   jwtSecret,
   supabaseAnonKey,
-  signupUser,
-  createAuthToken,
   authtokenEndpoint,
   CreateTokenFullResponse,
   buildServerOpts,
   truncateTables,
+  signupUser,
+  createAuthToken,
 } from "../../__test-utils";
 import { AuthToken } from "../../common/jwt";
 import buildServer from "../server";
+import { closePool } from "../../__test-utils/truncate-tables";
 
 describe("tests for authtokens PUT method", () => {
   // eslint-disable-next-line jest/no-hooks
   beforeEach(async () => {
     await truncateTables();
+  });
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    await truncateTables();
+    await closePool();
   });
   test("should update an existing token and compare properties", async () => {
     const server = buildServer(buildServerOpts);

@@ -2,20 +2,27 @@ import buildServer from "../server";
 import {
   deleteUser,
   supabaseAnonKey,
-  signupUser,
-  createAuthToken,
   apiVersion,
   buildServerOpts,
   jwtSecret,
   supabaseUrl,
   truncateTables,
+  signupUser,
+  createAuthToken,
 } from "../../__test-utils";
+import { closePool } from "../../__test-utils/truncate-tables";
 
 describe("authtokens DELETE tests", () => {
   // eslint-disable-next-line jest/no-hooks
   beforeEach(async () => {
     await truncateTables();
   });
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    await truncateTables();
+    await closePool();
+  });
+
   // eslint-disable-next-line jest/no-disabled-tests
   test.skip("should get a internal server error", async () => {
     const server = buildServer({
