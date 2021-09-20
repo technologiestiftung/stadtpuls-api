@@ -121,9 +121,7 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
         fastify.log.error(signupError);
         throw fastify.httpErrors.internalServerError(signupError.message);
       }
-
-      try {
-        const { data: idData, error: idError } = await getIdByEmail(email);
+      // try {
         if (idError) {
           fastify.log.error(idError);
           throw fastify.httpErrors.internalServerError();
@@ -153,10 +151,10 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
           url: `${request.url}`,
           data: { user, session },
         });
-      } catch (error) {
-        fastify.log.error("db error", error);
-        throw fastify.httpErrors.internalServerError();
-      }
+      // } catch (error) {
+      //   fastify.log.error("db error", error);
+      //   throw fastify.httpErrors.internalServerError();
+      // }
     },
   });
 };
