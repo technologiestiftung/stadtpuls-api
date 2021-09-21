@@ -5,6 +5,7 @@ import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 import config from "config";
+import { logLevel } from "../lib/env";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -61,6 +62,7 @@ const http: FastifyPluginAsync = async (fastify) => {
       headers: postHTTPHeaderSchema,
     },
     method: "POST",
+    logLevel,
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
       const decoded = (await request.jwtVerify()) as AuthToken;

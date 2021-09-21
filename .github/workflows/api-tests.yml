@@ -9,6 +9,7 @@ env:
   SUPABASE_URL: http://localhost:8000
   PORT: 4000
   ISSUER: "stadtpuls.com"
+  LOG_LEVEL: "info"
   DATABASE_URL: "postgres://postgres:your-super-secret-and-long-postgres-password@localhost:5432/postgres"
   POSTGRES_PASSWORD: "your-super-secret-and-long-postgres-password"
   # fill with random passwords
@@ -19,7 +20,7 @@ env:
   SMTP_PORT: 2500
   SMTP_USER: admin
   SMTP_PASS: 123456
-  SMTP_ADMIN_EMAIL: admin@inbucket.local
+  SMTP_ADMIN_EMAIL: info@stadtpuls.com
   # storage config
   STORAGE_BACKENDP: file # file | s3
   STORAGE_S3_BUCKET: supa-storage-testing # name of s3 bucket where you want to store objects

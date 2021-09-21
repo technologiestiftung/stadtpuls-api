@@ -8,6 +8,7 @@ import fp from "fastify-plugin";
 import S from "fluent-json-schema";
 import { definitions } from "../common/supabase";
 import { getIdByEmail, checkEmail } from "./db-utils";
+import { logLevel } from "./env";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -55,6 +56,7 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
   fastify.route<{ Body: PostBody }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "POST",
+    logLevel,
     config: {
       rateLimit: {
         max: 1,

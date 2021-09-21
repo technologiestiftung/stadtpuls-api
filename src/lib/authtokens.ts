@@ -4,9 +4,10 @@ import { v4 as uuidv4 } from "uuid";
 import { SignOptions } from "jsonwebtoken";
 import fp from "fastify-plugin";
 import { hash } from "bcrypt";
+import S from "fluent-json-schema";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
-import S from "fluent-json-schema";
+import { logLevel } from "./env";
 
 interface PostBody {
   description: string;
@@ -92,6 +93,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   fastify.route<{ Querystring: { nice_id?: string } }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "GET",
+    logLevel,
     schema: {
       querystring: getTokenQuerySchema,
     },
@@ -146,6 +148,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   fastify.route<{ Body: PostBody }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "POST",
+    logLevel,
     schema: {
       body: postTokenBodySchema,
       // headers: tokenHeaderSchema,
@@ -203,6 +206,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   fastify.route<{ Body: PutBody }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "PUT",
+    logLevel,
     schema: {
       body: putTokenBodySchema,
     },
@@ -270,6 +274,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   fastify.route<{ Body: DeleteBody }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "DELETE",
+    logLevel,
     schema: { body: deleteTokenBodySchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
 
