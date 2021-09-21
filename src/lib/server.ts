@@ -48,7 +48,11 @@ export const buildServer: (options: {
     mount: mountPoint,
     apiVersion: `v${apiVersion}`,
   };
-  const server = fastify({ logger, ignoreTrailingSlash: true });
+  const server = fastify({
+    logger,
+    ignoreTrailingSlash: true,
+    exposeHeadRoutes: true,
+  });
 
   server.register(fastifyBlipp);
   server.register(fastifyRateLimit, {
@@ -86,9 +90,10 @@ export const buildServer: (options: {
     `/${authtokensRouteOptions.mount}/${authtokensRouteOptions.apiVersion}`,
   ].forEach((path) => {
     server.route({
-      method: ["GET"],
+      method: ["GET", "HEAD"],
       url: path,
       logLevel: "warn",
+      exposeHeadRoute: true,
       handler: async (request, reply) => {
         reply.send({
           comment: "healthcheck",
