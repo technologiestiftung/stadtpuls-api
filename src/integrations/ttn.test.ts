@@ -3,17 +3,19 @@ import buildServer from "../lib/server";
 import {
   authtokenEndpoint,
   deleteUser,
-  createAuthToken,
-  createSensor,
   jwtSecret,
-  signupUser,
   supabaseAnonKey,
   supabaseServiceRoleKey,
   supabaseUrl,
   apiVersion,
   Sensor,
+  signupUser,
   createTTNPayload,
+  createAuthToken,
+  createSensor,
+  truncateTables,
 } from "../__test-utils";
+import { closePool } from "../__test-utils/truncate-tables";
 
 const issuer = "tsb";
 const buildServerOpts = {
@@ -26,6 +28,16 @@ const buildServerOpts = {
 const endpoint = `/api/v${apiVersion}/integrations/ttn/v3`;
 const ttnPayload = createTTNPayload();
 describe("tests for the ttn integration", () => {
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
+
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    await truncateTables();
+    await closePool();
+  });
   test("should be rejected due to no GET route", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({

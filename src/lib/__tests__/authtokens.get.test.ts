@@ -1,15 +1,26 @@
-import buildServer from "./server";
+import buildServer from "../server";
 import {
   deleteUser,
   supabaseAnonKey,
-  signupUser,
   buildServerOpts,
   authtokenEndpoint,
-  createAuthToken,
   CreateTokenFullResponse,
-} from "../__test-utils";
+  truncateTables,
+  signupUser,
+  createAuthToken,
+} from "../../__test-utils";
+import { closePool } from "../../__test-utils/truncate-tables";
 
 describe("authtokens GET tests", () => {
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    await truncateTables();
+    await closePool();
+  });
   test("should complain on GET with 401 due to missing token", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({

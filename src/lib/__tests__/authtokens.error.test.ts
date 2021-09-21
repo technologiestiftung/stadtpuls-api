@@ -8,8 +8,11 @@ import {
   buildServerOpts,
   deleteUser,
   signupUser,
-} from "../__test-utils";
-import { buildServer } from "./server";
+  truncateTables,
+} from "../../__test-utils";
+import { closePool } from "../../__test-utils/truncate-tables";
+
+import { buildServer } from "../server";
 // import { PostgrestError } from "@supabase/supabase-js";
 // jest.mock("@supabase/supabase-js", () => ({
 //   createClient: jest.fn(),
@@ -21,6 +24,15 @@ describe("error handling", () => {
   //   afterAll(() => {
   //     jest.clearAllMocks();
   //   });
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    await truncateTables();
+    await closePool();
+  });
   test("should throw an error in GET due to returned postgres error", async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();

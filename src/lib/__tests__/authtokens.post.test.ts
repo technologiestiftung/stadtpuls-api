@@ -1,16 +1,32 @@
-import buildServer from "./server";
+// Copyright (c) 2021 Technologiestiftung Berlin & Fabian Morón Zirfas
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import { verify } from "jsonwebtoken";
 import {
   JWTPayload,
   deleteUser,
   jwtSecret,
   supabaseAnonKey,
-  signupUser,
   apiVersion,
   buildServerOpts,
-} from "../__test-utils";
+  truncateTables,
+  signupUser,
+} from "../../__test-utils";
+import { closePool } from "../../__test-utils/truncate-tables";
+import buildServer from "../server";
 
 describe("authtokens POST tests", () => {
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    await truncateTables();
+    await closePool();
+  });
   test("should create a new token for that users", async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();

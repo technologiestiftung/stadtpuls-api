@@ -2,9 +2,6 @@ import buildServer from "../lib/server";
 
 import {
   deleteUser,
-  createAuthToken,
-  signupUser,
-  createSensor,
   jwtSecret,
   supabaseServiceRoleKey,
   supabaseAnonKey,
@@ -12,7 +9,12 @@ import {
   authtokenEndpoint,
   apiVersion,
   Sensor,
+  signupUser,
+  createSensor,
+  truncateTables,
 } from "../__test-utils";
+import { createAuthToken } from "../__test-utils/create-auth-token";
+import { closePool } from "../__test-utils/truncate-tables";
 
 const issuer = "tsb";
 const buildServerOpts = {
@@ -30,6 +32,15 @@ const httpPayload = {
   measurements: [1, 2, 3],
 };
 describe("tests for the http integration", () => {
+  // eslint-disable-next-line jest/no-hooks
+  beforeEach(async () => {
+    await truncateTables();
+  });
+  // eslint-disable-next-line jest/no-hooks
+  afterAll(async () => {
+    await truncateTables();
+    await closePool();
+  });
   test("should be rejected due to no GET route", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({

@@ -1,11 +1,11 @@
 /* eslint-disable jest/no-hooks */
-import buildServer from "./server";
+import buildServer from "../server";
 import {
   supabaseUrl,
   supabaseServiceRoleKey,
   jwtSecret,
   apiVersion,
-} from "../__test-utils";
+} from "../../__test-utils";
 
 const buildServerOpts = {
   jwtSecret,

@@ -118,3 +118,10 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
     volumes:
       - ./dockerfiles/postgres/pg-data:/var/lib/postgresql/data
+  mail:
+    container_name: supabase-mail
+    image: inbucket/inbucket:stable
+    ports:
+      - "2500:2500" # SMTP
+      - "9000:9000" # web interface
+      - "1100:1100" # POP3
