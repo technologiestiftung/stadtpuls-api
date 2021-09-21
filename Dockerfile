@@ -9,6 +9,7 @@ RUN npm run build
 FROM node:14.17-slim as runner
 WORKDIR /usr/app/
 COPY ["package.json", "package-lock.json*", "./"]
+ENV NODE_ENV=production
 RUN npm ci --silent
 COPY --from=builder /usr/src/app/dist/ /usr/app/
 # Add Tini
