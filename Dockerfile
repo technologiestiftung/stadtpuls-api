@@ -12,6 +12,7 @@ COPY ["package.json", "package-lock.json*", "./"]
 ENV NODE_ENV=production
 RUN npm ci --silent
 COPY --from=builder /usr/src/app/dist/ /usr/app/
+COPY ./config/ /usr/app/config/
 # Add Tini
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
