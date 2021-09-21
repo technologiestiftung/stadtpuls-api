@@ -5,6 +5,7 @@ import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 import config from "config";
+import { logLevel } from "../lib/env";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -89,6 +90,7 @@ const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
     url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
     method: "POST",
+    logLevel,
     schema: { body: postTTNBodySchema, headers: postTTNHeaderSchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
