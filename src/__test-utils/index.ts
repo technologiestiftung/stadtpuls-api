@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { definitions } from "../common/supabase";
 import { Pool } from "pg";
 export { createAuthToken } from "./create-auth-token";
-export { truncateTables } from "./truncate-tables";
+export { truncateTables, closePool } from "./truncate-tables";
 export { buildReply } from "./build-reply";
 export { buildRequest } from "./build-request";
 export { signup } from "./signup";
@@ -25,6 +25,7 @@ export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
 export const supabaseUrl = "http://localhost:8000";
 export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
+export const sensorsEndpoint = `/api/v${apiVersion}/sensors`;
 export const databaseUrl = process.env.DATABASE_URL!;
 export const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 

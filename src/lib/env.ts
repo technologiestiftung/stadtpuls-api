@@ -10,6 +10,12 @@ const supabaseServiceRoleKey = env.require("SUPABASE_SERVICE_ROLE_KEY");
 const issuer = env.require("ISSUER");
 const logLevel = env.require("LOG_LEVEL") as LogLevel;
 const logLevels = ["info", "error", "debug", "fatal", "warn", "trace"];
+const supabaseMaxRows = parseInt(env.require("SUPBASE_MAX_ROWS"), 10);
+if (isNaN(supabaseMaxRows)) {
+  throw new Error(
+    "Environment variable 'SUPBASE_MAX_ROWS' could not be parsed to int"
+  );
+}
 if (!logLevels.includes(logLevel)) {
   throw new Error(
     `Environment variable LOG_LEVEL must be one of ${logLevels.join(", ")}`
@@ -24,4 +30,5 @@ export {
   issuer,
   databaseUrl,
   logLevel,
+  supabaseMaxRows,
 };
