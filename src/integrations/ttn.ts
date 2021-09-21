@@ -12,7 +12,7 @@ declare module "fastify" {
   }
 }
 
-interface TTNPostBody {
+export interface TTNPostBody {
   [key: string]: unknown;
   received_at: string;
   uplink_message: {
@@ -30,9 +30,9 @@ interface TTNPostBody {
     };
   };
   end_device_ids: {
-    device_id: "string";
+    device_id: string;
     application_ids: {
-      application_id: "string";
+      application_id: string;
     };
   };
   simulated: boolean;
@@ -40,6 +40,14 @@ interface TTNPostBody {
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
 
+const postTTNHeaderSchema = S.object()
+  .id("/integration/zzn/header")
+  .title("HTTP Header")
+  .additionalProperties(true)
+  .oneOf([
+    S.object().prop("Authorization", S.string().required()),
+    S.object().prop("authorization", S.string().required()),
+  ]);
 const postTTNBodySchema = S.object()
   .id("/integrations/ttn/v3")
   .title("Validation for data coming from TTN")
@@ -81,16 +89,18 @@ const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
     url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
     method: "POST",
-    schema: { body: postTTNBodySchema },
+    schema: { body: postTTNBodySchema, headers: postTTNHeaderSchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
+      if (request.headers.authorization === undefined) {
+        throw fastify.httpErrors.unauthorized();
+      }
       const decoded = (await request.jwtVerify()) as AuthToken;
       const token = request.headers.authorization?.split(" ")[1];
       const { data: authtokens, error } = await fastify.supabase
-        .from<definitions["authtokens"]>("authtokens")
+        .from<definitions["auth_tokens"]>("auth_tokens")
         .select("*")
-        .eq("userId", decoded.sub)
-        .eq("projectId", decoded.projectId);
+        .eq("user_id", decoded.sub);
       if (!authtokens || authtokens.length === 0) {
         fastify.log.warn("no token found");
         throw fastify.httpErrors.unauthorized();
@@ -112,20 +122,43 @@ const ttn: FastifyPluginAsync = async (fastify) => {
       const { device_id } = end_device_ids;
       const { decoded_payload, locations } = uplink_message;
       const { measurements } = decoded_payload;
-      const { data: devices, error: deviceError } = await fastify.supabase
-        .from("devices")
+      const {
+        data: sensors,
+        error: sensorsError,
+      } = await fastify.supabase
+        .from<definitions["sensors"]>("sensors")
         .select("*")
-        .eq("externalId", device_id)
-        .eq("projectId", decoded.projectId)
-        .eq("userId", decoded.sub);
-      if (!devices || devices.length === 0) {
+        .eq("external_id", device_id)
+        .eq("user_id", decoded.sub);
+      if (!sensors || sensors.length === 0) {
         throw fastify.httpErrors.notFound("device not found");
       }
-      if (deviceError) {
+      if (sensorsError) {
         throw fastify.httpErrors.internalServerError(
           "device not found postgres error"
         );
       }
+      const latitude = locations?.user?.latitude;
+      const longitude = locations?.user?.longitude;
+      const altitude = locations?.user?.altitude;
+
+      const {
+        data: updatedSensors,
+        error: updateError,
+      } = await fastify.supabase
+        .from<definitions["sensors"]>("sensors")
+        .update({
+          latitude,
+          longitude,
+          altitude,
+        })
+        .eq("id", sensors[0].id);
+
+      if (updateError) {
+        fastify.log.error("Error while updating lat, lon, alt", updateError);
+      }
+      fastify.log.info("updated lat, lon, alt", updatedSensors);
+
       // console.log(
       //   new Date(received_at).toISOString().replace("T", " ").replace("Z", "")
       // );
@@ -134,11 +167,8 @@ const ttn: FastifyPluginAsync = async (fastify) => {
         .insert([
           {
             measurements: `{${measurements.join(",")}}`,
-            recordedAt: received_at,
-            deviceId: devices[0].id,
-            latitude: locations?.user?.latitude,
-            longitude: locations?.user?.longitude,
-            altitude: locations?.user?.altitude,
+            recorded_at: received_at,
+            sensor_id: sensors[0].id,
           },
         ]);
 

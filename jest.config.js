@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-
+//@ts-check
 const path = require("path");
 const fs = require("fs");
 const isCi = require("is-ci");
@@ -47,12 +47,14 @@ module.exports = merge(inPjsConfig, {
     "!src/__test-utils/*",
     "!src/mocks/*",
     "!src/common/supabase.ts",
+    "!src/index.ts",
     "!src/common/jwt.ts",
   ],
   setupFilesAfterEnv: ["./jest.setup.js"],
+  globalTeardown: "./jest.teardown.js",
   coverageThreshold: {
     global: {
-      branches: 70,
+      branches: 65,
       functions: 75,
       lines: 75,
       statements: 75,

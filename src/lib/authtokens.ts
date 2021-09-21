@@ -9,12 +9,16 @@ import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 
 interface PostBody {
-  projectId: number;
   description: string;
+  scope?: "sudo" | "read" | "write";
+}
+interface PutBody {
+  description?: string;
+  nice_id: number;
+  scope?: "sudo" | "read" | "write";
 }
 interface DeleteBody {
-  tokenId: number;
-  projectId: number;
+  nice_id: number;
 }
 interface SupabaseJWTPayload {
   aud: "authenticated" | "anon";
@@ -37,36 +41,55 @@ export interface AuthtokensPluginOptions {
   issuer: string;
 }
 
+// const tokenHeaderSchema = S.object()
+//   .id("/authtokens/headers")
+//   .title("Auth Token Header")
+//   .additionalProperties(true)
+//   .prop("Authorization", S.string().required().description("Bearer <token>"))
+//   .prop("Content-Type", S.string().required().description("application/json"));
+
 const postTokenBodySchema = S.object()
-  .id("/authtokens/oist")
+  .id("/authtokens/post")
   .title("for token generation")
-  .prop("projectId", S.number().minimum(1).required())
-  .prop("description", S.string().minLength(3).required());
+  .additionalProperties(false)
+  .prop("description", S.string().minLength(3).required())
+  .prop("scope", S.string().enum(["sudo", "read", "write"]));
+
+const putTokenBodySchema = S.object()
+  .id("/authtokens/put")
+  .title("for token re-generation")
+  .additionalProperties(false)
+  .prop("description", S.string().minLength(3))
+  .prop("nice_id", S.string().required())
+  .prop("scope", S.string());
 
 const getTokenQuerySchema = S.object()
-  .id("/auth?projectId=123")
-  .title("get all project tokens")
-  .prop("projectId", S.number().required());
+  .id("/authtokens/get")
+  .additionalProperties(false)
+  .prop("nice_id", S.string())
+  .title("get all project tokens or filter");
 
 const deleteTokenBodySchema = S.object()
   .id("/authtokens/delete")
   .title("for token deletion")
-  .prop("tokenId", S.number().minimum(1).required())
-  .prop("projectId", S.number().minimum(1).required());
+  .additionalProperties(false)
+  .prop("nice_id", S.number().minimum(1).required());
 
 const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   fastify,
   { mount, apiVersion, endpoint, issuer }
 ) => {
-  // fastify
-  //   .decorate(
-  //     "verifyJWT",
-  //     async (request: FastifyRequest, _reply: FastifyReply) => {
-  //       await request.jwtVerify();
-  //     }
-  //   )
-  //   .after(() => {
-  fastify.route<{ Querystring: { projectId: number } }>({
+  //   ▄████ ▓█████▄▄▄█████▓
+  //  ██▒ ▀█▒▓█   ▀▓  ██▒ ▓▒
+  // ▒██░▄▄▄░▒███  ▒ ▓██░ ▒░
+  // ░▓█  ██▓▒▓█  ▄░ ▓██▓ ░
+  // ░▒▓███▀▒░▒████▒ ▒██▒ ░
+  //  ░▒   ▒ ░░ ▒░ ░ ▒ ░░
+  //   ░   ░  ░ ░  ░   ░
+  // ░ ░   ░    ░    ░
+  //       ░    ░  ░
+
+  fastify.route<{ Querystring: { nice_id?: string } }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "GET",
     schema: {
@@ -74,117 +97,176 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
     },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
+      type PickedTokenProps = Pick<
+        definitions["auth_tokens"],
+        "description" | "scope" | "nice_id" | "user_id"
+      >;
+      const selection = "description, nice_id, scope";
+
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
-      const projectId = request.query.projectId;
-      const { data: authtokens, error } = await fastify.supabase
-        .from<
-          Pick<
-            definitions["authtokens"],
-            "userId" | "projectId" | "description" | "niceId"
-          >
-        >("authtokens")
-        .select("projectId,  description, niceId")
-        .eq("userId", decoded.sub)
-        .eq("projectId", projectId);
+      let res;
+      if (request.query.nice_id !== undefined) {
+        const nice_id = parseInt(request.query.nice_id, 10);
+        res = fastify.supabase
+          .from<PickedTokenProps>("auth_tokens")
+          .select(selection)
+          .eq("user_id", decoded.sub)
+          .eq("nice_id", nice_id);
+      } else {
+        res = fastify.supabase
+          .from<PickedTokenProps>("auth_tokens")
+          .select(selection)
+          .eq("user_id", decoded.sub);
+      }
+      const { data: authtokens, error } = await res;
 
       if (error) {
         fastify.log.error(error);
-        throw fastify.httpErrors.internalServerError();
+        throw fastify.httpErrors.internalServerError(error.hint);
       }
 
       reply.status(200).send({
-        comment: "Should return array of tokenIds and description",
         method: `${request.method}`,
         url: `${request.url}`,
         data: authtokens,
       });
     },
   });
+
+  //  ██▓███   ▒█████    ██████ ▄▄▄█████▓
+  // ▓██░  ██▒▒██▒  ██▒▒██    ▒ ▓  ██▒ ▓▒
+  // ▓██░ ██▓▒▒██░  ██▒░ ▓██▄   ▒ ▓██░ ▒░
+  // ▒██▄█▓▒ ▒▒██   ██░  ▒   ██▒░ ▓██▓ ░
+  // ▒██▒ ░  ░░ ████▓▒░▒██████▒▒  ▒██▒ ░
+  // ▒▓▒░ ░  ░░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░  ▒ ░░
+  // ░▒ ░       ░ ▒ ▒░ ░ ░▒  ░ ░    ░
+  // ░░       ░ ░ ░ ▒  ░  ░  ░    ░
+  //              ░ ░        ░
+
   fastify.route<{ Body: PostBody }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "POST",
-    schema: { body: postTokenBodySchema },
+    schema: {
+      body: postTokenBodySchema,
+      // headers: tokenHeaderSchema,
+    },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
-      const { projectId, description } = request.body;
+      const { description, scope } = request.body;
+
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
       const options: SignOptions = { algorithm: "HS256" };
-      const payload: AuthToken = {
+      const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
-        projectId,
+        scope: "sudo",
         description,
         jti: uuidv4(),
         iss: issuer,
       };
       const token = fastify.jwt.sign(payload, options);
       const hashedToken = await hash(token, 10);
-      const { data: projects, error: projError } = await fastify.supabase
-        .from<definitions["projects"]>("projects")
-        .select("id")
-        .eq("id", projectId)
-        .eq("userId", decoded.sub);
-      if (projError) {
-        throw fastify.httpErrors.internalServerError(
-          "error while checking for existing project"
-        );
-      }
-      if (!projects || projects.length === 0) {
-        throw fastify.httpErrors.notFound("project not found");
-      }
 
-      const { data: existingToken, error } = await fastify.supabase
-        .from<definitions["authtokens"]>("authtokens")
-        .select("*")
-        .eq("projectId", projectId)
-        .eq("userId", decoded.sub);
+      const { data: authTokens, error } = await fastify.supabase
+        .from<definitions["auth_tokens"]>("auth_tokens")
+        .insert([
+          {
+            id: hashedToken,
+            description,
+            scope: scope ? scope : "sudo",
+            user_id: decoded.sub,
+          },
+        ]);
+
       if (error) {
-        throw fastify.httpErrors.internalServerError(
-          "error while checking for existing tokens"
-        );
+        throw fastify.httpErrors.internalServerError();
       }
-      if (!existingToken || existingToken.length === 0) {
-        fastify.log.info(`inserting new token`);
+      if (authTokens === null || authTokens.length === 0) {
+        throw fastify.httpErrors.internalServerError();
+      }
+      reply.status(201).send({
+        method: `${request.method}`,
+        url: `${request.url}`,
+        data: { token, nice_id: authTokens[0].nice_id },
+      });
+    },
+  });
+  //  ██▓███   █    ██ ▄▄▄█████▓
+  // ▓██░  ██▒ ██  ▓██▒▓  ██▒ ▓▒
+  // ▓██░ ██▓▒▓██  ▒██░▒ ▓██░ ▒░
+  // ▒██▄█▓▒ ▒▓▓█  ░██░░ ▓██▓ ░
+  // ▒██▒ ░  ░▒▒█████▓   ▒██▒ ░
+  // ▒▓▒░ ░  ░░▒▓▒ ▒ ▒   ▒ ░░
+  // ░▒ ░     ░░▒░ ░ ░     ░
+  // ░░        ░░░ ░ ░   ░
+  //             ░
 
-        await fastify.supabase
-          .from<definitions["authtokens"]>("authtokens")
-          .insert([
-            {
-              id: hashedToken,
-              description,
-              projectId,
-              userId: decoded.sub,
-            },
-          ]);
-      } else {
-        fastify.log.info(`removing existing token ${existingToken[0].id}`);
-        // remove old token and insert new one
-        await fastify.supabase
-          .from<definitions["authtokens"]>("authtokens")
-          .delete()
-          .eq("id", existingToken[0].id);
-        fastify.log.info(`inserting new token`);
+  fastify.route<{ Body: PutBody }>({
+    url: `/${mount}/${apiVersion}/${endpoint}`,
+    method: "PUT",
+    schema: {
+      body: putTokenBodySchema,
+    },
+    preHandler: fastify.auth([fastify.verifyJWT]),
+    handler: async (request, reply) => {
+      const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
+      const { description, scope, nice_id } = request.body;
 
-        await fastify.supabase
-          .from<definitions["authtokens"]>("authtokens")
-          .insert([
-            {
-              id: hashedToken,
-              description,
-              projectId,
-              userId: decoded.sub,
-            },
-          ]);
+      const { data: currentTokens, error } = await fastify.supabase
+        .from<definitions["auth_tokens"]>("auth_tokens")
+        .select("description, nice_id, scope, user_id")
+        .eq("user_id", decoded.sub)
+        .eq("nice_id", nice_id);
+      if (currentTokens === null || currentTokens.length === 0) {
+        throw fastify.httpErrors.notFound();
+      }
+      if (error) {
+        fastify.log.error(error);
+        throw fastify.httpErrors.internalServerError();
+      }
+
+      const options: SignOptions = { algorithm: "HS256" };
+      const payload: Omit<AuthToken, "iat"> = {
+        sub: decoded.sub,
+        scope: scope ? scope : currentTokens[0].scope,
+        description: description ? description : currentTokens[0].description,
+        jti: uuidv4(),
+        iss: issuer,
+      };
+      const token = fastify.jwt.sign(payload, options);
+      const hashedToken = await hash(token, 10);
+
+      const { data: newTokens } = await fastify.supabase
+        .from<definitions["auth_tokens"]>("auth_tokens")
+        .update({
+          id: hashedToken,
+          description,
+          scope: scope ? scope : "sudo",
+        })
+        .eq("user_id", decoded.sub)
+        .eq("nice_id", nice_id);
+
+      if (newTokens === null || newTokens.length === 0) {
+        throw fastify.httpErrors.internalServerError();
       }
 
       reply.status(201).send({
-        comment: "Should do create a token",
         method: `${request.method}`,
         url: `${request.url}`,
-        data: { token },
+        data: { token, nice_id: newTokens[0].nice_id },
       });
     },
   });
 
+  // ▓█████▄ ▓█████  ██▓
+  // ▒██▀ ██▌▓█   ▀ ▓██▒
+  // ░██   █▌▒███   ▒██░
+  // ░▓█▄   ▌▒▓█  ▄ ▒██░
+  // ░▒████▓ ░▒████▒░██████▒
+  //  ▒▒▓  ▒ ░░ ▒░ ░░ ▒░▓  ░
+  //  ░ ▒  ▒  ░ ░  ░░ ░ ▒  ░
+  //  ░ ░  ░    ░     ░ ░
+  //    ░       ░  ░    ░  ░
+  //  ░
   fastify.route<{ Body: DeleteBody }>({
     url: `/${mount}/${apiVersion}/${endpoint}`,
     method: "DELETE",
@@ -192,11 +274,11 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
     preHandler: fastify.auth([fastify.verifyJWT]),
 
     handler: async (request, reply) => {
-      const { tokenId: niceId } = request.body;
+      const { nice_id } = request.body;
       const { data: authtoken, error } = await fastify.supabase
-        .from<Pick<definitions["authtokens"], "id" | "niceId">>("authtokens")
-        .select("niceId, id")
-        .eq("niceId", niceId)
+        .from<Pick<definitions["auth_tokens"], "id" | "nice_id">>("auth_tokens")
+        .select("nice_id, id")
+        .eq("nice_id", nice_id)
         .single();
       if (!authtoken) {
         throw fastify.httpErrors.notFound("token not found");
@@ -206,7 +288,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         throw fastify.httpErrors.internalServerError();
       }
       const success = await fastify.supabase
-        .from("authtokens")
+        .from("auth_tokens")
         .delete()
         .eq("id", authtoken.id);
 

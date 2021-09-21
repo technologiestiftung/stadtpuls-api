@@ -1,81 +1,96 @@
--- -------------------------------------------------------------
--- Generation Time: 2021-04-21 11:21:46.9660
--- -------------------------------------------------------------
-DROP TABLE IF EXISTS "public"."authtokens";
--- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
--- Sequence and defined type
--- Table Definition
-CREATE TABLE "public"."authtokens" (
-    "niceId" int4 GENERATED ALWAYS AS IDENTITY,
-    "id" text NOT NULL,
-    "description" varchar(200) NOT NULL,
-    "projectId" int4 NOT NULL,
-    "userId" uuid NOT NULL,
+-- role
+DROP TYPE IF EXISTS "public"."role";
+CREATE TYPE "public"."role" AS ENUM ('maker', 'taker');
+--
+--
+--
+--
+--
+--
+-- user profile
+DROP TABLE IF EXISTS "public"."user_profiles";
+CREATE TABLE "public"."user_profiles" (
+    "id" uuid NOT NULL,
+    "name" varchar(20) constraint name_length_min_3_check check(char_length(name) >= 3) constraint special_character_check check ("name" ~* '^[a-zA-Z0-9_-]*$') constraint name_unique UNIQUE,
+    "display_name" varchar(50),
+    "created_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "role" "public"."role" DEFAULT 'maker'::"role",
+    "url" varchar(100),
+    "description" varchar(200),
     PRIMARY KEY ("id")
 );
+--
+--
+--
+--
+--
+--
+-- auth tokens
+DROP TYPE IF EXISTS "public"."token_scope";
+CREATE TYPE "public"."token_scope" AS ENUM ('sudo', 'read', 'write');
+DROP TABLE IF EXISTS "public"."auth_tokens";
+CREATE TABLE "public"."auth_tokens" (
+    "nice_id" int4 GENERATED ALWAYS AS IDENTITY,
+    "id" text NOT NULL,
+    "description" varchar(200) NOT NULL,
+    "scope" "public"."token_scope" NOT NULL DEFAULT 'sudo'::"token_scope",
+    "user_id" uuid NOT NULL REFERENCES "public"."user_profiles" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY ("id")
+);
+--
+--
+--
+--
+--
+-- categories
 DROP TABLE IF EXISTS "public"."categories";
--- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
--- Sequence and defined type
-DROP TYPE IF EXISTS "public"."categoryNames";
-CREATE TYPE "public"."categoryNames" AS ENUM (
+DROP TYPE IF EXISTS "public"."category_names";
+CREATE TYPE "public"."category_names" AS ENUM (
     'Temperatur',
     'CO2',
     'Luftfeuchtigkeit',
-    'Druck',
-    'PAXCounter',
+    'Luftdruck',
+    'Unit Counter',
     'Lautstärke'
 );
--- Table Definition
 CREATE TABLE "public"."categories" (
     "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "name" "public"."categoryNames" NOT NULL,
+    "name" "public"."category_names" NOT NULL constraint category_name_unique UNIQUE,
     "description" varchar(200) NOT NULL
 );
-DROP TABLE IF EXISTS "public"."devices";
+--
+--
+--
+--
+--
+--
+--
+--
+-- Sensors
+DROP TYPE IF EXISTS "public"."connection_types";
+CREATE TYPE "public"."connection_types" AS ENUM ('http', 'ttn', 'other');
+DROP TABLE IF EXISTS "public"."sensors";
 -- Table Definition
-CREATE TABLE "public"."devices" (
+CREATE TABLE "public"."sensors" (
+    "created_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "externalId" varchar(36),
-    "name" varchar(20),
-    "projectId" int4 NOT NULL,
-    "userId" uuid NOT NULL
-);
-DROP TABLE IF EXISTS "public"."projects";
-DROP TYPE IF EXISTS "public"."connectionTypes";
-CREATE TYPE "public"."connectionTypes" AS ENUM ('ttn', 'http', 'other');
--- Table Definition
-CREATE TABLE "public"."projects" (
-    "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "name" varchar(50) NOT NULL,
+    "external_id" varchar(36),
+    "name" varchar(50) constraint name_length_min_3_check check(char_length(name) >= 3),
     "description" varchar(200),
-    "createdAt" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "connectype" "public"."connectionTypes" NOT NULL DEFAULT 'ttn'::"connectionTypes",
-    "location" varchar(20),
-    "userId" uuid NOT NULL,
-    "categoryId" int4 NOT NULL
-);
-DROP TABLE IF EXISTS "public"."userprofiles";
--- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
-DROP TYPE IF EXISTS "public"."Role";
-CREATE TYPE "public"."Role" AS ENUM ('maker');
--- Table Definition
-CREATE TABLE "public"."userprofiles" (
-    "id" uuid NOT NULL,
-    "name" varchar(20),
-    "createdAt" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "role" "public"."Role" DEFAULT 'maker'::"Role",
-    PRIMARY KEY ("id")
+    "connection_type" "public"."connection_types" NOT NULL DEFAULT 'http'::"connection_types",
+    "location" varchar(50),
+    "longitude" float8,
+    "latitude" float8,
+    "altitude" float8,
+    "category_id" int4 NOT NULL REFERENCES "public"."categories" (id),
+    "icon_id" int4,
+    "user_id" uuid NOT NULL REFERENCES "public"."user_profiles" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 DROP TABLE IF EXISTS "public"."records";
--- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
--- Sequence and defined type
 -- Table Definition
 CREATE TABLE "public"."records" (
     "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "recordedAt" timestamptz NOT NULL,
+    "recorded_at" timestamptz NOT NULL,
     "measurements" _float8,
-    "longitude" float4,
-    "latitude" float4,
-    "altitude" float4,
-    "deviceId" int4 NOT NULL
+    "sensor_id" int4 NOT NULL REFERENCES "public"."sensors" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

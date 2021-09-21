@@ -1,9 +1,20 @@
-import faker from "faker";
 import config from "config";
 import { createClient } from "@supabase/supabase-js";
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import fetch from "node-fetch";
 import { definitions } from "../common/supabase";
+import { Pool } from "pg";
+export { createAuthToken } from "./create-auth-token";
+export { truncateTables } from "./truncate-tables";
+export { buildReply } from "./build-reply";
+export { buildRequest } from "./build-request";
+export { signup } from "./signup";
+export { signupUser } from "./signup-user";
+export { login } from "./login";
+export { logout } from "./logout";
+export { deleteUser } from "./delete-user";
+export { checkInbox, purgeInbox } from "./mail";
+export { createTTNPayload } from "./create-ttn-payload";
+export { createSensor } from "./create-sensor";
+export type Sensor = definitions["sensors"];
 
 export const jwtSecret =
   process.env.JWT_SECRET ||
@@ -14,8 +25,24 @@ export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
 export const supabaseUrl = "http://localhost:8000";
 export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
-const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+export const databaseUrl = process.env.DATABASE_URL!;
+export const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
+export const pool = new Pool({
+  connectionString: databaseUrl,
+});
+
+export const buildServerOpts = {
+  jwtSecret,
+  supabaseUrl,
+  supabaseServiceRoleKey,
+  logger: false,
+  issuer: "tsb",
+};
+export interface CreateTokenFullResponse {
+  token: string;
+  nice_id: number;
+}
 export interface ApiAuthResponsePayload {
   access_token: string;
   token_type: string;
@@ -50,224 +77,7 @@ export interface AppMetadata {
   provider: string;
 }
 
-export const buildReply: (
-  overrides?: Record<string, unknown>
-) => FastifyReply = (overrides) => {
-  const fastifyReply: unknown = {
-    code: 200,
-    status: jest.fn(() => fastifyReply),
-    send: jest.fn(() => fastifyReply),
-    ...overrides,
-  };
-  return fastifyReply as FastifyReply;
-};
-
-export const buildRequest: (
-  overrides?: Record<string, unknown>
-) => FastifyRequest = (overrides) => {
-  const req: unknown = { ...overrides };
-  return req as FastifyRequest;
-};
-
-interface SignupLoginResponse {
+export interface SignupLoginResponse {
   token: string;
   id: string;
 }
-
-export const signupUser: () => Promise<{
-  id: string;
-  token: string;
-}> = async () => {
-  const { id, token } = await signup({
-    anonKey: supabaseAnonKey,
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    url: new URL(`${supabaseUrl}/auth/v1/signup`),
-  });
-  return { id, token };
-};
-export const signup: (options: {
-  email: string;
-  password: string;
-  url: URL;
-  anonKey: string;
-}) => Promise<SignupLoginResponse> = async ({
-  email,
-  password,
-  url,
-  anonKey,
-}) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    apikey: anonKey,
-  };
-  const body = JSON.stringify({ email, password });
-
-  const response = await fetch(url.href, {
-    method: "POST",
-    headers,
-    body,
-  });
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-  if (response.status === 200) {
-    const json = (await response.json()) as ApiAuthResponsePayload;
-    return { token: json.access_token, id: json.user.id };
-  } else {
-    throw new Error(await response.json());
-  }
-};
-export const login: (options: {
-  email: string;
-  password: string;
-  url: URL;
-  anonKey: string;
-}) => Promise<SignupLoginResponse> = async ({
-  email,
-  password,
-  url,
-  anonKey,
-}) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    apikey: anonKey,
-  };
-  const body = JSON.stringify({ email, password });
-
-  const response = await fetch(url.href, {
-    method: "POST",
-    headers,
-    body,
-  });
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-  if (response.status === 200) {
-    const json = (await response.json()) as ApiAuthResponsePayload;
-    return { token: json.access_token, id: json.user.id };
-  } else {
-    throw new Error(await response.json());
-  }
-};
-
-export const logout: (options: {
-  userToken: string;
-  url: URL;
-  anonKey: string;
-}) => Promise<boolean> = async ({ url, userToken, anonKey }) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    apikey: anonKey,
-    Authorization: `Bearer ${userToken}`,
-  };
-
-  const response = await fetch(url.href, {
-    method: "POST",
-    headers,
-  });
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-  if (response.status === 204) {
-    return true;
-  } else {
-    throw new Error(await response.json());
-  }
-};
-
-export const deleteUser: (userToken: string) => Promise<boolean> = async (
-  userToken
-) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    apikey: supabaseAnonKey,
-    Authorization: `Bearer ${userToken}`,
-  };
-
-  const url = new URL(`${supabaseUrl}/rest/v1/rpc/delete_user`);
-  const response = await fetch(url.href, {
-    method: "POST",
-    headers,
-  });
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-  if (response.status !== 200) {
-    console.error(await response.json());
-    throw new Error("Could not delete user");
-  }
-  return true;
-};
-
-export const createProject: (options: {
-  name?: string;
-  userId: string;
-  categoryId?: number;
-}) => Promise<definitions["projects"]> = async ({
-  name,
-  userId,
-  categoryId,
-}) => {
-  const { data: projects, error } = await supabase
-    .from<definitions["projects"]>("projects")
-    .insert([
-      {
-        name: name ? name : faker.internet.domainName(),
-        userId,
-        categoryId: categoryId || 1,
-      },
-    ]);
-  if (!projects) {
-    throw error;
-  }
-  return projects[0];
-};
-
-export const createDevice: (options: {
-  userId: string;
-  projectId: number;
-  name?: string;
-  externalId?: string;
-}) => Promise<definitions["devices"]> = async ({
-  userId,
-  projectId,
-  name,
-  externalId,
-}) => {
-  const { data: devices, error: dError } = await supabase
-    .from<definitions["devices"]>("devices")
-    .insert([
-      {
-        name: name ? name : faker.random.word(),
-        userId,
-        projectId,
-        externalId,
-      },
-    ]);
-  if (!devices) {
-    throw dError;
-  }
-  return devices[0];
-};
-export const createAuthToken: (opts: {
-  server: FastifyInstance;
-  userToken: string;
-  projectId: number;
-}) => Promise<string> = async ({ server, userToken, projectId }) => {
-  const responseToken = await server.inject({
-    method: "POST",
-    url: authtokenEndpoint,
-    headers: {
-      authorization: `Bearer ${userToken}`,
-      apikey: supabaseAnonKey,
-    },
-    payload: {
-      projectId: projectId,
-      description: faker.random.words(5),
-    },
-  });
-
-  const resBody = JSON.parse(responseToken.body);
-  return resBody.data.token;
-};

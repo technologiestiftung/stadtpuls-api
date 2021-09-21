@@ -1,7 +1,11 @@
+import { definitions } from "./supabase";
+type Scope = definitions["auth_tokens"]["scope"];
+
 export interface AuthToken {
   sub: string;
-  projectId: number;
   description: string;
   jti: string;
   iss: string;
+  scope: Scope;
+  iat: number;
 }

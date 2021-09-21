@@ -1,6 +1,6 @@
 describe("env var loading", () => {
   test("should pass since we have all the variables in place", async () => {
-    const envs = await import("./env");
+    const envs = await import("../env");
 
     expect(envs.jwtSecret).toBe(process.env.JWT_SECRET);
     expect(envs.issuer).toBe(process.env.ISSUER);
