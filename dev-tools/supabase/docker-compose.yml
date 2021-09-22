@@ -1,3 +1,4 @@
+# TODO: [STADTPULS-396] Fix container versions. Don't use the latest version.
 version: "3.6"
 services:
   kong:
