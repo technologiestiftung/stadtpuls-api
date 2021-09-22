@@ -9,27 +9,74 @@ export interface ReplyPayload<Payload> {
   data: Payload | Payload[];
   nextPage?: string;
 }
-interface ContentRange {
+export interface ContentRange {
   offset: number;
   limit: number;
-  totalCount: number;
 }
-export function buildReplyPayload<PayloadType>(
-  url: string,
-  payload: PayloadType,
-  contentRange?: ContentRange
-): ReplyPayload<PayloadType> {
+export interface BuildReplyHeadersOptions {
+  count: number | null;
+  offset: number;
+  unit: RangeUnit;
+  unitLength?: number;
+}
+export type RangeUnit = "sensor";
+export function buildReplyPayload<PayloadType>({
+  url,
+  payload,
+  contentRange,
+}: {
+  url: string;
+  payload: PayloadType;
+  contentRange?: ContentRange;
+}): ReplyPayload<PayloadType> {
+  // TODO: This function needs to be smarter and should compare unitLength and payload
   let nextPage: string | undefined = undefined;
 
-  if (contentRange) {
-    nextPage = `${url}?offset=${
-      contentRange.offset + contentRange.limit
-    }&limit=${contentRange.limit}`;
+  if (contentRange && payload && Array.isArray(payload) && payload.length > 0) {
+    const { offset, limit } = contentRange;
+    nextPage = `${url}?offset=${offset + payload.length - 1}&limit=${limit}`;
+  }
+  let data: PayloadType[] = [];
+  if (payload && Array.isArray(payload)) {
+    data = [...payload];
+  } else {
+    data.push(payload);
   }
   const empty: PayloadType[] = [];
   return {
     nextPage,
     url,
-    data: payload ? payload : empty,
+    data: payload ? data : empty,
+  };
+}
+
+export function buildReplyHeaders({
+  offset,
+  unit,
+
+  unitLength,
+  count,
+}: BuildReplyHeadersOptions): {
+  "Range-Unit": RangeUnit;
+  "Content-Range": string;
+} {
+  let range = unitLength
+    ? `${offset}-${offset + unitLength - 1}`
+    : `${offset}-*`;
+
+  let total = count ? `${count}` : "*";
+
+  if (unitLength !== undefined && count !== null) {
+    if (offset > count) {
+      range = "*";
+    }
+    if (unitLength < count) {
+      total = "*";
+    }
+  }
+
+  return {
+    "Range-Unit": unit,
+    "Content-Range": `${range}/${total}`,
   };
 }
