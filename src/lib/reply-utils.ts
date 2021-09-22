@@ -6,7 +6,7 @@
 export interface ReplyPayload<Payload> {
   comment?: string;
   url: string;
-  data: Payload[];
+  data: Payload | Payload[];
   nextPage?: string;
 }
 interface ContentRange {
@@ -26,9 +26,10 @@ export function buildReplyPayload<PayloadType>(
       contentRange.offset + contentRange.limit
     }&limit=${contentRange.limit}`;
   }
+  const empty: PayloadType[] = [];
   return {
     nextPage,
     url,
-    data: payload ? payload : [],
+    data: payload ? payload : empty,
   };
 }
