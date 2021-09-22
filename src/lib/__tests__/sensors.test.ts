@@ -16,12 +16,22 @@ import buildServer from "../server";
 // https://opensource.org/licenses/MIT
 describe("sensors tests", () => {
   beforeEach(async () => {
-    // await truncateTables();
+    await truncateTables();
   });
   // eslint-disable-next-line jest/no-hooks
   afterAll(async () => {
-    // await truncateTables();
-    // await closePool();
+    await truncateTables();
+    await closePool();
+  });
+
+  test("should be rejected due to wrong query string", async () => {
+    const server = buildServer(buildServerOpts);
+    const response = await server.inject({
+      method: "GET",
+      url: `${sensorsEndpoint}?wrong=param`,
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.json()).toMatchInlineSnapshot();
   });
   test("list of all sensors GET (empty)", async () => {
     const server = buildServer(buildServerOpts);
@@ -44,6 +54,8 @@ describe("sensors tests", () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toBe("");
+    expect(response.headers["content-range"]).toBeDefined();
+    expect(response.headers["range-unit"]).toBeDefined();
   });
 
   test("get list of all sensors GET > 0", async () => {
