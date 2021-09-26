@@ -22,6 +22,7 @@ import sensors from "./sensors";
 
 import ttn from "../integrations/ttn";
 import http from "../integrations/http";
+import { getResponseDefaultSchema } from "../common/schemas";
 
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
@@ -59,6 +60,11 @@ export const buildServer: (options: {
     logger,
     ignoreTrailingSlash: true,
     exposeHeadRoutes: true,
+    ajv: {
+      customOptions: {
+        removeAdditional: false,
+      },
+    },
   });
 
   server.register(fastifyBlipp);
@@ -86,6 +92,11 @@ export const buildServer: (options: {
       await request.jwtVerify();
     }
   );
+
+  // TODO: [STADTPULS-398] Write Schemas for all responses
+  // https://www.fastify.io/docs/latest/Validation-and-Serialization/#adding-a-shared-schema
+  server.addSchema(getResponseDefaultSchema);
+
   server.register(signup, singupRouteOptoins);
   server.register(routesAuth, authtokensRouteOptions);
   server.register(sensors, sensorsRouteOptions);
