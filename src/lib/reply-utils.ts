@@ -34,7 +34,7 @@ export function buildReplyPayload<PayloadType>({
 
   if (contentRange && payload && Array.isArray(payload) && payload.length > 0) {
     const { offset, limit } = contentRange;
-    nextPage = `${url}?offset=${offset + payload.length - 1}&limit=${limit}`;
+    nextPage = `${url}?offset=${offset + payload.length}&limit=${limit}`;
   }
   let data: PayloadType[] = [];
   if (payload && Array.isArray(payload)) {
