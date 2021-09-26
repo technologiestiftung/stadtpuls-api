@@ -175,3 +175,14 @@ Content-Type: application/json
 #   }
 # ]
 
+###  Get some sensors
+
+GET {{ baseurl }}/sensors
+Content-Type: application/json
+
+###  Get some sensors
+
+GET {{ baseurl }}/sensors?category_id=1&limit=1000&offset=0
+Content-Type: application/json
+
+
