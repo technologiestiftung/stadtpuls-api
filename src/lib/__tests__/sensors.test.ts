@@ -3,6 +3,7 @@
 //
 // This software is released under the MIT License.
 
+import { definitions } from "../../common/supabase";
 import {
   buildServerOpts,
   closePool,
@@ -11,6 +12,7 @@ import {
   signupUser,
   truncateTables,
 } from "../../__test-utils";
+import { createSensors } from "../../__test-utils/create-sensors";
 import buildServer from "../server";
 
 // https://opensource.org/licenses/MIT
@@ -31,7 +33,13 @@ describe("sensors tests", () => {
       url: `${sensorsEndpoint}?wrong=param`,
     });
     expect(response.statusCode).toBe(400);
-    expect(response.json()).toMatchInlineSnapshot();
+    expect(response.json()).toMatchInlineSnapshot(`
+      Object {
+        "error": "Bad Request",
+        "message": "querystring should NOT have additional properties",
+        "statusCode": 400,
+      }
+    `);
   });
   test("list of all sensors GET (empty)", async () => {
     const server = buildServer(buildServerOpts);
@@ -61,13 +69,64 @@ describe("sensors tests", () => {
   test("get list of all sensors GET > 0", async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    const sensor = await createSensor({ user_id: user.id, name: "test" });
+    await createSensor({ user_id: user.id, name: "test" });
     const response = await server.inject({
       method: "GET",
       url: sensorsEndpoint,
     });
     expect(response.statusCode).toBe(200);
     expect(response.json().data).toHaveLength(1);
-    expect(response.json().data[0]).toStrictEqual(sensor);
+    expect(response.json().data[0]).toMatchSnapshot({
+      altitude: expect.any(Number),
+      category_id: 1,
+      connection_type: "http",
+      created_at: expect.any(String),
+      description: null,
+      external_id: null,
+      icon_id: null,
+      id: expect.any(Number),
+      latitude: expect.any(Number),
+      location: null,
+      longitude: expect.any(Number),
+      name: "test",
+    });
+  });
+
+  test("get list of all sensors GET > 1000 should have pagination", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    await createSensors(user.id, 2000);
+    // await createSensor({ user_id: user.id, name: "test" });
+    const response = await server.inject({
+      method: "GET",
+      url: sensorsEndpoint,
+    });
+    const json = response.json<{
+      url: string;
+      nextPage: string;
+      data: Omit<definitions["sensors"], "user_id">[];
+    }>();
+    const lastItem = json.data[json.data.length - 1];
+    expect(json).toMatchSnapshot({
+      data: expect.any(Array),
+      url: sensorsEndpoint,
+      nextPage: "/api/v3/sensors?offset=1000&limit=1000",
+    });
+    expect(lastItem.id).toBe(1000);
+    expect(response.statusCode).toBe(200);
+
+    // make another request
+    const response2 = await server.inject({
+      method: "GET",
+      url: json.nextPage,
+    });
+    const json2 = response2.json<{
+      url: string;
+      nextPage: string;
+      data: Omit<definitions["sensors"], "user_id">[];
+    }>();
+
+    expect(response2.statusCode).toBe(200);
+    expect(json2.data[0].id).toBe(1001);
   });
 });

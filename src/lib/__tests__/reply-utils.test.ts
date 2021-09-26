@@ -61,7 +61,7 @@ describe("utilities to build reply payload", () => {
     expect(replyPayload.nextPage).toBeDefined();
     expect(replyPayload.url).toBeDefined();
     expect(replyPayload.nextPage).toBeDefined();
-    expect(replyPayload.nextPage).toBe("/api/v3/sensors?offset=0&limit=1000");
+    expect(replyPayload.nextPage).toBe("/api/v3/sensors?offset=1&limit=1000");
   });
 });
 

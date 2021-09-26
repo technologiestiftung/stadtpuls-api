@@ -8,6 +8,7 @@ import {
   buildServerOpts,
   deleteUser,
   signupUser,
+  supabaseUrl,
   truncateTables,
 } from "../../__test-utils";
 import { closePool } from "../../__test-utils/truncate-tables";
@@ -39,7 +40,7 @@ describe("error handling", () => {
 
     const logSpy = jest.spyOn(server.log, "error");
     // const httpErrorsSpy = jest.spyOn(server.httpErrors, "internalServerError");
-    const scope = nock("http://localhost:8000")
+    const scope = nock(supabaseUrl)
       .get("/rest/v1/auth_tokens")
       .query(true)
       .reply(500);
