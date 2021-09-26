@@ -23,7 +23,7 @@ export const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "123";
 export const apiVersion = config.get("apiVersion");
 export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
-export const supabaseUrl = "http://localhost:8000";
+export const supabaseUrl = process.env.SUPABASE_URL || "http://localhost:8080";
 export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
 export const sensorsEndpoint = `/api/v${apiVersion}/sensors`;
 export const databaseUrl = process.env.DATABASE_URL!;
