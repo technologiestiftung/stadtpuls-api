@@ -47,7 +47,10 @@ const getQuerySchema = S.object()
 const sensors: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Querystring: Querystring }>({
     url: `/${mountPoint}/v${apiVersion}/sensors`,
-    schema: { querystring: getQuerySchema },
+    schema: {
+      querystring: getQuerySchema,
+      response: { response: { $ref: "get-response-default#" } },
+    },
     method: ["GET", "HEAD"],
     logLevel,
     handler: async (request, reply) => {
@@ -60,7 +63,7 @@ const sensors: FastifyPluginAsync = async (fastify) => {
 
       const unit: RangeUnit = "sensor";
       const selection =
-        "id, external_id, name, description, connection_type, location, longitude, latitude, altitude, category_id, icon_id";
+        "id, external_id, name, description, connection_type, location, longitude, latitude, altitude, category_id, icon_id, created_at";
       // get the head only and return
       const { count } = await fastify.supabase
         .from<SensorNoUserId>("sensors")
@@ -100,11 +103,7 @@ const sensors: FastifyPluginAsync = async (fastify) => {
 
       // now resolve the promise
       const { data: sensors, error: sensorError } = pgResponse;
-      // fastify.supabase
-      // .from<Omit<Sensor, "user_id">>("sensors")
-      // .select(selection)
-      // .eq("category_id", category_id)
-      // .range(offset, offset + (limit - 1));
+
       // ups. There is an error with the requerst to supabase return 500
       if (sensorError) {
         fastify.log.error(sensorError);
