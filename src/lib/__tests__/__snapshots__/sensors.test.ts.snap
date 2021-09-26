@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sensors tests get list of all sensors GET > 0 1`] = `
+Object {
+  "altitude": Any<Number>,
+  "category_id": 1,
+  "connection_type": "http",
+  "created_at": Any<String>,
+  "description": null,
+  "external_id": null,
+  "icon_id": null,
+  "id": Any<Number>,
+  "latitude": Any<Number>,
+  "location": null,
+  "longitude": Any<Number>,
+  "name": "test",
+}
+`;
+
+exports[`sensors tests get list of all sensors GET > 1000 should have pagination 1`] = `
+Object {
+  "data": Any<Array>,
+  "nextPage": "/api/v3/sensors?offset=1000&limit=1000",
+  "url": "/api/v3/sensors",
+}
+`;
