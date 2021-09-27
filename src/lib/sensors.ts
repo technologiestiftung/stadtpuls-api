@@ -43,7 +43,7 @@ const getQuerySchema = S.object()
   .prop("category_id", S.number())
   .prop("limit", S.number().maximum(supabaseMaxRows))
   .prop("offset", S.number());
-
+// TODO: [STADTPULS-402] API Allow sensor filtering by username
 const sensors: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Querystring: Querystring }>({
     url: `/${mountPoint}/v${apiVersion}/sensors`,
