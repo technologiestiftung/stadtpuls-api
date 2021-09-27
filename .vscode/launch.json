@@ -40,7 +40,6 @@
       "request": "launch",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/jest",
       "args": [
-        "test",
         "-p ${input:pattern}",
         // "--runInBand",
         // "--no-cache",
@@ -50,7 +49,7 @@
       "protocol": "inspector",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
-    }
+    },
 
     {
       "name": "Inpyjamas scripts Debug tests watch mode",
