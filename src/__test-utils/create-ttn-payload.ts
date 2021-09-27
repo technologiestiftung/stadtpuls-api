@@ -1,8 +1,8 @@
 import { TTNPostBody } from "../integrations/ttn";
 
-export const createTTNPayload: (
+export function createTTNPayload(
   overrides?: TTNPostBody | Record<string, unknown>
-) => TTNPostBody = (overrides) => {
+): TTNPostBody {
   return {
     simulated: true,
     end_device_ids: {
@@ -26,4 +26,4 @@ export const createTTNPayload: (
     },
     ...overrides,
   };
-};
+}

@@ -1,3 +1,4 @@
+// TODO: Should this file be moved to sensors-records.ts?
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import { compare } from "bcrypt";

@@ -19,7 +19,7 @@ export interface BuildReplyHeadersOptions {
   unit: RangeUnit;
   unitLength?: number;
 }
-export type RangeUnit = "sensor";
+export type RangeUnit = "sensor" | "record";
 export function buildReplyPayload<PayloadType>({
   url,
   payload,

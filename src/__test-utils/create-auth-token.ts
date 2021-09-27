@@ -6,15 +6,15 @@ import {
   supabaseAnonKey,
 } from "./index";
 
-export const createAuthToken: (opts: {
-  server: FastifyInstance;
-  userToken: string;
-  getFullResponse?: boolean;
-}) => Promise<string | CreateTokenFullResponse> = async ({
+export async function createAuthToken({
   server,
   userToken,
   getFullResponse = false,
-}) => {
+}: {
+  server: FastifyInstance;
+  userToken: string;
+  getFullResponse?: boolean;
+}): Promise<string | CreateTokenFullResponse> {
   const responseToken = await server.inject({
     method: "POST",
     url: authtokenEndpoint,
@@ -29,4 +29,4 @@ export const createAuthToken: (opts: {
 
   const resBody = JSON.parse(responseToken.body);
   return getFullResponse ? resBody.data : resBody.data.token;
-};
+}

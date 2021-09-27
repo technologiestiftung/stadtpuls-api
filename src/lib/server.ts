@@ -18,7 +18,7 @@ import fastifySupabase from "@technologiestiftung/fastify-supabase";
 
 import routesAuth from "./authtokens";
 import signup from "./signup";
-import sensors from "./sensors";
+import sensorsRecordsRoutes from "./sensors-records";
 
 import ttn from "../integrations/ttn";
 import http from "../integrations/http";
@@ -99,7 +99,7 @@ export const buildServer: (options: {
 
   server.register(signup, singupRouteOptoins);
   server.register(routesAuth, authtokensRouteOptions);
-  server.register(sensors, sensorsRouteOptions);
+  server.register(sensorsRecordsRoutes, sensorsRouteOptions);
   server.register(ttn);
   server.register(http);
 

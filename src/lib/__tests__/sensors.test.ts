@@ -1,3 +1,4 @@
+/* eslint-disable jest/require-top-level-describe */
 /* eslint-disable jest/no-hooks */
 // Copyright (c) 2021 Technologiestiftung Berlin & Fabian Morón Zirfas
 //
@@ -16,16 +17,15 @@ import { createSensors } from "../../__test-utils/create-sensors";
 import buildServer from "../server";
 
 // https://opensource.org/licenses/MIT
-describe("sensors tests", () => {
-  beforeEach(async () => {
-    await truncateTables();
-  });
-  // eslint-disable-next-line jest/no-hooks
-  afterAll(async () => {
-    await truncateTables();
-    await closePool();
-  });
-
+beforeEach(async () => {
+  await truncateTables();
+});
+// eslint-disable-next-line jest/no-hooks
+afterAll(async () => {
+  await truncateTables();
+  await closePool();
+});
+describe(`all ${sensorsEndpoint} tests`, () => {
   test("should be rejected due to wrong query string", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
@@ -128,5 +128,69 @@ describe("sensors tests", () => {
 
     expect(response2.statusCode).toBe(200);
     expect(json2.data[0].id).toBe(1001);
+  });
+});
+
+describe(`single ${sensorsEndpoint}/:sensorId tests`, () => {
+  // beforeEach(async () => {
+  //   await truncateTables();
+  // });
+  // // eslint-disable-next-line jest/no-hooks
+  // afterAll(async () => {
+  //   await truncateTables();
+  //   await closePool();
+  // });
+  test("should give us 404 response", async () => {
+    const server = buildServer(buildServerOpts);
+    const response = await server.inject({
+      method: "HEAD",
+      url: `${sensorsEndpoint}/1`,
+    });
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toMatchInlineSnapshot(
+      `"{\\"statusCode\\":404,\\"error\\":\\"Not Found\\",\\"message\\":\\"Not Found\\"}"`
+    );
+  });
+  test("should give us HEAD response", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const sensor = await createSensor({ user_id: user.id, name: "test" });
+    const response = await server.inject({
+      method: "HEAD",
+      url: `${sensorsEndpoint}/${sensor.id}`,
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toBe("");
+    expect(response.headers["content-range"]).toBeDefined();
+    expect(response.headers["range-unit"]).toBeDefined();
+  });
+  test("should give us the sensor response", async () => {
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+    const sensor = await createSensor({ user_id: user.id, name: "test" });
+    const response = await server.inject({
+      method: "GET",
+      url: `${sensorsEndpoint}/${sensor.id}`,
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toMatchSnapshot({
+      url: `${sensorsEndpoint}/${sensor.id}`,
+      data: [
+        {
+          altitude: expect.any(Number),
+          category_id: 1,
+          connection_type: "http",
+          created_at: expect.any(String),
+          description: null,
+          external_id: null,
+          icon_id: null,
+          id: 1,
+          latitude: expect.any(Number),
+          location: null,
+          longitude: expect.any(Number),
+          name: "test",
+        },
+      ],
+    });
   });
 });

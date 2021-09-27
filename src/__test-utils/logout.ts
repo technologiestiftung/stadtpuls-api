@@ -1,10 +1,14 @@
 import fetch from "node-fetch";
 
-export const logout: (options: {
+export async function logout({
+  url,
+  userToken,
+  anonKey,
+}: {
   userToken: string;
   url: URL;
   anonKey: string;
-}) => Promise<boolean> = async ({ url, userToken, anonKey }) => {
+}): Promise<boolean> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     apikey: anonKey,
@@ -23,4 +27,4 @@ export const logout: (options: {
   } else {
     throw new Error(await response.json());
   }
-};
+}
