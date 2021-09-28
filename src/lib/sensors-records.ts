@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 import { PostgrestResponse } from "@supabase/supabase-js";
 import config from "config";
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 
 import fp from "fastify-plugin";
 import S from "fluent-json-schema";
@@ -46,7 +46,6 @@ interface GetRecordParams extends GetSensorParams {
   recordId: string;
 }
 type SensorNoUserId = Omit<Sensor, "user_id">;
-const unit: RangeUnit = "sensor";
 const sensorSelection =
   "id, external_id, name, description, connection_type, location, longitude, latitude, altitude, category_id, icon_id, created_at";
 const apiVersion = config.get("apiVersion");
@@ -82,6 +81,28 @@ const getQuerySchemaRecords = S.object()
   .extend(getQuerySchemaDefault);
 
 const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
+  const preRecordsHandler = async (
+    request: FastifyRequest,
+    _reply: FastifyReply
+  ) => {
+    const { sensorId } = request.params as GetSensorParams;
+    const { data, error } = await fastify.supabase
+      .from<Sensor>("sensors")
+      .select("*")
+      .eq("id", sensorId);
+    if (error) {
+      fastify.log.error(error);
+      throw fastify.httpErrors.internalServerError();
+    }
+    if (data === null) {
+      fastify.log.error(error);
+      throw fastify.httpErrors.internalServerError();
+    }
+    if (data.length === 0) {
+      throw fastify.httpErrors.notFound();
+    }
+  };
+
   //   ██████  ██▓ ███▄    █   ▄████  ██▓    ▓█████
   // ▒██    ▒ ▓██▒ ██ ▀█   █  ██▒ ▀█▒▓██▒    ▓█   ▀
   // ░ ▓██▄   ▒██▒▓██  ▀█ ██▒▒██░▄▄▄░▒██░    ▒███
@@ -110,6 +131,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
     },
     method: ["GET", "HEAD"],
     logLevel,
+    preHandler: [preRecordsHandler],
     handler: async (request, reply) => {
       const { sensorId, recordId } = request.params;
 
@@ -133,7 +155,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
         const headReplyHeaders = buildReplyHeaders({
           count: 1,
           offset: 0,
-          unit,
+          unit: "record",
         });
         return reply.status(200).headers(headReplyHeaders).send();
       }
@@ -173,8 +195,9 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
     },
     method: ["HEAD", "GET"],
     logLevel,
+    preHandler: [preRecordsHandler],
     handler: async (request, reply) => {
-      const { sensorId } = request.params as GetSensorParams;
+      const { sensorId } = request.params;
       const { limit: qLimit = supabaseMaxRows, offset = 0 } = request.query;
       // get the max limit. If the user gives a limit larger
       // then the limit defined by supabase we set it to our limit
@@ -189,7 +212,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
         const headReplyHeaders = buildReplyHeaders({
           count,
           offset,
-          unit,
+          unit: "record",
         });
         return reply.status(200).headers(headReplyHeaders).send();
       }
@@ -282,7 +305,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
         const headReplyHeaders = buildReplyHeaders({
           count: 1,
           offset: 0,
-          unit,
+          unit: "sensor",
         });
         return reply.status(200).headers(headReplyHeaders).send();
       }
@@ -342,7 +365,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
         const headReplyHeaders = buildReplyHeaders({
           count,
           offset,
-          unit,
+          unit: "sensor",
         });
         return reply.status(200).headers(headReplyHeaders).send();
       }
