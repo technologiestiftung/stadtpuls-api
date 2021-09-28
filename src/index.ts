@@ -13,7 +13,7 @@ const server = buildServer({
   jwtSecret,
   supabaseUrl,
   supabaseServiceRoleKey,
-  logger: process.env.NODE_ENV !== "production" ? true : false,
+  logger: true,
   issuer,
 });
 async function main(): Promise<void> {
