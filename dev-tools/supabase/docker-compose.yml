@@ -112,6 +112,10 @@ services:
       - postgres
       - -c
       - wal_level=logical
+      # want to see all requests logged?
+      # might be useful for debugging
+      - -c
+      - log_statement=all
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
