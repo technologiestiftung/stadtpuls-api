@@ -23,3 +23,7 @@ services:
         sync: false
       - key: DATABASE_URL
         sync: false
+      - key: LOG_LEVEL
+        sync: false
+      - key: SUPABASE_MAX_ROWS
+        sync: false

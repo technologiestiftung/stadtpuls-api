@@ -3,14 +3,15 @@ import { definitions } from "../common/supabase";
 import { signup } from "./signup";
 import { supabaseAnonKey, supabaseUrl, supabase } from "./index";
 
-export const signupUser: (
+type UserProfile = definitions["user_profiles"];
+export async function signupUser(
   name?: string,
   email?: string
-) => Promise<{
+): Promise<{
   id: string;
   token: string;
-  userProfile?: definitions["user_profiles"];
-}> = async (name, email) => {
+  userProfile?: UserProfile;
+}> {
   const { id, token } = await signup({
     anonKey: supabaseAnonKey,
     email: email ? email : `${faker.random.word()}+${faker.internet.email()}`,
@@ -19,7 +20,7 @@ export const signupUser: (
   });
   if (name) {
     const { data: userProfile, error } = await supabase
-      .from<definitions["user_profiles"]>("user_profiles")
+      .from<UserProfile>("user_profiles")
       .update({
         name,
       })
@@ -36,4 +37,4 @@ export const signupUser: (
     return { id, token, userProfile };
   }
   return { id, token };
-};
+}

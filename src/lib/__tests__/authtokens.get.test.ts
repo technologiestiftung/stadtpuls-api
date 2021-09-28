@@ -8,8 +8,8 @@ import {
   truncateTables,
   signupUser,
   createAuthToken,
+  closePool,
 } from "../../__test-utils";
-import { closePool } from "../../__test-utils/truncate-tables";
 
 describe("authtokens GET tests", () => {
   // eslint-disable-next-line jest/no-hooks

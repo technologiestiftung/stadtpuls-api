@@ -1,17 +1,17 @@
 import fetch from "node-fetch";
 import { SignupLoginResponse, ApiAuthResponsePayload } from "./index";
 
-export const login: (options: {
-  email: string;
-  password: string;
-  url: URL;
-  anonKey: string;
-}) => Promise<SignupLoginResponse> = async ({
+export async function login({
   email,
   password,
   url,
   anonKey,
-}) => {
+}: {
+  email: string;
+  password: string;
+  url: URL;
+  anonKey: string;
+}): Promise<SignupLoginResponse> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     apikey: anonKey,
@@ -32,4 +32,4 @@ export const login: (options: {
   } else {
     throw new Error(await response.json());
   }
-};
+}

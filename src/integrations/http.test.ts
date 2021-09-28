@@ -49,7 +49,7 @@ describe("tests for the http integration", () => {
     });
     expect(response.statusCode).toBe(404);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"message\\":\\"Route GET:/api/v3/sensors/1/records not found\\",\\"error\\":\\"Not Found\\",\\"statusCode\\":404}"`
+      `"{\\"statusCode\\":404,\\"error\\":\\"Not Found\\",\\"message\\":\\"Not Found\\"}"`
     );
   });
 

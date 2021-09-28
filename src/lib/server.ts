@@ -18,9 +18,11 @@ import fastifySupabase from "@technologiestiftung/fastify-supabase";
 
 import routesAuth from "./authtokens";
 import signup from "./signup";
+import sensorsRecordsRoutes from "./sensors-records";
 
 import ttn from "../integrations/ttn";
 import http from "../integrations/http";
+import { getResponseDefaultSchema } from "../common/schemas";
 
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
@@ -48,10 +50,21 @@ export const buildServer: (options: {
     mount: mountPoint,
     apiVersion: `v${apiVersion}`,
   };
+  const sensorsRouteOptions = {
+    endpoint: "sensors",
+    mount: mountPoint,
+    apiVersion: `v${apiVersion}`,
+  };
+
   const server = fastify({
     logger,
     ignoreTrailingSlash: true,
     exposeHeadRoutes: true,
+    ajv: {
+      customOptions: {
+        removeAdditional: false,
+      },
+    },
   });
 
   server.register(fastifyBlipp);
@@ -79,8 +92,14 @@ export const buildServer: (options: {
       await request.jwtVerify();
     }
   );
+
+  // TODO: [STADTPULS-398] Write Schemas for all responses
+  // https://www.fastify.io/docs/latest/Validation-and-Serialization/#adding-a-shared-schema
+  server.addSchema(getResponseDefaultSchema);
+
   server.register(signup, singupRouteOptoins);
   server.register(routesAuth, authtokensRouteOptions);
+  server.register(sensorsRecordsRoutes, sensorsRouteOptions);
   server.register(ttn);
   server.register(http);
 

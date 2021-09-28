@@ -76,6 +76,7 @@ const deleteTokenBodySchema = S.object()
   .additionalProperties(false)
   .prop("nice_id", S.number().minimum(1).required());
 
+// TODO: [STADTPULS-400] authtokens GET is missing pagination
 const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   fastify,
   { mount, apiVersion, endpoint, issuer }
@@ -128,7 +129,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       }
 
       reply.status(200).send({
-        method: `${request.method}`,
         url: `${request.url}`,
         data: authtokens,
       });

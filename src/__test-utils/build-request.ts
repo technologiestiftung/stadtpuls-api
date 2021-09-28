@@ -1,8 +1,8 @@
 import { FastifyRequest } from "fastify";
 
-export const buildRequest: (
+export function buildRequest(
   overrides?: Record<string, unknown>
-) => FastifyRequest = (overrides) => {
+): FastifyRequest {
   const req: unknown = { ...overrides };
   return req as FastifyRequest;
-};
+}

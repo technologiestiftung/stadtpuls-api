@@ -1,3 +1,4 @@
+# TODO: [STADTPULS-396] Fix container versions. Don't use the latest version.
 version: "3.6"
 services:
   kong:
@@ -111,6 +112,10 @@ services:
       - postgres
       - -c
       - wal_level=logical
+      # want to see all requests logged?
+      # might be useful for debugging
+      - -c
+      - log_statement=all
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres

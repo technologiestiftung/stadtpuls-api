@@ -1,8 +1,6 @@
 import { FastifyReply } from "fastify";
 
-export const buildReply: (
-  overrides?: Record<string, unknown>
-) => FastifyReply = (overrides) => {
+export function buildReply(overrides?: Record<string, unknown>): FastifyReply {
   const fastifyReply: unknown = {
     code: 200,
     status: jest.fn(() => fastifyReply),
@@ -10,4 +8,4 @@ export const buildReply: (
     ...overrides,
   };
   return fastifyReply as FastifyReply;
-};
+}

@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 import fetch from "node-fetch";
+import { supabaseUrl } from "./index";
 interface Message {
   mailbox: string;
   id: string;
@@ -17,8 +18,10 @@ interface Message {
 }
 
 export async function purgeInbox(inbox: string): Promise<void> {
+  const url = new URL(supabaseUrl);
+
   const response = await fetch(
-    `http://localhost:9000/api/v1/mailbox/${inbox}`,
+    `${url.protocol}//${url.hostname}:9000/api/v1/mailbox/${inbox}`,
     {
       method: "DELETE",
     }
@@ -33,7 +36,11 @@ export async function purgeInbox(inbox: string): Promise<void> {
   }
 }
 export async function checkInbox(inbox: string): Promise<Message[]> {
-  const response = await fetch(`http://localhost:9000/api/v1/mailbox/${inbox}`);
+  const url = new URL(supabaseUrl);
+
+  const response = await fetch(
+    `${url.protocol}//${url.hostname}:9000/api/v1/mailbox/${inbox}`
+  );
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text);

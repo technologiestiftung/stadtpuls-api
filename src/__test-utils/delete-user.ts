@@ -6,9 +6,7 @@ import fetch from "node-fetch";
 
 import { supabaseAnonKey, supabaseUrl } from "./index";
 
-export const deleteUser: (userToken: string) => Promise<boolean> = async (
-  userToken
-) => {
+export async function deleteUser(userToken: string): Promise<boolean> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     apikey: supabaseAnonKey,
@@ -28,4 +26,4 @@ export const deleteUser: (userToken: string) => Promise<boolean> = async (
     throw new Error("Could not delete user");
   }
   return true;
-};
+}

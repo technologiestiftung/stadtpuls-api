@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { definitions } from "../common/supabase";
 import { Pool } from "pg";
 export { createAuthToken } from "./create-auth-token";
-export { truncateTables } from "./truncate-tables";
+export { truncateTables, closePool } from "./truncate-tables";
 export { buildReply } from "./build-reply";
 export { buildRequest } from "./build-request";
 export { signup } from "./signup";
@@ -13,7 +13,7 @@ export { logout } from "./logout";
 export { deleteUser } from "./delete-user";
 export { checkInbox, purgeInbox } from "./mail";
 export { createTTNPayload } from "./create-ttn-payload";
-export { createSensor } from "./create-sensor";
+export { createSensor } from "./create-sensors";
 export type Sensor = definitions["sensors"];
 
 export const jwtSecret =
@@ -23,8 +23,9 @@ export const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "123";
 export const apiVersion = config.get("apiVersion");
 export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "123";
-export const supabaseUrl = "http://localhost:8000";
+export const supabaseUrl = process.env.SUPABASE_URL || "http://localhost:8000";
 export const authtokenEndpoint = `/api/v${apiVersion}/authtokens`;
+export const sensorsEndpoint = `/api/v${apiVersion}/sensors`;
 export const databaseUrl = process.env.DATABASE_URL!;
 export const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
