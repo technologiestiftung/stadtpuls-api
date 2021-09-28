@@ -5,8 +5,11 @@
 
 import { supabase } from "./index";
 import { definitions } from "../common/supabase";
+// const binomial = require("@stdlib/random/base/binomial");
 
-type Record = definitions["records"];
+type Record = Omit<definitions["records"], "measurements"> & {
+  measurements: number[];
+};
 
 function recordDataBuilder({
   sensor_id,
@@ -14,13 +17,13 @@ function recordDataBuilder({
 }: {
   sensor_id: number;
   num: number;
-}): Record[] {
-  const data: Record[] = [];
+}): Omit<Record, "id">[] {
+  const data: Omit<Record, "id">[] = [];
   for (let i = 0; i < num; i++) {
     data.push({
-      id: i,
       recorded_at: new Date().toISOString(),
-      measurements: [],
+      // TODO: replace with random values
+      measurements: [Math.random() * 10],
       sensor_id,
     });
   }
