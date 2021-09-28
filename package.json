@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "test": "inpyjamas-scripts test --runInBand",
+    "test:ci": "jest --runInBand --forceExit",
     "generate:types": "ts-node -r dotenv/config scripts/create-supabase-types.ts",
     "prebuild": "rimraf dist",
     "postbuild": "tsc --emitDeclarationOnly --outDir dist",
