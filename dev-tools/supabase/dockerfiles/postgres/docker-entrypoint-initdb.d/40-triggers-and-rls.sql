@@ -50,7 +50,7 @@ commit;
 -- -- add a table to the publication
 -- alter publication supabase_realtime add table records;
 -- -- add other tables to the publication
--- alter publication supabase_realtime add table devices;
+-- alter publication supabase_realtime add table sensors;
 --
 --
 --

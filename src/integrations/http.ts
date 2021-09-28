@@ -22,7 +22,7 @@ interface HTTPPostBody {
 }
 
 interface HTTPPostParams {
-  deviceId: string;
+  sensorId: string;
 }
 
 const apiVersion = config.get("apiVersion");
@@ -40,7 +40,7 @@ const postHTTPParamsSchema = S.object()
   .id("/integration/http/params")
   .title("HTTP Params")
   .additionalProperties(false)
-  .prop("deviceId", S.string().required());
+  .prop("sensorId", S.string().required());
 
 const postHTTPHeaderSchema = S.object()
   .id("/integration/http/header")
@@ -56,7 +56,7 @@ const http: FastifyPluginAsync = async (fastify) => {
     Body: HTTPPostBody;
     Params: HTTPPostParams;
   }>({
-    url: `/${mountPoint}/v${apiVersion}/sensors/:deviceId/records`,
+    url: `/${mountPoint}/v${apiVersion}/sensors/:sensorId/records`,
     schema: {
       body: postHTTPBodySchema,
       params: postHTTPParamsSchema,
@@ -92,22 +92,22 @@ const http: FastifyPluginAsync = async (fastify) => {
         fastify.log.error("using old token");
         throw fastify.httpErrors.unauthorized();
       }
-      const deviceId = request.params.deviceId;
-      const id = parseInt(deviceId, 10);
+      const sensorId = request.params.sensorId;
+      const id = parseInt(sensorId, 10);
       if (!Number.isInteger(id)) {
         throw fastify.httpErrors.badRequest();
       }
-      const { data: sensors, error: deviceError } = await fastify.supabase
+      const { data: sensors, error: sensorError } = await fastify.supabase
         .from<definitions["sensors"]>("sensors")
         .select("*")
         .eq("id", id)
         .eq("user_id", decoded.sub);
       if (!sensors || sensors.length === 0) {
-        throw fastify.httpErrors.notFound("device not found");
+        throw fastify.httpErrors.notFound("sensor not found");
       }
-      if (deviceError) {
+      if (sensorError) {
         throw fastify.httpErrors.internalServerError(
-          "device not found postgres error"
+          "sensor not found postgres error"
         );
       }
 

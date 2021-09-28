@@ -21,7 +21,7 @@ values (
       limit 1
     )
   );
-insert into records ("device_id", "recorded_at", "measurements")
+insert into records ("sensor_id", "recorded_at", "measurements")
 values (
     (
       select id
@@ -47,7 +47,7 @@ tss as (
       '1 hour'::interval
     ) as ts
 )
-insert into records ("device_id", "recorded_at", "measurements")
+insert into records ("sensor_id", "recorded_at", "measurements")
 select (
     (
       select id

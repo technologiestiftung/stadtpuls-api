@@ -111,7 +111,7 @@ describe("tests for the http integration", () => {
     });
     expect(response.statusCode).toBe(404);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"statusCode\\":404,\\"error\\":\\"Not Found\\",\\"message\\":\\"device not found\\"}"`
+      `"{\\"statusCode\\":404,\\"error\\":\\"Not Found\\",\\"message\\":\\"sensor not found\\"}"`
     );
     // start boilerplate
     await deleteUser(user.token);
