@@ -3,7 +3,6 @@
 exports[`authtokens GET tests should GET an empty list of tokens for that user 1`] = `
 Object {
   "data": Array [],
-  "method": "GET",
   "url": Any<String>,
 }
 `;
