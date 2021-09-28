@@ -68,7 +68,7 @@ jobs:
       - name: Run supabase
         run: docker-compose --env-file dev-tools/supabase/.env.example --file dev-tools/supabase/docker-compose.yml up --detach --build --force-recreate
       - run: npm ci
-      - run: npm test -- --runInBand
+      - run: npm run test:ci
       - name: Setup tmate session
         if: ${{ failure() }}
         uses: mxschmitt/action-tmate@v3
