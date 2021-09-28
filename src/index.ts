@@ -1,4 +1,5 @@
 // TODO: [STADTPULS-399] There are to many places where .env files area read from. Need unification
+// TODO: [STADTPULS-403] Could we make postgrest accept our tokens so we can pass requests through?
 import {
   port,
   jwtSecret,
