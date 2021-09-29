@@ -59,7 +59,7 @@ describe("signup POST tests", () => {
   });
   test("should be rejected due to username already taken", async () => {
     const server = buildServer(buildServerOpts);
-    const { token, id, userProfile } = await signupUser("ff6347");
+    const { token, userProfile } = await signupUser("ff6347");
     // if (!userProfile) throw new Error("Could not create userProfile");
 
     const response = await server.inject({
