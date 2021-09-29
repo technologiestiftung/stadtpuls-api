@@ -12,6 +12,7 @@ import {
   deleteUser,
   purgeInbox,
   signupUser,
+  supabase,
   truncateTables,
 } from "../../__test-utils";
 import { closePool } from "../../__test-utils/truncate-tables";
@@ -106,6 +107,7 @@ describe("signup POST tests", () => {
         name,
       },
     });
+
     const messages = await checkInbox("me");
     expect(messages).toHaveLength(1);
     expect(messages).toMatchSnapshot([
@@ -122,5 +124,12 @@ describe("signup POST tests", () => {
       },
     ]);
     expect(response.statusCode).toBe(204);
+    const { data: user, error } = await supabase
+      .from("user_profiles")
+      .select("name")
+      .eq("name", name)
+      .single();
+    expect(error).toBeNull();
+    expect(user.name).toBe(name);
   });
 });
