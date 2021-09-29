@@ -6,12 +6,13 @@ import nock from "nock";
 import {
   authtokenEndpoint,
   buildServerOpts,
+  closePool,
+  connectPool,
   deleteUser,
   signupUser,
   supabaseUrl,
   truncateTables,
 } from "../../__test-utils";
-import { closePool } from "../../__test-utils/truncate-tables";
 
 import { buildServer } from "../server";
 // import { PostgrestError } from "@supabase/supabase-js";
@@ -19,13 +20,9 @@ import { buildServer } from "../server";
 //   createClient: jest.fn(),
 // }));
 describe("error handling", () => {
-  //   afterEach(() => {
-  //     jest.resetAllMocks();
-  //   });
-  //   afterAll(() => {
-  //     jest.clearAllMocks();
-  //   });
-  // eslint-disable-next-line jest/no-hooks
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });

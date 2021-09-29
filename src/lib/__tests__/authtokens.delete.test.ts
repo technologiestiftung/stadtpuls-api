@@ -9,10 +9,14 @@ import {
   truncateTables,
   signupUser,
   createAuthToken,
+  connectPool,
+  closePool,
 } from "../../__test-utils";
-import { closePool } from "../../__test-utils/truncate-tables";
 
 describe("authtokens DELETE tests", () => {
+  beforeAll(async () => {
+    await connectPool();
+  });
   // eslint-disable-next-line jest/no-hooks
   beforeEach(async () => {
     await truncateTables();
