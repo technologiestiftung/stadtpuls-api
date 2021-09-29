@@ -6,8 +6,9 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import S from "fluent-json-schema";
-import { getIdByEmail, checkEmail } from "./db-utils";
+import { checkEmail } from "./db-utils";
 import { logLevel } from "./env";
+import { buildReplyPayload } from "./reply-utils";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -17,7 +18,6 @@ declare module "fastify" {
 
 interface PostBody {
   email: string;
-  name: string;
 }
 
 export interface SigninPluginOptions {
@@ -38,7 +38,7 @@ const postSigninBodySchema = S.object()
       .description("The email address of the user")
   );
 
-const server: FastifyPluginAsync<SigninPluginOptions> = async (
+const signinPlugin: FastifyPluginAsync<SigninPluginOptions> = async (
   fastify,
   { mount, apiVersion, endpoint }
 ) => {
@@ -49,7 +49,7 @@ const server: FastifyPluginAsync<SigninPluginOptions> = async (
     config: {
       rateLimit: {
         max: 1,
-        timeWindow: 1000 * 10, // 10 seconds
+        timeWindow: "10s",
         allowList: ["127.0.0.1"],
       },
     },
@@ -59,24 +59,21 @@ const server: FastifyPluginAsync<SigninPluginOptions> = async (
     handler: async (request, reply) => {
       const { email } = request.body;
       // Check if the mail is already taken
-      let isEmailTaken = true;
+      let isEmailTaken = false;
       try {
         isEmailTaken = await checkEmail(email);
       } catch (error) {
         fastify.log.error("pg db request error", error);
         throw fastify.httpErrors.internalServerError();
       }
-      if (isEmailTaken === true) {
-        fastify.log.info("Signin try with existing email. Aborting...");
+      if (isEmailTaken === false) {
+        fastify.log.warn("Signin try with non existing email. Aborting...");
         // TODO: [STADTPULS-394] Backend (User Signin Route) Should we respond with a hint if an email is taken?
-        throw fastify.httpErrors.conflict(
-          `The email ${email} is already taken`
+        throw fastify.httpErrors.notFound(
+          "The email address you entered is not registered."
         );
       }
-      // We can create the user and send him his magic link
-      // and afterwards change his username
-      // send magic link first
-
+      // Thee email exists lets send magic link
       const { error: signinError } = await fastify.supabase.auth.signIn({
         email,
       });
@@ -87,36 +84,18 @@ const server: FastifyPluginAsync<SigninPluginOptions> = async (
         fastify.log.error(signinError);
         throw fastify.httpErrors.internalServerError(signinError.message);
       }
-      // No error on magic link sending. Nice so now we get the id of the user
-      // again for updating his user_profile
-      // try {
-      const { data: idData, error: idError } = await getIdByEmail(email);
-      // if we have an error here there was an issue connectiong to the database
-      // using the pg module
-      // log and throw an internal server error
-      if (idError) {
-        fastify.log.error(idError);
-        throw fastify.httpErrors.internalServerError();
-      }
-      // again if the id is null the user profile was not created
-      // this is another internal server error
-      if (idData === null) {
-        fastify.log.error(idData);
-        throw fastify.httpErrors.internalServerError();
-      }
+      // No error on magic link sending.We are out of here
+
       // awesome we made it to the end. Respond with 204
       // Since we wait for the login with the magic link
-      // we dont have to send anything.
-      reply.status(201).send({
-        method: `${request.method}`,
+      // we dont __have__ to send anything. We still do
+      const payload = buildReplyPayload<string>({
         url: `${request.url}`,
+        payload: email,
       });
-      // } catch (error) {
-      //   fastify.log.error("db error", error);
-      //   throw fastify.httpErrors.internalServerError();
-      // }
+      reply.status(204).send(payload);
     },
   });
 };
 
-export default fp(server);
+export default fp(signinPlugin);
