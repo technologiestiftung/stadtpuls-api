@@ -121,6 +121,6 @@ describe("signup POST tests", () => {
         to: ["<me@email.com>"],
       },
     ]);
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(204);
   });
 });

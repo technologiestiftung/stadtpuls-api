@@ -7,7 +7,9 @@
 import {
   apiVersion,
   buildServerOpts,
+  checkInbox,
   signinUser,
+  signupUser,
   truncateTables,
 } from "../../__test-utils";
 import { closePool } from "../../__test-utils/truncate-tables";
@@ -41,16 +43,43 @@ describe("signin POST tests", () => {
     expect(response.statusCode).toBe(400);
   });
 
-  test("should be rejected due to email already taken", async () => {
+  test("should be rejected since the email does not exists", async () => {
     const server = buildServer(buildServerOpts);
     const email = "me@email.com";
-    await signinUser(email);
+    const response = await server.inject({
+      method: "POST",
+      url: signinUrl,
+      payload: { email },
+    });
+    expect(response.statusCode).toBe(404);
+  });
+  test("should be happy since the email exists", async () => {
+    const server = buildServer(buildServerOpts);
+    const name = "ff6347";
+    const email = "me@email.com";
+    await signupUser(name, email);
 
     const response = await server.inject({
       method: "POST",
       url: signinUrl,
       payload: { email },
     });
-    expect(response.statusCode).toBe(409);
+    // lets check the inbox
+    const messages = await checkInbox("me");
+    expect(messages).toHaveLength(1);
+    expect(messages).toMatchSnapshot([
+      {
+        date: expect.any(String),
+        from: "<info@stadtpuls.com>",
+        id: expect.any(String),
+        mailbox: email.split("@")[0],
+        "posix-millis": expect.any(Number),
+        seen: false,
+        size: expect.any(Number),
+        subject: "Your Magic Link",
+        to: [`<${email}>`],
+      },
+    ]);
+    expect(response.statusCode).toBe(204);
   });
 });
