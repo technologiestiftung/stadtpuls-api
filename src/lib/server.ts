@@ -18,6 +18,7 @@ import fastifySupabase from "@technologiestiftung/fastify-supabase";
 
 import routesAuth from "./authtokens";
 import signup from "./signup";
+import signin from "./signin";
 import sensorsRecordsRoutes from "./sensors-records";
 
 import ttn from "../integrations/ttn";
@@ -44,6 +45,11 @@ export const buildServer: (options: {
     mount: mountPoint,
     apiVersion: `v${apiVersion}`,
     issuer,
+  };
+  const singinRouteOptoins = {
+    endpoint: "signin",
+    mount: mountPoint,
+    apiVersion: `v${apiVersion}`,
   };
   const singupRouteOptoins = {
     endpoint: "signup",
@@ -97,6 +103,7 @@ export const buildServer: (options: {
   // https://www.fastify.io/docs/latest/Validation-and-Serialization/#adding-a-shared-schema
   server.addSchema(getResponseDefaultSchema);
 
+  server.register(signin, singinRouteOptoins);
   server.register(signup, singupRouteOptoins);
   server.register(routesAuth, authtokensRouteOptions);
   server.register(sensorsRecordsRoutes, sensorsRouteOptions);
