@@ -39,9 +39,9 @@ env:
 
 on:
   push:
-    branches: [main, v3]
+    branches: [main, staging]
   pull_request:
-    branches: [main, v3]
+    branches: [main, staging]
   workflow_dispatch:
     inputs:
       debug_enabled:
