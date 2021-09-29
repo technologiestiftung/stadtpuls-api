@@ -1,4 +1,4 @@
-FROM node:14.17-slim as builder
+FROM node:14.18-slim as builder
 ENV NODE_ENV=development
 WORKDIR /usr/src/app/
 COPY ["package.json", "package-lock.json*", "./"]
@@ -6,7 +6,7 @@ RUN npm ci --silent
 COPY . .
 RUN npm run build
 
-FROM node:14.17-slim as runner
+FROM node:14.18-slim as runner
 WORKDIR /usr/app/
 COPY ["package.json", "package-lock.json*", "./"]
 ENV NODE_ENV=production
