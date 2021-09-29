@@ -89,7 +89,7 @@ The following routes need an auth token created by this API.
 
 ```plain
 POST	/api/v<API_VERSION>/integrations/ttn/v3
-POST	/api/v<API_VERSION>/devices/:deviceId/records
+POST	/api/v<API_VERSION>/sensors/:sensorId/records
 ```
 
 ### Create an Auth Token
@@ -115,7 +115,7 @@ curl --location --request POST 'http://localhost:8000/auth/v1/token?grant_type=p
 }'
 ```
 
-You will get an response that contains an `access_token` property. That can be used to create, get and delete our auth tokens.
+You will get an response that contains an `access_token` property. That can be used to create (POST), rotate (PUT), get (GET) and delete (DELETE) our auth tokens.
 
 ```bash
 # get all existing tokens
@@ -126,7 +126,6 @@ curl --location --request POST 'http://localhost:4000/api/v3/authtokens' \
 --header 'Authorization: Bearer <YOUR SUPABASE ACCESS TOKEN>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "projectId": 61,
     "description": "my fancy token"
 }'
 # delete a token
@@ -135,7 +134,6 @@ curl --location --request DELETE 'http://localhost:4000/api/v3/authtokens' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 "tokenId": 28,
-"projectId":23
 }'
 ```
 
@@ -146,7 +144,7 @@ Once you created a new token via POST you can move on to posting records.
 To post data via HTTP you need to optain an auth token like described above. Then you can POST data.
 
 ```bash
-curl --location --request POST 'http://localhost:4000/api/v3/devices/14/records' \
+curl --location --request POST 'http://localhost:4000/api/v3/sensors/14/records' \
 --header 'Authorization: Bearer <YOUR AUTH TOKEN>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
