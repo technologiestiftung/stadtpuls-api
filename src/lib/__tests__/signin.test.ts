@@ -4,21 +4,19 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import faker from "faker";
 import {
   apiVersion,
   buildServerOpts,
   checkInbox,
-  deleteUser,
-  purgeInbox,
+  signinUser,
   signupUser,
   truncateTables,
 } from "../../__test-utils";
 import { closePool } from "../../__test-utils/truncate-tables";
 import buildServer from "../server";
 
-const signupUrl = `/api/v${apiVersion}/signup`;
-describe("signup POST tests", () => {
+const signinUrl = `/api/v${apiVersion}/signin`;
+describe("signin POST tests", () => {
   beforeEach(async () => {
     await truncateTables();
   });
@@ -31,7 +29,7 @@ describe("signup POST tests", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: signupUrl,
+      url: signinUrl,
     });
     expect(response.statusCode).toBe(400);
   });
@@ -39,73 +37,34 @@ describe("signup POST tests", () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({
       method: "POST",
-      url: signupUrl,
-      payload: {
-        user: "baz",
-      },
+      url: signinUrl,
+      payload: {},
     });
     expect(response.statusCode).toBe(400);
   });
-  test("should be rejected due to missing body property user", async () => {
+
+  test("should be rejected since the email does not exists", async () => {
     const server = buildServer(buildServerOpts);
+    const email = "me@email.com";
     const response = await server.inject({
       method: "POST",
-      url: signupUrl,
-      payload: {
-        email: faker.internet.email(),
-      },
+      url: signinUrl,
+      payload: { email },
     });
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(404);
   });
-  test("should be rejected due to username already taken", async () => {
-    const server = buildServer(buildServerOpts);
-    const { token, userProfile } = await signupUser("ff6347");
-    // if (!userProfile) throw new Error("Could not create userProfile");
-
-    const response = await server.inject({
-      method: "POST",
-      url: signupUrl,
-      payload: {
-        email: faker.internet.email(),
-        name: userProfile?.name,
-      },
-    });
-
-    expect(response.statusCode).toBe(409);
-    await deleteUser(token);
-  });
-
-  test("should be rejected due to email already taken", async () => {
+  test("should be happy since the email exists", async () => {
     const server = buildServer(buildServerOpts);
     const name = "ff6347";
     const email = "me@email.com";
-    const { token } = await signupUser(name, email);
+    await signupUser(name, email);
 
     const response = await server.inject({
       method: "POST",
-      url: signupUrl,
-      payload: {
-        email,
-        name: faker.random.word(), //?
-      },
+      url: signinUrl,
+      payload: { email },
     });
-    expect(response.statusCode).toBe(409);
-    await deleteUser(token);
-  });
-
-  test("should create a new user and user profile with a username", async () => {
-    const server = buildServer(buildServerOpts);
-    const name = "ff6347";
-    const email = "me@email.com";
-    await purgeInbox(email.split("@")[0]);
-    const response = await server.inject({
-      method: "POST",
-      url: signupUrl,
-      payload: {
-        email,
-        name,
-      },
-    });
+    // lets check the inbox
     const messages = await checkInbox("me");
     expect(messages).toHaveLength(1);
     expect(messages).toMatchSnapshot([
@@ -113,12 +72,12 @@ describe("signup POST tests", () => {
         date: expect.any(String),
         from: "<info@stadtpuls.com>",
         id: expect.any(String),
-        mailbox: "me",
+        mailbox: email.split("@")[0],
         "posix-millis": expect.any(Number),
         seen: false,
         size: expect.any(Number),
         subject: "Your Magic Link",
-        to: ["<me@email.com>"],
+        to: [`<${email}>`],
       },
     ]);
     expect(response.statusCode).toBe(204);

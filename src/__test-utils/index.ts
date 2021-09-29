@@ -7,6 +7,8 @@ export { truncateTables, closePool } from "./truncate-tables";
 export { buildReply } from "./build-reply";
 export { buildRequest } from "./build-request";
 export { signup } from "./signup";
+export { signin } from "./signin";
+export { signinUser } from "./signin-user";
 export { signupUser } from "./signup-user";
 export { login } from "./login";
 export { logout } from "./logout";

@@ -1,5 +1,5 @@
 import { pool } from "./index";
-
+// TODO: [STADTPULS-408] pool is blocking test from exiting. Should be shared as global so we can have a proper teardown
 export async function truncateTables(): Promise<void> {
   try {
     const client = await pool.connect();
