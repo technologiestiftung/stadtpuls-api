@@ -9,13 +9,16 @@ import {
   truncateTables,
   signupUser,
   createAuthToken,
+  closePool,
+  connectPool,
 } from "../../__test-utils";
 import { AuthToken } from "../../common/jwt";
 import buildServer from "../server";
-import { closePool } from "../../__test-utils/truncate-tables";
 
 describe("tests for authtokens PUT method", () => {
-  // eslint-disable-next-line jest/no-hooks
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });

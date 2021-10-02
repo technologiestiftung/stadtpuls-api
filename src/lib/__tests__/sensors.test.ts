@@ -8,15 +8,19 @@ import { definitions } from "../../common/supabase";
 import {
   buildServerOpts,
   closePool,
+  connectPool,
   createSensor,
+  createSensors,
   sensorsEndpoint,
   signupUser,
   truncateTables,
 } from "../../__test-utils";
-import { createSensors } from "../../__test-utils/create-sensors";
 import buildServer from "../server";
 
 // https://opensource.org/licenses/MIT
+beforeAll(async () => {
+  await connectPool();
+});
 beforeEach(async () => {
   await truncateTables();
 });
@@ -132,14 +136,6 @@ describe(`all ${sensorsEndpoint} tests`, () => {
 });
 
 describe(`single ${sensorsEndpoint}/:sensorId tests`, () => {
-  // beforeEach(async () => {
-  //   await truncateTables();
-  // });
-  // // eslint-disable-next-line jest/no-hooks
-  // afterAll(async () => {
-  //   await truncateTables();
-  //   await closePool();
-  // });
   test("should give us 404 response", async () => {
     const server = buildServer(buildServerOpts);
     const response = await server.inject({

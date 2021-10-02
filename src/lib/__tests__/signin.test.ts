@@ -8,15 +8,18 @@ import {
   apiVersion,
   buildServerOpts,
   checkInbox,
-  signinUser,
+  closePool,
+  connectPool,
   signupUser,
   truncateTables,
 } from "../../__test-utils";
-import { closePool } from "../../__test-utils/truncate-tables";
 import buildServer from "../server";
 
 const signinUrl = `/api/v${apiVersion}/signin`;
 describe("signin POST tests", () => {
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });

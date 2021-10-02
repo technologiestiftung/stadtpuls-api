@@ -9,14 +9,17 @@ import {
   signupUser,
   createAuthToken,
   closePool,
+  connectPool,
 } from "../../__test-utils";
 
 describe("authtokens GET tests", () => {
-  // eslint-disable-next-line jest/no-hooks
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });
-  // eslint-disable-next-line jest/no-hooks
+
   afterAll(async () => {
     await truncateTables();
     await closePool();

@@ -9,17 +9,21 @@ import {
   apiVersion,
   buildServerOpts,
   checkInbox,
+  closePool,
+  connectPool,
   deleteUser,
   purgeInbox,
   signupUser,
   supabase,
   truncateTables,
 } from "../../__test-utils";
-import { closePool } from "../../__test-utils/truncate-tables";
 import buildServer from "../server";
 
 const signupUrl = `/api/v${apiVersion}/signup`;
 describe("signup POST tests", () => {
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });
