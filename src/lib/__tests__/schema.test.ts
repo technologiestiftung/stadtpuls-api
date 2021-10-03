@@ -1,28 +1,28 @@
-import { Pool, PoolClient } from "pg";
-import { closePool, databaseUrl, truncateTables } from "../../__test-utils";
-let client: PoolClient;
-const pool = new Pool({ connectionString: databaseUrl });
+import {
+  closePool,
+  connectPool,
+  execQuery,
+  truncateTables,
+} from "../../__test-utils";
+
 describe("things the schema should provide", () => {
   beforeAll(async () => {
-    client = await pool.connect();
+    await connectPool();
   });
   afterEach(async () => {
-    await client.query(
-      "TRUNCATE public.user_profiles restart identity cascade"
-    );
+    await truncateTables();
   });
   afterAll(async () => {
-    client.release();
-    await pool.end();
+    await truncateTables();
     await closePool();
   });
   test("should have user_profiles.name case insensitive", async () => {
-    await client.query(
+    await execQuery(
       "INSERT INTO user_profiles (id, name) VALUES(uuid_generate_v4 (), $1)",
       ["foo"]
     );
     await expect(
-      client.query(
+      execQuery(
         "INSERT INTO user_profiles (id, name) VALUES(uuid_generate_v4 (),$1)",
         ["Foo"]
       )
@@ -30,7 +30,7 @@ describe("things the schema should provide", () => {
   });
   test("should have user_profiles.name needs more then 3 characters", async () => {
     await expect(
-      client.query(
+      execQuery(
         "INSERT INTO user_profiles (id, name) VALUES(uuid_generate_v4 (),$1)",
         ["12"]
       )
@@ -40,7 +40,7 @@ describe("things the schema should provide", () => {
   });
   test("should not allow user_profiles.name special characters", async () => {
     await expect(
-      client.query(
+      execQuery(
         "INSERT INTO user_profiles (id, name) VALUES(uuid_generate_v4 (),$1)",
         ["12 f"]
       )
@@ -99,7 +99,7 @@ describe("things the schema should provide", () => {
   ];
   test.each(table)("should not allow special characters %j", async (char) => {
     await expect(
-      client.query(
+      execQuery(
         "INSERT INTO user_profiles (id, name) VALUES(uuid_generate_v4 (),$1)",
         [char]
       )
