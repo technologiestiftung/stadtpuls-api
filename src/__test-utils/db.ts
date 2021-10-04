@@ -1,3 +1,4 @@
+import { isCI } from "ci-info";
 import { PoolClient } from "pg";
 import { pool } from "./index";
 // TODO: [STADTPULS-408] pool is blocking test from exiting. Should be shared as global so we can have a proper teardown
@@ -29,10 +30,12 @@ export async function execQuery(
     const res = await client.query(query, values);
     return res;
   } catch (error) {
-    console.error(
-      `DB error while executing query: ${query} with values: ${values}`,
-      error
-    );
+    if (!isCI) {
+      console.error(
+        `DB error while executing query: ${query} with values: ${values}`,
+        error
+      );
+    }
     throw error;
   }
 }
