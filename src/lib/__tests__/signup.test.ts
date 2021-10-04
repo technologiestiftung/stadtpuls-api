@@ -10,13 +10,13 @@ import {
   buildServerOpts,
   checkInbox,
   closePool,
-  connectPool,
   deleteUser,
   purgeInbox,
   signupUser,
   supabase,
   truncateTables,
 } from "../../__test-utils";
+import { connectPool } from "../../__test-utils/db";
 import buildServer from "../server";
 
 const signupUrl = `/api/v${apiVersion}/signup`;
