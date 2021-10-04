@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { definitions } from "../common/supabase";
 import { Pool } from "pg";
 export { createAuthToken } from "./create-auth-token";
-export { truncateTables, closePool, connectPool } from "./truncate-tables";
+export { truncateTables, closePool, connectPool, execQuery } from "./db";
 export { buildReply } from "./build-reply";
 export { buildRequest } from "./build-request";
 export { signup } from "./signup";

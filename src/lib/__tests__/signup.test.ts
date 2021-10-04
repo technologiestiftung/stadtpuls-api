@@ -10,13 +10,13 @@ import {
   buildServerOpts,
   checkInbox,
   closePool,
-  connectPool,
   deleteUser,
   purgeInbox,
   signupUser,
   supabase,
   truncateTables,
 } from "../../__test-utils";
+import { connectPool } from "../../__test-utils/db";
 import buildServer from "../server";
 
 const signupUrl = `/api/v${apiVersion}/signup`;
@@ -75,11 +75,25 @@ describe("signup POST tests", () => {
         name: userProfile?.name,
       },
     });
-
     expect(response.statusCode).toBe(409);
     await deleteUser(token);
   });
+  test("should be rejected due to username already taken case insensitive", async () => {
+    const server = buildServer(buildServerOpts);
+    const { token, userProfile } = await signupUser("ff6347");
+    // if (!userProfile) throw new Error("Could not create userProfile");
 
+    const response = await server.inject({
+      method: "POST",
+      url: signupUrl,
+      payload: {
+        email: faker.internet.email(),
+        name: userProfile?.name?.toUpperCase(),
+      },
+    });
+    expect(response.statusCode).toBe(409);
+    await deleteUser(token);
+  });
   test("should be rejected due to email already taken", async () => {
     const server = buildServer(buildServerOpts);
     const name = "ff6347";
