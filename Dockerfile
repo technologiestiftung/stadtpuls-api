@@ -21,4 +21,7 @@ ENTRYPOINT ["/tini", "--"]
 
 USER node
 EXPOSE 4000
+# TODO: [STADTPULS-415] Add pino-syslog to log to syslog https://github.com/pinojs/pino-syslog
+# RUN npm install --production -g pino-syslog
+# CMD ["node", "/usr/app/index.js", "|", "pino-syslog"]
 CMD ["node", "/usr/app/index.js"]
