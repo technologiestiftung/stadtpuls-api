@@ -78,7 +78,7 @@ const signupPlugin: FastifyPluginAsync<SignupPluginOptions> = async (
       } = await fastify.supabase
         .from<UserProfile>("user_profiles")
         .select("name")
-        .eq("name", name);
+        .eq("name", name.toLowerCase());
 
       // we had some error with supabase
       // return 500 and log

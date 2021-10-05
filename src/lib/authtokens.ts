@@ -166,6 +166,8 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         jti: uuidv4(),
         iss: issuer,
       };
+      // TODO: [STADTPULS-417] Refactor authtokens.ts to allow the usage a different JWT secret.
+      // means we need to use jwt.sign directly and not the fastify plugin
       const token = fastify.jwt.sign(payload, options);
       const hashedToken = await hash(token, 10);
 
