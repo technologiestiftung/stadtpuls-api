@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-hooks */
 import buildServer from "../lib/server";
 
 import {
@@ -12,9 +13,10 @@ import {
   signupUser,
   createSensor,
   truncateTables,
+  closePool,
+  connectPool,
 } from "../__test-utils";
 import { createAuthToken } from "../__test-utils/create-auth-token";
-import { closePool } from "../__test-utils/truncate-tables";
 
 const issuer = "tsb";
 const buildServerOpts = {
@@ -33,6 +35,9 @@ const httpPayload = {
 };
 describe("tests for the http integration", () => {
   // eslint-disable-next-line jest/no-hooks
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });

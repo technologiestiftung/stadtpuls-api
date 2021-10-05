@@ -9,6 +9,7 @@ import S from "fluent-json-schema";
 import { definitions } from "../common/supabase";
 import { getIdByEmail, checkEmail } from "./db-utils";
 import { logLevel } from "./env";
+import { buildReplyPayload } from "./reply-utils";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -49,7 +50,7 @@ const postSignupBodySchema = S.object()
       .description("The username")
   );
 
-const server: FastifyPluginAsync<SignupPluginOptions> = async (
+const signupPlugin: FastifyPluginAsync<SignupPluginOptions> = async (
   fastify,
   { mount, apiVersion, endpoint }
 ) => {
@@ -77,7 +78,7 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
       } = await fastify.supabase
         .from<UserProfile>("user_profiles")
         .select("name")
-        .eq("name", name);
+        .eq("name", name.toLowerCase());
 
       // we had some error with supabase
       // return 500 and log
@@ -157,11 +158,12 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
       }
       // awesome we made it to the end. Respond with 204
       // Since we wait for the login with the magic link
-      // we dont have to send anything.
-      reply.status(201).send({
-        method: `${request.method}`,
+      // we dont have to send anything. But we do
+      const payload = buildReplyPayload({
         url: `${request.url}`,
+        payload: { email, name },
       });
+      reply.status(204).send(payload);
       // } catch (error) {
       //   fastify.log.error("db error", error);
       //   throw fastify.httpErrors.internalServerError();
@@ -170,4 +172,4 @@ const server: FastifyPluginAsync<SignupPluginOptions> = async (
   });
 };
 
-export default fp(server);
+export default fp(signupPlugin);

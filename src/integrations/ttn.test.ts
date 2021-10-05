@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-hooks */
 import buildServer from "../lib/server";
 
 import {
@@ -14,8 +15,9 @@ import {
   createAuthToken,
   createSensor,
   truncateTables,
+  closePool,
+  connectPool,
 } from "../__test-utils";
-import { closePool } from "../__test-utils/truncate-tables";
 
 const issuer = "tsb";
 const buildServerOpts = {
@@ -28,6 +30,9 @@ const buildServerOpts = {
 const endpoint = `/api/v${apiVersion}/integrations/ttn/v3`;
 const ttnPayload = createTTNPayload();
 describe("tests for the ttn integration", () => {
+  beforeAll(async () => {
+    await connectPool();
+  });
   // eslint-disable-next-line jest/no-hooks
   beforeEach(async () => {
     await truncateTables();

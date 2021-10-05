@@ -3,17 +3,19 @@ import { createClient } from "@supabase/supabase-js";
 import { definitions } from "../common/supabase";
 import { Pool } from "pg";
 export { createAuthToken } from "./create-auth-token";
-export { truncateTables, closePool } from "./truncate-tables";
+export { truncateTables, closePool, connectPool, execQuery } from "./db";
 export { buildReply } from "./build-reply";
 export { buildRequest } from "./build-request";
 export { signup } from "./signup";
+export { signin } from "./signin";
+export { signinUser } from "./signin-user";
 export { signupUser } from "./signup-user";
 export { login } from "./login";
 export { logout } from "./logout";
 export { deleteUser } from "./delete-user";
 export { checkInbox, purgeInbox } from "./mail";
 export { createTTNPayload } from "./create-ttn-payload";
-export { createSensor } from "./create-sensors";
+export { createSensor, createSensors } from "./create-sensors";
 export type Sensor = definitions["sensors"];
 
 export const jwtSecret =

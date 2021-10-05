@@ -13,7 +13,7 @@ services:
       - ${KONG_PORT_TLS}:8443/tcp
   auth:
     container_name: supabase-auth
-    image: supabase/gotrue:latest
+    image: supabase/gotrue:v2.1.11
     ports:
       - ${AUTH_PORT}
     depends_on:
@@ -47,7 +47,7 @@ services:
 
   rest:
     container_name: supabase-rest
-    image: postgrest/postgrest:latest
+    image: postgrest/postgrest:v8.0.0
     ports:
       - ${REST_PORT}:3000
     depends_on:
@@ -61,7 +61,7 @@ services:
 
   realtime:
     container_name: supabase-realtime
-    image: supabase/realtime:latest
+    image: supabase/realtime:v0.16.0
     ports:
       - ${REALTIME_PORT}
     depends_on:

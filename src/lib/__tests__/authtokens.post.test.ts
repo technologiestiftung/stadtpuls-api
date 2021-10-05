@@ -13,16 +13,18 @@ import {
   buildServerOpts,
   truncateTables,
   signupUser,
+  closePool,
+  connectPool,
 } from "../../__test-utils";
-import { closePool } from "../../__test-utils/truncate-tables";
 import buildServer from "../server";
 
 describe("authtokens POST tests", () => {
-  // eslint-disable-next-line jest/no-hooks
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });
-  // eslint-disable-next-line jest/no-hooks
   afterAll(async () => {
     await truncateTables();
     await closePool();

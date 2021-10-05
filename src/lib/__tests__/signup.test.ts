@@ -9,16 +9,21 @@ import {
   apiVersion,
   buildServerOpts,
   checkInbox,
+  closePool,
   deleteUser,
   purgeInbox,
   signupUser,
+  supabase,
   truncateTables,
 } from "../../__test-utils";
-import { closePool } from "../../__test-utils/truncate-tables";
+import { connectPool } from "../../__test-utils/db";
 import buildServer from "../server";
 
 const signupUrl = `/api/v${apiVersion}/signup`;
 describe("signup POST tests", () => {
+  beforeAll(async () => {
+    await connectPool();
+  });
   beforeEach(async () => {
     await truncateTables();
   });
@@ -59,7 +64,7 @@ describe("signup POST tests", () => {
   });
   test("should be rejected due to username already taken", async () => {
     const server = buildServer(buildServerOpts);
-    const { token, id, userProfile } = await signupUser("ff6347");
+    const { token, userProfile } = await signupUser("ff6347");
     // if (!userProfile) throw new Error("Could not create userProfile");
 
     const response = await server.inject({
@@ -70,11 +75,25 @@ describe("signup POST tests", () => {
         name: userProfile?.name,
       },
     });
-
     expect(response.statusCode).toBe(409);
     await deleteUser(token);
   });
+  test("should be rejected due to username already taken case insensitive", async () => {
+    const server = buildServer(buildServerOpts);
+    const { token, userProfile } = await signupUser("ff6347");
+    // if (!userProfile) throw new Error("Could not create userProfile");
 
+    const response = await server.inject({
+      method: "POST",
+      url: signupUrl,
+      payload: {
+        email: faker.internet.email(),
+        name: userProfile?.name?.toUpperCase(),
+      },
+    });
+    expect(response.statusCode).toBe(409);
+    await deleteUser(token);
+  });
   test("should be rejected due to email already taken", async () => {
     const server = buildServer(buildServerOpts);
     const name = "ff6347";
@@ -106,6 +125,7 @@ describe("signup POST tests", () => {
         name,
       },
     });
+
     const messages = await checkInbox("me");
     expect(messages).toHaveLength(1);
     expect(messages).toMatchSnapshot([
@@ -121,6 +141,13 @@ describe("signup POST tests", () => {
         to: ["<me@email.com>"],
       },
     ]);
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(204);
+    const { data: user, error } = await supabase
+      .from("user_profiles")
+      .select("name")
+      .eq("name", name)
+      .single();
+    expect(error).toBeNull();
+    expect(user.name).toBe(name);
   });
 });

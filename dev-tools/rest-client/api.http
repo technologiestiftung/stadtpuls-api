@@ -132,7 +132,7 @@ POST {{baseurl}}/authtokens
 Content-Type: application/json
 Authorization: Bearer {{user_token}}
 
-{"description": "testing http"}
+{"description": "testing ttn"}
 
 # {
 #   "comment": "Should do create a token",
@@ -186,3 +186,12 @@ GET {{ baseurl }}/sensors?category_id=1&limit=1000&offset=0
 Content-Type: application/json
 
 
+
+
+### TTN Tests
+
+POST {{ baseurl }}/integrations/ttn/v3
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{"simulated":true,"end_device_ids":{"application_ids":{"application_id":"foo"},"device_id":"123"},"received_at":"2021-10-04T14:36:58.082Z","uplink_message":{"decoded_payload":{"measurements":[1,2,3],"bytes":[1,2,3]},"locations":{"user":{"latitude":13,"longitude":52,"altitude":23,"source":"SOURCE_REGISTRY"}}}}

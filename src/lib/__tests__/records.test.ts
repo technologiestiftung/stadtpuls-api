@@ -9,6 +9,7 @@ import { definitions } from "../../common/supabase";
 import {
   buildServerOpts,
   closePool,
+  connectPool,
   createSensor,
   sensorsEndpoint,
   signupUser,
@@ -22,10 +23,12 @@ type JsonResponseRecords = {
   data: definitions["records"][];
 };
 
+beforeAll(async () => {
+  await connectPool();
+});
 beforeEach(async () => {
   await truncateTables();
 });
-// eslint-disable-next-line jest/no-hooks
 afterAll(async () => {
   await truncateTables();
   await closePool();
