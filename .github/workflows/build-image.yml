@@ -50,4 +50,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to ghcr.io
-        run: docker push ${{ env.REGISTRY }}/${{ steps.meta.outputs.tags }}
+        run: |
+          docker tag ${{ steps.meta.outputs.tags }} ${{ env.REGISTRY }}/${{ steps.meta.outputs.tags }}
+          docker push ${{ env.REGISTRY }}/${{ steps.meta.outputs.tags }}
