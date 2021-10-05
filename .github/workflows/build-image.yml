@@ -2,10 +2,15 @@ name: Docker Image Builder
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*"
   release:
     types: [published]
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 env:
@@ -42,6 +47,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Push to hub.docker.com
+        if: ${{ github.event_name != 'pull_request' }}
         run: docker push ${{ steps.meta.outputs.tags }}
       - name: Log in to the ghcr.io
         uses: docker/login-action@v1
@@ -50,6 +56,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to ghcr.io
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker tag ${{ steps.meta.outputs.tags }} ${{ env.REGISTRY }}/${{ steps.meta.outputs.tags }}
           docker push ${{ env.REGISTRY }}/${{ steps.meta.outputs.tags }}
