@@ -168,3 +168,85 @@ You will  need an auth token like described above. Then you can hook up your TTN
 ## Testing
 
 To test the API you need to run the integration tests. You can do this by running `npm test`. Make sure your local supabase is running. Currently the tests use the environment variables from `.env.test`
+
+
+## Running with Docker
+
+You can run the stadtpuls-api with docker in several ways.
+
+1. Attaching to an already existing local subase instance.
+2. Running within your supabase setup.
+3. Running with a remote supabase project.
+
+Take a look at [the hub.docker.com page](https://hub.docker.com/repository/docker/technologiestiftung/stadtpuls-api) of the image to see which tag to use. Don't use the latest tag for production.
+
+
+### Attaching to an already existing local supabase instance
+
+For attaching to the already existing instance use the  following `docker-compose.yml`. You should adjust the environment variables to your needs and then run
+
+```bash
+# MacOS & Windows
+docker compose up
+# Linux
+docker-compose up
+```
+
+```yml
+version: "3"
+services:
+  stadtpuls-api:
+    environment:
+      PORT: 4000
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_SERVICE_ROLE_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwNzUzMiwiZXhwIjoxNjkwMjc5NTMyLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoic2VydmljZV9yb2xlIn0.hfdXFZV5PdvUdo2xK0vStb1i97GJukSkRqfwd4YIh2M
+      SUPABASE_ANON_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.sUHErUOiKZ3nHQIxy-7jND6B80Uzf9G4NtMLmL6HXPQ
+      JWT_SECRET: your-super-secret-jwt-token-with-at-least-32-characters-long
+      ISSUER: stadtpuls.com
+      LOG_LEVEL: info
+      SUPABASE_MAX_ROWS: 1000
+      DATABASE_URL: postgres://postgres:your-super-secret-and-long-postgres-password@localhost:5432/postgres
+    image: "technologiestiftung/stadtpuls-api:latest"
+    ports:
+      - "4000:4000"
+networks:
+  default:
+    external: true
+    name: supabase_default
+```
+
+
+### Running within your supabase setup
+
+* Copy the whole service `stadtpuls-api` to the file `dev-tools/supabase/docker-compose.yml`.
+* Dont copy the network part.
+* Adjust the `SUPABASE_URL` to (TBD)
+* Adjust the `DATABASE_URL` to (TBD)
+
+```bash
+cd dev-tools/supabase/
+# if you had the whole setup already running
+docker compose down && rm -rf dockerfiles/postgres/pg-data/ && mkdir dockerfiles/postgres/pg-data
+# MacOS & Windows
+docker compose up --build --force-recreate
+# Linux
+docker-compose up  --build --force-recreate
+```
+
+### Running with a remote supabase project
+
+
+* Adjust the `SUPABASE_URL`
+* Adjust the `DATABASE_URL`
+* Adjust the `SUPABASE_SERVICE_ROLE_KEY`
+* Adjust the `SUPABSE_ANON_KEY`
+* Adjust the `JWT_SECRET`
+
+You can find these values under `https://app.supabase.io/project/<YOUR PROJECT ID>/settings/api`
+
+```bash
+# MacOS & Windows
+docker compose up
+# Linux
+docker-compose up
+```
