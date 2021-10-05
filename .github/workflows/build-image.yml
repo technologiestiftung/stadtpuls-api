@@ -18,11 +18,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  build-and-push-docker-hub:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: Checkout source repository
@@ -34,7 +31,6 @@ jobs:
           images: ${{ env.IMAGE_NAME }}
 
       - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -43,20 +39,36 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: false
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: Push to hub.docker.com
-        if: ${{ github.event_name != 'pull_request' }}
-        run: docker push ${{ steps.meta.outputs.tags }}
-      - name: Log in to the ghcr.io
+  build-and-push-ghcr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
         uses: docker/login-action@v1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push to ghcr.io
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          docker tag ${{ steps.meta.outputs.tags }} ${{ env.REGISTRY }}/${{ steps.meta.outputs.tags }}
-          docker push ${{ env.REGISTRY }}/${{ steps.meta.outputs.tags }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
