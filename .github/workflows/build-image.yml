@@ -19,7 +19,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${GITHUB_REPOSITORY}
+          images: technologiestiftung/stadtpuls-api
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
