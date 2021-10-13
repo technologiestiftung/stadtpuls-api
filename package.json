@@ -44,6 +44,7 @@
     "@types/jsonwebtoken": "8.5.5",
     "@types/node-fetch": "2.5.10",
     "@types/pg": "8.6.1",
+    "@types/pino": "6.3.11",
     "@types/uuid": "8.3.1",
     "dotenv": "10.0.0",
     "esbuild": "0.12.28",
@@ -79,6 +80,9 @@
     "fluent-json-schema": "3.0.1",
     "make-promises-safe": "5.1.0",
     "pg": "8.7.1",
+    "pino": "7.0.0-rc.9",
+    "pino-pretty": "7.0.1",
+    "pino-syslog": "2.0.0",
     "uuid": "8.3.2"
   }
 }
