@@ -11,7 +11,6 @@ describe("utilities to build reply payload", () => {
       payload: [],
     });
     expect(replyPayload.nextPage).not.toBeDefined();
-    expect(replyPayload.url).toBeDefined();
     expect(replyPayload.data).toHaveLength(0);
   });
 
@@ -21,7 +20,6 @@ describe("utilities to build reply payload", () => {
       payload: [1, 2, 3],
     });
     expect(replyPayload.nextPage).not.toBeDefined();
-    expect(replyPayload.url).toBeDefined();
     expect(replyPayload.data).toHaveLength(3);
   });
 
@@ -31,7 +29,6 @@ describe("utilities to build reply payload", () => {
       payload: { id: 1 },
     });
     expect(replyPayload.nextPage).not.toBeDefined();
-    expect(replyPayload.url).toBeDefined();
     expect(Array.isArray(replyPayload.data)).toBe(true);
     expect(replyPayload.data).toHaveLength(1);
   });
@@ -42,7 +39,6 @@ describe("utilities to build reply payload", () => {
       payload: null,
     });
     expect(replyPayload.nextPage).not.toBeDefined();
-    expect(replyPayload.url).toBeDefined();
     expect(Array.isArray(replyPayload.data)).toBe(true);
     expect(replyPayload.data).toHaveLength(0);
   });
@@ -59,7 +55,6 @@ describe("utilities to build reply payload", () => {
     });
 
     expect(replyPayload.nextPage).toBeDefined();
-    expect(replyPayload.url).toBeDefined();
     expect(replyPayload.nextPage).toBeDefined();
     expect(replyPayload.nextPage).toBe("/api/v3/sensors?offset=1&limit=1000");
   });
