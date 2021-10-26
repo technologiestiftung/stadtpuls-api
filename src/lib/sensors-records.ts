@@ -14,7 +14,6 @@ import {
   buildReplyHeaders,
   buildReplyPayload,
   ContentRange,
-  RangeUnit,
 } from "./reply-utils";
 
 // type Categories = definitions["categories"]["name"];

@@ -21,7 +21,6 @@ exports[`all /api/v3/sensors tests get list of all sensors GET > 1000 should hav
 Object {
   "data": Any<Array>,
   "nextPage": "/api/v3/sensors?offset=1000&limit=1000",
-  "url": "/api/v3/sensors",
 }
 `;
 
@@ -43,6 +42,5 @@ Object {
       "name": "test",
     },
   ],
-  "url": "/api/v3/sensors/1",
 }
 `;
