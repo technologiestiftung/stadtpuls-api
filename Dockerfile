@@ -2,7 +2,7 @@ FROM node:14.18-slim as builder
 ENV NODE_ENV=development
 WORKDIR /usr/src/app/
 COPY ["package.json", "package-lock.json*", "./"]
-RUN npm ci --silent
+RUN npm ci --silent --build-from-source
 COPY . .
 RUN npm run build
 
@@ -10,7 +10,7 @@ FROM node:14.18-slim as runner
 WORKDIR /usr/app/
 COPY ["package.json", "package-lock.json*", "./"]
 ENV NODE_ENV=production
-RUN npm ci --silent
+RUN npm ci --silent --build-from-source
 COPY --from=builder /usr/src/app/dist/ /usr/app/
 COPY ./config/ /usr/app/config/
 # Add Tini
