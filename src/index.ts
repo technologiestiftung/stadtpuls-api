@@ -1,5 +1,6 @@
 // TODO: [STADTPULS-399] There are to many places where .env files area read from. Need unification
 // TODO: [STADTPULS-403] Could we make postgrest accept our tokens so we can pass requests through?
+import { FastifyLoggerOptions } from "fastify";
 import {
   port,
   jwtSecret,
@@ -7,14 +8,36 @@ import {
   supabaseServiceRoleKey,
   issuer,
 } from "./lib/env";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+import pino from "pino";
+
+const transport = pino.transport({
+  target: "pino-syslog",
+
+  options: {
+    enablePipelining: false, // optional (default: true)
+    destination: 1, // optional (default: stdout)
+    modern: true,
+    newline: true,
+    appname: "stadtpuls.com",
+    level: "info",
+    redact: ["req.headers.authorization"],
+    enabled: true,
+    crlf: true,
+  },
+});
+const pinoLogger = pino(transport);
 
 import buildServer from "./lib/server";
 
+const _logger: FastifyLoggerOptions = {
+  prettyPrint: true,
+};
 const server = buildServer({
   jwtSecret,
   supabaseUrl,
   supabaseServiceRoleKey,
-  logger: true,
+  logger: pinoLogger,
   issuer,
 });
 async function main(): Promise<void> {

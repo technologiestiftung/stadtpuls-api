@@ -18,10 +18,6 @@ ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
-
 USER node
 EXPOSE 4000
-# TODO: [STADTPULS-415] Add pino-syslog to log to syslog https://github.com/pinojs/pino-syslog
-# RUN npm install --production -g pino-syslog
-# CMD ["node", "/usr/app/index.js", "|", "pino-syslog"]
 CMD ["node", "/usr/app/index.js"]

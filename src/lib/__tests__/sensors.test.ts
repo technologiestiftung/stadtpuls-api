@@ -54,7 +54,6 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toStrictEqual({
       data: [],
-      url: sensorsEndpoint,
     });
   });
   test("list of all sensors HEAD", async () => {
@@ -113,7 +112,6 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     const lastItem = json.data[json.data.length - 1];
     expect(json).toMatchSnapshot({
       data: expect.any(Array),
-      url: sensorsEndpoint,
       nextPage: "/api/v3/sensors?offset=1000&limit=1000",
     });
     expect(lastItem.id).toBe(1000);
@@ -125,7 +123,6 @@ describe(`all ${sensorsEndpoint} tests`, () => {
       url: json.nextPage,
     });
     const json2 = response2.json<{
-      url: string;
       nextPage: string;
       data: Omit<definitions["sensors"], "user_id">[];
     }>();
@@ -170,7 +167,6 @@ describe(`single ${sensorsEndpoint}/:sensorId tests`, () => {
     });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toMatchSnapshot({
-      url: `${sensorsEndpoint}/${sensor.id}`,
       data: [
         {
           altitude: expect.any(Number),

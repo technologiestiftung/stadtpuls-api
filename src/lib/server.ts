@@ -2,6 +2,7 @@ import "make-promises-safe";
 import config from "config";
 import fastify, {
   FastifyInstance,
+  FastifyLoggerOptions,
   FastifyReply,
   FastifyRequest,
 } from "fastify";
@@ -24,6 +25,7 @@ import sensorsRecordsRoutes from "./sensors-records";
 import ttn from "../integrations/ttn";
 import http from "../integrations/http";
 import { getResponseDefaultSchema } from "../common/schemas";
+import pino from "pino";
 
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
@@ -31,7 +33,7 @@ export const buildServer: (options: {
   jwtSecret: string;
   supabaseUrl: string;
   supabaseServiceRoleKey: string;
-  logger: boolean;
+  logger: boolean | FastifyLoggerOptions | pino.Logger;
   issuer: string;
 }) => FastifyInstance = ({
   jwtSecret,
@@ -78,7 +80,10 @@ export const buildServer: (options: {
     allowList: ["127.0.0.1"],
   });
   server.register(fastifyHelmet);
-  server.register(fastifyCors);
+  server.register(fastifyCors, {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"],
+  });
   server.register(fastifySensible);
   server.register(fastifyAuth);
   // server.register(fastifyPostgres, {
@@ -118,7 +123,7 @@ export const buildServer: (options: {
     server.route({
       method: ["GET", "HEAD"],
       url: path,
-      logLevel: "warn",
+      logLevel: process.env.NODE_ENV === "production" ? "warn" : "info",
       exposeHeadRoute: true,
       handler: async (request, reply) => {
         reply.send({

@@ -5,7 +5,6 @@
 
 export interface ReplyPayload<Payload> {
   comment?: string;
-  url: string;
   data: Payload | Payload[];
   nextPage?: string;
 }
@@ -31,10 +30,12 @@ export function buildReplyPayload<PayloadType>({
 }): ReplyPayload<PayloadType> {
   // TODO: This function needs to be smarter and should compare unitLength and payload
   let nextPage: string | undefined = undefined;
-
+  const strippedUrl = url.split("?")[0];
   if (contentRange && payload && Array.isArray(payload) && payload.length > 0) {
     const { offset, limit } = contentRange;
-    nextPage = `${url}?offset=${offset + payload.length}&limit=${limit}`;
+    nextPage = `${strippedUrl}?offset=${
+      offset + payload.length
+    }&limit=${limit}`;
   }
   let data: PayloadType[] = [];
   if (payload && Array.isArray(payload)) {
@@ -45,7 +46,6 @@ export function buildReplyPayload<PayloadType>({
   const empty: PayloadType[] = [];
   return {
     nextPage,
-    url,
     data: payload ? data : empty,
   };
 }

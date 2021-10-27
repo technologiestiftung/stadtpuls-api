@@ -11,7 +11,10 @@ services:
       LOG_LEVEL: info
       SUPABASE_MAX_ROWS: 1000
       DATABASE_URL: postgres://postgres:your-super-secret-and-long-postgres-password@localhost:5432/postgres
-    image: "technologiestiftung/stadtpuls-api:latest"
+    # build:
+    #   context: ../../.
+    #   dockerfile: Dockerfile
+    image: technologiestiftung/stadtpuls-api:dev-pino-syslog
     ports:
       - "4000:4000"
 networks:
