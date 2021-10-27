@@ -15,19 +15,22 @@ const transport = pino.transport({
   target: "pino-syslog",
 
   options: {
-    redact: ["req.headers.authorization"],
     enablePipelining: false, // optional (default: true)
-    destination: 2, // optional (default: stdout)
+    destination: 1, // optional (default: stdout)
     modern: true,
-    newlines: true,
+    newline: true,
     appname: "stadtpuls.com",
+    level: "info",
+    redact: ["req.headers.authorization"],
+    enabled: true,
+    crlf: true,
   },
 });
 const pinoLogger = pino(transport);
 
 import buildServer from "./lib/server";
 
-const logger: FastifyLoggerOptions = {
+const _logger: FastifyLoggerOptions = {
   prettyPrint: true,
 };
 const server = buildServer({
