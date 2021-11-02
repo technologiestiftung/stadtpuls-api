@@ -83,3 +83,4 @@ dev-tools/supabase/.vscode/
 LAB_NOTES.md
 thunder-tests
 dev-tools/supabase/dockerfiles/postgres/pg-data
+dev-tools/supabase-mirror/NOTES.md
