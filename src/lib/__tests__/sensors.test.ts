@@ -20,8 +20,8 @@ const sensorSnapshotDescription = {
   data: [
     {
       altitude: expect.any(Number),
-      category_id: 1,
       category: {
+        id: expect.any(Number),
         description: expect.any(String),
         name: expect.any(String),
       },

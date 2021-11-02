@@ -46,7 +46,7 @@ interface GetRecordParams extends GetSensorParams {
 }
 type SensorNoUserId = Omit<Sensor, "user_id">;
 const sensorSelection =
-  "id, external_id, name, description, connection_type, location, longitude, latitude, altitude, category_id, icon_id, created_at, category:categories (id, name, description), author:user_profiles(name, display_name)";
+  "id, external_id, name, description, connection_type, location, longitude, latitude, altitude, icon_id, created_at, category:categories (id, name, description), author:user_profiles(name, display_name)";
 const apiVersion = config.get("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
 

@@ -9,9 +9,9 @@ Object {
   },
   "category": Object {
     "description": Any<String>,
+    "id": Any<Number>,
     "name": Any<String>,
   },
-  "category_id": 1,
   "connection_type": "http",
   "created_at": Any<String>,
   "description": null,
@@ -43,9 +43,9 @@ Object {
       },
       "category": Object {
         "description": Any<String>,
+        "id": Any<Number>,
         "name": Any<String>,
       },
-      "category_id": 1,
       "connection_type": "http",
       "created_at": Any<String>,
       "description": null,
