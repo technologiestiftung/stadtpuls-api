@@ -4,12 +4,6 @@ IFS=$'\n\t'
 
 # dump all data with pg_dump without schema
 
-PGPORT=5432
-PGHOST="localhost"
-PGDATABASE=postgres
-PGUSER=postgres
-PGPASSWORD="your-super-secret-and-long-postgres-password"
-
 docker run --rm --volume "$(pwd)":/dump \
   --workdir /dump \
   --network="host" \
@@ -24,5 +18,6 @@ docker run --rm --volume "$(pwd)":/dump \
   --table='auth.users' \
   --table='public.*' \
   --exclude-table='public.categories' \
+  --exclude-table='public.auth_tokens' \
   --username $PGUSER \
-  --host $PGHOST $PGDATABASE >supabase.dump
+  --host $PGHOST $PGDATABASE >$STADTPULS_DUMP_PATH

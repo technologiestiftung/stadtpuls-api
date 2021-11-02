@@ -2,12 +2,6 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-PGPORT=5433
-PGHOST="localhost"
-PGDATABASE=postgres
-PGUSER=postgres
-PGPASSWORD="postgres"
-
 docker run \
   --rm \
   --volume "$(pwd)":/dump \
@@ -28,5 +22,5 @@ docker run \
   --disable-triggers \
   --data-only \
   --no-owner \
-  supabase.dump
+  $STADTPULS_DUMP_PATH
 # --clean \

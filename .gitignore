@@ -89,3 +89,4 @@ dev-tools/supabase/dockerfiles/postgres/pg-data
 **/supabase/.env
 **/supabase/.globals.sql
 dev-tools/supabase-mirror/supabase.dump
+dev-tools/supabase-mirror/stadtpuls.dump
