@@ -16,7 +16,32 @@ import {
   truncateTables,
 } from "../../__test-utils";
 import buildServer from "../server";
-
+const sensorSnapshotDescription = {
+  data: [
+    {
+      altitude: expect.any(Number),
+      category: {
+        id: expect.any(Number),
+        description: expect.any(String),
+        name: expect.any(String),
+      },
+      author: {
+        name: expect.any(String),
+        display_name: null,
+      },
+      connection_type: "http",
+      created_at: expect.any(String),
+      description: null,
+      external_id: null,
+      icon_id: null,
+      id: 1,
+      latitude: expect.any(Number),
+      location: null,
+      longitude: expect.any(Number),
+      name: "test",
+    },
+  ],
+};
 // https://opensource.org/licenses/MIT
 beforeAll(async () => {
   await connectPool();
@@ -79,20 +104,9 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     });
     expect(response.statusCode).toBe(200);
     expect(response.json().data).toHaveLength(1);
-    expect(response.json().data[0]).toMatchSnapshot({
-      altitude: expect.any(Number),
-      category_id: 1,
-      connection_type: "http",
-      created_at: expect.any(String),
-      description: null,
-      external_id: null,
-      icon_id: null,
-      id: expect.any(Number),
-      latitude: expect.any(Number),
-      location: null,
-      longitude: expect.any(Number),
-      name: "test",
-    });
+    expect(response.json().data[0]).toMatchSnapshot(
+      sensorSnapshotDescription.data[0]
+    );
   });
 
   test("get list of all sensors GET > 1000 should have pagination", async () => {
@@ -166,23 +180,6 @@ describe(`single ${sensorsEndpoint}/:sensorId tests`, () => {
       url: `${sensorsEndpoint}/${sensor.id}`,
     });
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toMatchSnapshot({
-      data: [
-        {
-          altitude: expect.any(Number),
-          category_id: 1,
-          connection_type: "http",
-          created_at: expect.any(String),
-          description: null,
-          external_id: null,
-          icon_id: null,
-          id: 1,
-          latitude: expect.any(Number),
-          location: null,
-          longitude: expect.any(Number),
-          name: "test",
-        },
-      ],
-    });
+    expect(response.json()).toMatchSnapshot(sensorSnapshotDescription);
   });
 });

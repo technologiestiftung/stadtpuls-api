@@ -3,13 +3,21 @@
 exports[`all /api/v3/sensors tests get list of all sensors GET > 0 1`] = `
 Object {
   "altitude": Any<Number>,
-  "category_id": 1,
+  "author": Object {
+    "display_name": null,
+    "name": Any<String>,
+  },
+  "category": Object {
+    "description": Any<String>,
+    "id": Any<Number>,
+    "name": Any<String>,
+  },
   "connection_type": "http",
   "created_at": Any<String>,
   "description": null,
   "external_id": null,
   "icon_id": null,
-  "id": Any<Number>,
+  "id": 1,
   "latitude": Any<Number>,
   "location": null,
   "longitude": Any<Number>,
@@ -29,7 +37,15 @@ Object {
   "data": Array [
     Object {
       "altitude": Any<Number>,
-      "category_id": 1,
+      "author": Object {
+        "display_name": null,
+        "name": Any<String>,
+      },
+      "category": Object {
+        "description": Any<String>,
+        "id": Any<Number>,
+        "name": Any<String>,
+      },
       "connection_type": "http",
       "created_at": Any<String>,
       "description": null,
