@@ -13,10 +13,8 @@ import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 import fastifyAuth from "fastify-auth";
 import fastifyRateLimit from "fastify-rate-limit";
-// import fastifyPostgres from "fastify-postgres";
 
-import fastifySupabase from "@technologiestiftung/fastify-supabase";
-
+import fastifySupabase from "./supabase";
 import routesAuth from "./authtokens";
 import signup from "./signup";
 import signin from "./signin";
