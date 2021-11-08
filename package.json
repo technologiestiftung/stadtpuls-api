@@ -65,7 +65,6 @@
   "dependencies": {
     "@humanwhocodes/env": "2.2.0",
     "@supabase/supabase-js": "1.22.6",
-    "@technologiestiftung/fastify-supabase": "0.1.2",
     "bcrypt": "5.0.1",
     "config": "3.3.6",
     "fastify": "3.20.2",
