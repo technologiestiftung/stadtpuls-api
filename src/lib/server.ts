@@ -26,9 +26,16 @@ import ttn from "../integrations/ttn";
 import http from "../integrations/http";
 import { getResponseDefaultSchema } from "../common/schemas";
 import pino from "pino";
-
+import Redis from "ioredis";
+import { redisUrl, stage } from "./env";
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
+
+const redis = new Redis(redisUrl, {
+  connectionName: `stadtpuls-api-${stage}`,
+  connectTimeout: 500,
+  maxRetriesPerRequest: 1,
+});
 export const buildServer: (options: {
   jwtSecret: string;
   supabaseUrl: string;
@@ -78,6 +85,8 @@ export const buildServer: (options: {
   server.register(fastifyBlipp);
   server.register(fastifyRateLimit, {
     allowList: ["127.0.0.1"],
+    cache: 5000,
+    redis,
   });
   server.register(fastifyHelmet);
   server.register(fastifyCors, {
