@@ -36,7 +36,7 @@ env:
   KONG_PORT: 8000
   KONG_PORT_TLS: 8443
   SUPABASE_MAX_ROWS: 1000
-  REDIS_url: http://redis:6379
+  REDIS_URL: http://redis:6379
   STAGE: test
 on:
   push:
