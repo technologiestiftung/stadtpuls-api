@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS "public"."user_profiles";
 DROP INDEX IF EXISTS user_name_case_insensitive;
 CREATE TABLE "public"."user_profiles" (
     "id" uuid NOT NULL,
-    "name" varchar(36) NOT NULL CONSTRAINT name_length_min_3_check check(char_length(name) >= 3) CONSTRAINT special_character_check check ("name" ~* '^[a-zA-Z0-9_-]*$') CONSTRAINT name_unique UNIQUE DEFAULT uuid_generate_v4 ()::text,
+    "name" varchar(36) NOT NULL CONSTRAINT name_length_min_3_check check(char_length(name) >= 3) CONSTRAINT special_character_check check ("name" ~* '^[a-zA-Z0-9_-]*$') CONSTRAINT name_unique UNIQUE DEFAULT extensions.uuid_generate_v4 ()::text,
     "display_name" varchar(50),
     "created_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "role" "public"."role" DEFAULT 'maker'::"role",

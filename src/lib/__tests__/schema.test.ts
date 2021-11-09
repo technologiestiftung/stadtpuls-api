@@ -60,7 +60,7 @@ describe("things the schema should provide", () => {
       /external_id cannot be null when connection type is ttn/
     );
   });
-  test.only("should return an error if external_id is not set on upsert of http to ttn sensor", async () => {
+  test("should return an error if external_id is not set on upsert of http to ttn sensor", async () => {
     const user = await signupUser();
     const sensor = await createSensor({ user_id: user.id, name: "snoopy" });
     const { data: sensors, error: sError } = await supabase
