@@ -83,7 +83,6 @@ export const buildServer: (options: {
   server.register(fastifyBlipp);
   server.register(fastifyRateLimit, {
     allowList: ["127.0.0.1"],
-    cache: 5000,
     redis,
   });
   server.register(fastifyHelmet);
