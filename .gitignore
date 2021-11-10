@@ -83,5 +83,12 @@ dev-tools/supabase/.vscode/
 LAB_NOTES.md
 thunder-tests
 dev-tools/supabase/dockerfiles/postgres/pg-data
+
+# Supabase
+**/supabase/.temp
+**/supabase/.env
+**/supabase/.globals.sql
+dev-tools/supabase-mirror/supabase.dump
+dev-tools/supabase-mirror/stadtpuls.dump
 dev-tools/supabase-mirror/NOTES.md
 vscode-profile-*.heapsnapshot
