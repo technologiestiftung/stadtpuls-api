@@ -1,0 +1,11 @@
+version: "3"
+services:
+  redis:
+    # image: redis:6.2.6-alpine
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "6379:10000"
+    volumes:
+      - /var/lib/redis
