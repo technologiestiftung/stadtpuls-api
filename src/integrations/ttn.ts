@@ -96,6 +96,7 @@ const ttn: FastifyPluginAsync = async (fastify) => {
       if (request.headers.authorization === undefined) {
         throw fastify.httpErrors.unauthorized();
       }
+      // TODO: [STADTPULS-470] Verify if the auth token flow works for ttn and http
       const decoded = (await request.jwtVerify()) as AuthToken;
       const token = request.headers.authorization?.split(" ")[1];
       const { data: authtokens, error } = await fastify.supabase
