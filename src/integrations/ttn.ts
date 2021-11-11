@@ -84,7 +84,6 @@ const postTTNBodySchema = S.object()
   )
   .required()
   .additionalProperties(true);
-// console.log(JSON.stringify(postTTNBodySchema.valueOf(), null, 2));
 
 const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
@@ -188,4 +187,22 @@ const ttn: FastifyPluginAsync = async (fastify) => {
   });
 };
 
+/**
+ * A birds eye view of the TTN plugin.
+ * When a request comes in, it will be validated against the schema and if it is valid and it has a valid JWT token, the request will be passed on to the handler function.
+ *
+ * In the handler it first looks up the JWT token in the data base. If it is found, it will be verified.
+ *
+ * From the token we obtain the `user_id`.
+ *
+ * Within the payload from TTN we also have a field called `end_device_ids.device_id`. This corresponds to the `external_id` id of a TTN sensor in our DB.
+ * If the user has a sensor with that `external_id` we finally have a valid request.
+ *
+ * From there on it is basic request handling.
+ *
+ * We take the `measurements` from `uplink_message.decoded_payload.measurements` and insert them into the DB as record for the sensor.
+ *
+ * We update the lat/lon/alt fields of the sensor based on `uplink_message.locations.user.latitude`, `uplink_message.locations.user.longitude` and `uplink_message.locations.user.altitude`.
+ *
+ */
 export default fp(ttn);
