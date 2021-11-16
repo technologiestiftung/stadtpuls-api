@@ -1,7 +1,6 @@
 // TODO: Should this file be moved to sensors-records.ts?
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { compare } from "bcrypt";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
@@ -66,6 +65,8 @@ const http: FastifyPluginAsync = async (fastify) => {
     logLevel,
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
+      // ---------------------------------
+      // TODO: [STADTPULS-474] remove duplicate code on both integrations
       const decoded = (await request.jwtVerify()) as AuthToken;
       if (request.headers.authorization === undefined) {
         throw fastify.httpErrors.unauthorized();
@@ -82,6 +83,7 @@ const http: FastifyPluginAsync = async (fastify) => {
         fastify.log.error("using old token");
         throw fastify.httpErrors.unauthorized();
       }
+      // ---------------------------------
       const sensorId = request.params.sensorId;
       const id = parseInt(sensorId, 10);
       if (!Number.isInteger(id)) {
