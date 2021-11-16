@@ -21,19 +21,12 @@
 @service_role_key = {{ $dotenv %SUPABASE_SERVICE_ROLE_KEY }}
 
 @auth_token = {{ $dotenv %AUTH_TOKEN }}
-@sensor_id = 73
+@sensor_id = 3
 
 
 ### Healthcheck
 GET {{ baseurl }}
 
-### auth
-
-
-POST {{ baseurl }}/auth
-Content-Type: application/json
-
-{"userId":"123"}
 
 
 ### postgrest with anon key
@@ -48,7 +41,7 @@ apikey: {{service_role_key}}
 
 
 
-### Create a user in supabase
+### login as an user in supabase
 # should return a token for later use
 # add it to the .env file
 
@@ -59,7 +52,7 @@ Content-Type: application/json
 {"email": "hash@ff6347.email",
 "password": "123password"}
 
-### login as an user in supabase
+### signup a user in supabase
 # should return a token for later use
 # add it to the .env file
 
@@ -132,7 +125,7 @@ POST {{baseurl}}/authtokens
 Content-Type: application/json
 Authorization: Bearer {{user_token}}
 
-{"description": "testing ttn"}
+{"description": "testing new tokens"}
 
 # {
 #   "comment": "Should do create a token",
@@ -142,6 +135,17 @@ Authorization: Bearer {{user_token}}
 #     "token": "123"
 #   }
 # }
+
+### create a sensor
+
+POST {{supabase_url}}/rest/v1/sensors
+apikey: {{anon_key}}
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+{"description": "testing ttn"}
+
+
 
 ### post records using HTTP integration  in this API
 
