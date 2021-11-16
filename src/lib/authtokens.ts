@@ -3,7 +3,7 @@ import { FastifyPluginAsync } from "fastify";
 import { v4 as uuidv4 } from "uuid";
 import { SignOptions } from "jsonwebtoken";
 import fp from "fastify-plugin";
-import { hash } from "bcrypt";
+import { hash } from "./crypto";
 import S from "fluent-json-schema";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
@@ -169,7 +169,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       // TODO: [STADTPULS-417] Refactor authtokens.ts to allow the usage a different JWT secret.
       // means we need to use jwt.sign directly and not the fastify plugin
       const token = fastify.jwt.sign(payload, options);
-      const hashedToken = await hash(token, 10);
+      const { computedHash: hashedToken, salt } = await hash({ token });
 
       const { data: authTokens, error } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
@@ -179,6 +179,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
             description,
             scope: scope ? scope : "sudo",
             user_id: decoded.sub,
+            salt,
           },
         ]);
 
@@ -239,7 +240,10 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         iss: issuer,
       };
       const token = fastify.jwt.sign(payload, options);
-      const hashedToken = await hash(token, 10);
+      const { computedHash: hashedToken } = await hash({
+        token,
+        salt: currentTokens[0].salt,
+      });
 
       const { data: newTokens } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")

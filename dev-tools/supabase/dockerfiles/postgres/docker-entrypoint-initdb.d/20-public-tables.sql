@@ -37,6 +37,7 @@ CREATE TABLE "public"."auth_tokens" (
     "description" varchar(200) NOT NULL,
     "scope" "public"."token_scope" NOT NULL DEFAULT 'sudo'::"token_scope",
     "user_id" uuid NOT NULL REFERENCES "public"."user_profiles" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    "salt" varchar(255) NOT NULL DEFAULT '',
     PRIMARY KEY ("id")
 );
 --

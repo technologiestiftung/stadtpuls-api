@@ -71,24 +71,14 @@ const http: FastifyPluginAsync = async (fastify) => {
         throw fastify.httpErrors.unauthorized();
       }
       const token = request.headers.authorization.split(" ")[1];
-      const { data: authtokens, error } = await fastify.supabase
-        .from<definitions["auth_tokens"]>("auth_tokens")
-        .select("*")
-        .eq("user_id", decoded.sub);
-      if (!authtokens || authtokens.length === 0) {
-        fastify.log.warn("no token found");
-        throw fastify.httpErrors.unauthorized();
-      }
+      const authTokenExists = await fastify.checkAuthtokenExists(
+        token,
+        decoded.sub
+      );
 
-      if (error) {
-        fastify.log.error("postgres error");
-        throw fastify.httpErrors.internalServerError(error.hint);
-      }
-
-      const compared = await compare(token, authtokens[0].id);
-      if (!compared) {
-        // this shouldn't happen since the token has to be deleted at this point
-        // and should already throw an error that it wasnt founds
+      if (!authTokenExists) {
+        // this shouldn't happen the request comes in with an valid but
+        // not existing token.
         fastify.log.error("using old token");
         throw fastify.httpErrors.unauthorized();
       }
@@ -97,6 +87,7 @@ const http: FastifyPluginAsync = async (fastify) => {
       if (!Number.isInteger(id)) {
         throw fastify.httpErrors.badRequest();
       }
+
       const { data: sensors, error: sensorError } = await fastify.supabase
         .from<definitions["sensors"]>("sensors")
         .select("*")
