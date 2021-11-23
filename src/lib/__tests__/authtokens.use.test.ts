@@ -28,7 +28,7 @@ describe("authtokens POST tests", () => {
     await truncateTables();
   });
   afterAll(async () => {
-    await truncateTables();
+    // await truncateTables();
     await closePool();
   });
 
@@ -113,7 +113,14 @@ describe("authtokens POST tests", () => {
       altitude: 30,
       measurements: [1, 2, 3],
     };
-    const ttnPayload = createTTNPayload({
+    const payload = createTTNPayload({
+      end_device_ids: {
+        device_id: "test-device-id",
+        application_ids: {
+          application_id: "test-application-id",
+        },
+      },
+
       uplink_message: {
         decoded_payload: {
           measurements: [1, 2, 3],
@@ -125,7 +132,6 @@ describe("authtokens POST tests", () => {
         },
       },
     });
-    console.log(ttnPayload);
     const httpSensor = await createSensor({
       user_id: user.id,
       name: "test with multiple tokens",
@@ -133,7 +139,8 @@ describe("authtokens POST tests", () => {
     const ttnSensor = await createSensor({
       user_id: user.id,
       name: "test with multiple tokens",
-    });
+      external_id: payload.end_device_ids.device_id,
+    }); //?
 
     const url = `/api/v${apiVersion}/authtokens`;
     const response1 = await server.inject({
@@ -186,16 +193,16 @@ describe("authtokens POST tests", () => {
     });
     const response5 = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/sensors/${ttnSensor.id}/records`,
-      payload: ttnPayload,
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      payload,
       headers: {
         Authorization: `Bearer ${token1}`,
       },
     });
     const response6 = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/sensors/${ttnSensor.id}/records`,
-      payload: ttnPayload,
+      url: `/api/v${apiVersion}/integrations/ttn/v3`,
+      payload,
       headers: {
         Authorization: `Bearer ${token2}`,
       },
@@ -220,7 +227,7 @@ describe("authtokens POST tests", () => {
     expect(httpRecords!).toHaveLength(2);
     expect(ttnRecords!).toHaveLength(2);
     // start boilerplate delete user
-    await deleteUser(user.token);
+    // await deleteUser(user.token);
     // end boilerplate
   });
 });

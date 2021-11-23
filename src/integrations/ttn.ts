@@ -16,10 +16,31 @@ export interface TTNPostBody {
   [key: string]: unknown;
   received_at: string;
   uplink_message: {
+    f_port?: number;
+    frm_payload?: string;
     decoded_payload: {
-      bytes: number[];
+      bytes?: number[];
       measurements: number[];
     };
+    rx_metadata?: [
+      {
+        gateway_ids?: {
+          gateway_id?: string;
+        };
+        rssi?: number;
+        channel_rssi?: number;
+        snr?: number;
+      }
+    ];
+    settings?: {
+      data_rate?: {
+        lora?: {
+          bandwidth?: number;
+          spreading_factor?: number;
+        };
+      };
+    };
+    received_at?: string;
     locations?: {
       user?: {
         latitude: number;
@@ -30,6 +51,8 @@ export interface TTNPostBody {
     };
   };
   end_device_ids: {
+    [key: string]: unknown;
+
     device_id: string;
     application_ids: {
       application_id: string;
@@ -86,6 +109,7 @@ const postTTNBodySchema = S.object()
 
 const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
+    // TODO: [STADTPULS-516] TTN should not be mounted on its own URL
     url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
     method: "POST",
     logLevel,
