@@ -25,6 +25,13 @@ Object {
 }
 `;
 
+exports[`all /api/v3/sensors tests get list of all sensors GET > 3000 should have pagination 1`] = `
+Object {
+  "data": Any<Array>,
+  "nextPage": "/api/v3/sensors?offset=3000&limit=3000",
+}
+`;
+
 exports[`single /api/v3/sensors/:sensorId tests should give us the sensor response 1`] = `
 Object {
   "data": Array [

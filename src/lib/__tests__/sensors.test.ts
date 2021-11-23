@@ -128,7 +128,7 @@ describe(`all ${sensorsEndpoint} tests`, () => {
       data: expect.any(Array),
       nextPage: `/api/v3/sensors?offset=${maxRows}&limit=${maxRows}`,
     });
-    expect(lastItem.id).toBe(1000);
+    expect(lastItem.id).toBe(maxRows);
     expect(response.statusCode).toBe(200);
 
     // make another request
