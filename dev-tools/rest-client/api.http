@@ -136,15 +136,6 @@ Authorization: Bearer {{user_token}}
 #   }
 # }
 
-### create a sensor
-
-POST {{supabase_url}}/rest/v1/sensors
-apikey: {{anon_key}}
-Content-Type: application/json
-Authorization: Bearer {{user_token}}
-
-{"description": "testing ttn"}
-
 
 
 ### post records using HTTP integration  in this API
