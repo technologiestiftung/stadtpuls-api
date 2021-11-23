@@ -38,7 +38,7 @@ export async function hash({
  * Function to verify a token hash against the original.
  * Needs the salt used to generate the token
  * @example
- * const { hash, salt } = await hashToken({ token: "123" });
+ * const { hash, salt } = await hash({ token: "123" });
  * const result = await compare({ provided: "123", stored: hash, salt });
  */
 export async function compare({

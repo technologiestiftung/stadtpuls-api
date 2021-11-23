@@ -48,7 +48,7 @@ const FastifySupabase = async (
     for (const at of authtokens) {
       if (at.salt.length === 0) {
         // we have one of our old tokens and we actually cant
-        // verify whivh is which. So we at least checked that the
+        // verify which is which. So we at least checked that the
         // user exisits.
         const comparedOld = await bycrypt.compare(token, at.id);
         if (comparedOld) {
@@ -90,7 +90,6 @@ const FastifySupabase = async (
   );
   if (!fastify.supabase) {
     fastify.decorate("supabase", supabaseAdmin);
-
     fastify.decorate("checkAuthtokenExists", checkAuthtokenExists);
   }
 };
