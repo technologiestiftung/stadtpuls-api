@@ -3,6 +3,6 @@
   "ignore": ["src/**/*.test.ts"],
   "ext": "ts,json,",
   "__exec": "npm run build && node --expose-gc --trace_gc --inspect -r dotenv/config ./dist/index.js ",
-  "exec": "npm run build && --inspect -r dotenv/config ./dist/index.js ",
+  "exec": "npm run build && node --inspect -r dotenv/config ./dist/index.js ",
   "legacyWatch": true
 }

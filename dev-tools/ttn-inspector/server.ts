@@ -5,7 +5,7 @@ const server = fastify({
   logger: false,
 });
 
-function decodeUplink(input: bytes) {
+function decodeUplink(input: any) {
   console.log(input);
   const temp = (input[0] << 8) | input[1];
   console.log(temp);
