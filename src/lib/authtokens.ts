@@ -184,9 +184,11 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         ]);
 
       if (error) {
+        fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
       }
       if (authTokens === null || authTokens.length === 0) {
+        fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
       }
       reply.status(201).send({
