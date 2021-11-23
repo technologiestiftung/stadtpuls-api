@@ -14,7 +14,7 @@ export async function signupUser(
 }> {
   const { id, token } = await signup({
     anonKey: supabaseAnonKey,
-    email: email ? email : `${faker.random.word()}+${faker.internet.email()}`,
+    email: email ? email : `${faker.internet.email()}`,
     password: faker.internet.password(),
     url: new URL(`${supabaseUrl}/auth/v1/signup`),
   });
