@@ -2,6 +2,7 @@
   "watch": ["src"],
   "ignore": ["src/**/*.test.ts"],
   "ext": "ts,json,",
-  "exec": "npm run esbuild && node --expose-gc --trace_gc --inspect -r dotenv/config ./dist/index.js ",
+  "__exec": "npm run build && node --expose-gc --trace_gc --inspect -r dotenv/config ./dist/index.js ",
+  "exec": "npm run build && node --inspect -r dotenv/config ./dist/index.js ",
   "legacyWatch": true
 }

@@ -1,6 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { compare } from "bcrypt";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
@@ -17,10 +16,31 @@ export interface TTNPostBody {
   [key: string]: unknown;
   received_at: string;
   uplink_message: {
+    f_port?: number;
+    frm_payload?: string;
     decoded_payload: {
-      bytes: number[];
+      bytes?: number[];
       measurements: number[];
     };
+    rx_metadata?: [
+      {
+        gateway_ids?: {
+          gateway_id?: string;
+        };
+        rssi?: number;
+        channel_rssi?: number;
+        snr?: number;
+      }
+    ];
+    settings?: {
+      data_rate?: {
+        lora?: {
+          bandwidth?: number;
+          spreading_factor?: number;
+        };
+      };
+    };
+    received_at?: string;
     locations?: {
       user?: {
         latitude: number;
@@ -31,6 +51,8 @@ export interface TTNPostBody {
     };
   };
   end_device_ids: {
+    [key: string]: unknown;
+
     device_id: string;
     application_ids: {
       application_id: string;
@@ -87,39 +109,30 @@ const postTTNBodySchema = S.object()
 
 const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
+    // TODO: [STADTPULS-516] TTN should not be mounted on its own URL
     url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
     method: "POST",
     logLevel,
     schema: { body: postTTNBodySchema, headers: postTTNHeaderSchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
+      const decoded = (await request.jwtVerify()) as AuthToken;
       if (request.headers.authorization === undefined) {
         throw fastify.httpErrors.unauthorized();
       }
-      // TODO: [STADTPULS-470] Verify if the auth token flow works for ttn and http
-      const decoded = (await request.jwtVerify()) as AuthToken;
+
       const token = request.headers.authorization?.split(" ")[1];
-      const { data: authtokens, error } = await fastify.supabase
-        .from<definitions["auth_tokens"]>("auth_tokens")
-        .select("*")
-        .eq("user_id", decoded.sub);
-      if (!authtokens || authtokens.length === 0) {
-        fastify.log.warn("no token found");
+      const authTokenExists = await fastify.checkAuthtokenExists(
+        token,
+        decoded.sub
+      );
+      if (!authTokenExists) {
+        // this shouldn't happen the request comes in with an valid but
+        // not existing token.
+        fastify.log.error("using old/non existing token");
         throw fastify.httpErrors.unauthorized();
       }
 
-      if (error) {
-        fastify.log.error("postgres error");
-        throw fastify.httpErrors.internalServerError();
-      }
-
-      const compared = await compare(token, authtokens[0].id);
-      if (!compared) {
-        // this shouldn't happen since the token has to be deleted at this point
-        // and should already throw an error that it wasnt founds
-        fastify.log.error("using old token");
-        throw fastify.httpErrors.unauthorized();
-      }
       const { end_device_ids, received_at, uplink_message } = request.body;
       const { device_id } = end_device_ids;
       const { decoded_payload, locations } = uplink_message;

@@ -4,7 +4,6 @@ import openapiTS from "openapi-typescript";
 
 const anonKey = process.env.SUPABASE_ANON_KEY;
 const supabaseUrl = process.env.SUPABASE_URL;
-
 const url = new URL(`${supabaseUrl}/rest/v1/?apikey=${anonKey}`);
 // const options = {
 //   hostname: url.host,

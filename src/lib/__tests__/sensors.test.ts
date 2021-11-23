@@ -3,6 +3,7 @@
 // Copyright (c) 2021 Technologiestiftung Berlin & Fabian Morón Zirfas
 //
 // This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
 
 import { definitions } from "../../common/supabase";
 import {
@@ -11,6 +12,7 @@ import {
   connectPool,
   createSensor,
   createSensors,
+  maxRows,
   sensorsEndpoint,
   signupUser,
   truncateTables,
@@ -42,7 +44,6 @@ const sensorSnapshotDescription = {
     },
   ],
 };
-// https://opensource.org/licenses/MIT
 beforeAll(async () => {
   await connectPool();
 });
@@ -109,11 +110,10 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     );
   });
 
-  test("get list of all sensors GET > 1000 should have pagination", async () => {
+  test(`get list of all sensors GET > ${maxRows} should have pagination`, async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    await createSensors(user.id, 2000);
-    // await createSensor({ user_id: user.id, name: "test" });
+    await createSensors(user.id, maxRows * 2);
     const response = await server.inject({
       method: "GET",
       url: sensorsEndpoint,
@@ -126,9 +126,9 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     const lastItem = json.data[json.data.length - 1];
     expect(json).toMatchSnapshot({
       data: expect.any(Array),
-      nextPage: "/api/v3/sensors?offset=1000&limit=1000",
+      nextPage: `/api/v3/sensors?offset=${maxRows}&limit=${maxRows}`,
     });
-    expect(lastItem.id).toBe(1000);
+    expect(lastItem.id).toBe(maxRows);
     expect(response.statusCode).toBe(200);
 
     // make another request
@@ -142,7 +142,7 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     }>();
 
     expect(response2.statusCode).toBe(200);
-    expect(json2.data[0].id).toBe(1001);
+    expect(json2.data[0].id).toBe(maxRows + 1);
   });
 });
 
