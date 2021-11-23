@@ -1,6 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { compare } from "bcrypt";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
@@ -106,7 +105,7 @@ const ttn: FastifyPluginAsync = async (fastify) => {
       if (!authTokenExists) {
         // this shouldn't happen the request comes in with an valid but
         // not existing token.
-        fastify.log.error("using old token");
+        fastify.log.error("using old/non existing token");
         throw fastify.httpErrors.unauthorized();
       }
 
