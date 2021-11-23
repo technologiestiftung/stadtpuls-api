@@ -18,6 +18,10 @@ export { createTTNPayload } from "./create-ttn-payload";
 export { createSensor, createSensors } from "./create-sensors";
 export type Sensor = definitions["sensors"];
 
+export const maxRows = process.env.SUPABASE_MAX_ROWS
+  ? parseInt(process.env.SUPABASE_MAX_ROWS, 10)
+  : 3000;
+
 export const jwtSecret =
   process.env.JWT_SECRET ||
   "super-secret-jwt-token-with-at-least-32-characters-long";
