@@ -13,10 +13,8 @@ import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 import fastifyAuth from "fastify-auth";
 import fastifyRateLimit from "fastify-rate-limit";
-// import fastifyPostgres from "fastify-postgres";
 
-import fastifySupabase from "@technologiestiftung/fastify-supabase";
-
+import fastifySupabase from "./supabase";
 import routesAuth from "./authtokens";
 import signup from "./signup";
 import signin from "./signin";
@@ -26,9 +24,16 @@ import ttn from "../integrations/ttn";
 import http from "../integrations/http";
 import { getResponseDefaultSchema } from "../common/schemas";
 import pino from "pino";
-
+import Redis from "ioredis";
+import { redisUrl, stage } from "./env";
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
+
+const redis = new Redis(redisUrl, {
+  connectionName: `stadtpuls-api-${stage}`,
+  connectTimeout: 500,
+  maxRetriesPerRequest: 1,
+});
 export const buildServer: (options: {
   jwtSecret: string;
   supabaseUrl: string;
@@ -78,6 +83,7 @@ export const buildServer: (options: {
   server.register(fastifyBlipp);
   server.register(fastifyRateLimit, {
     allowList: ["127.0.0.1"],
+    redis,
   });
   server.register(fastifyHelmet);
   server.register(fastifyCors, {

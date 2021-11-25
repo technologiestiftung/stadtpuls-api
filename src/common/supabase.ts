@@ -21,6 +21,7 @@ export interface paths {
           description?: parameters["rowFilter.auth_tokens.description"];
           scope?: parameters["rowFilter.auth_tokens.scope"];
           user_id?: parameters["rowFilter.auth_tokens.user_id"];
+          salt?: parameters["rowFilter.auth_tokens.salt"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -76,6 +77,7 @@ export interface paths {
           description?: parameters["rowFilter.auth_tokens.description"];
           scope?: parameters["rowFilter.auth_tokens.scope"];
           user_id?: parameters["rowFilter.auth_tokens.user_id"];
+          salt?: parameters["rowFilter.auth_tokens.salt"];
         };
         header: {
           /** Preference */
@@ -95,6 +97,7 @@ export interface paths {
           description?: parameters["rowFilter.auth_tokens.description"];
           scope?: parameters["rowFilter.auth_tokens.scope"];
           user_id?: parameters["rowFilter.auth_tokens.user_id"];
+          salt?: parameters["rowFilter.auth_tokens.salt"];
         };
         body: {
           /** auth_tokens */
@@ -596,6 +599,7 @@ export interface definitions {
      * This is a Foreign Key to `user_profiles.id`.<fk table='user_profiles' column='id'/>
      */
     user_id: string;
+    salt: string;
   };
   categories: {
     /**
@@ -641,6 +645,10 @@ export interface definitions {
     longitude?: number;
     latitude?: number;
     altitude?: number;
+    /**
+     * Note:
+     * This is a Foreign Key to `categories.id`.<fk table='categories' column='id'/>
+     */
     category_id: number;
     icon_id?: number;
     /**
@@ -692,6 +700,7 @@ export interface parameters {
   "rowFilter.auth_tokens.description": string;
   "rowFilter.auth_tokens.scope": string;
   "rowFilter.auth_tokens.user_id": string;
+  "rowFilter.auth_tokens.salt": string;
   /** categories */
   "body.categories": definitions["categories"];
   "rowFilter.categories.id": string;

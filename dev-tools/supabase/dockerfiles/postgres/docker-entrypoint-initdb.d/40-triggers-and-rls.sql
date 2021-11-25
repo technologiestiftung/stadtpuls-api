@@ -35,7 +35,23 @@ after delete on auth.users for each row execute procedure public.handle_deleted_
 --
 --
 --
---
+/****************************************************************
+ * trigger function for checking if external_id is set on new or
+ * updated sensors.
+ *****************************************************************/
+drop trigger if exists on_sensors_external_id_check on public.sensors;
+drop function if exists public.check_external_id();
+create function public.check_external_id() returns trigger as $$ begin if new.connection_type = 'ttn' then if new.external_id is null then raise exception 'external_id cannot be null when connection type is %',
+new.connection_type;
+end if;
+end if;
+return new;
+end;
+$$ language plpgsql;
+create trigger on_sensors_external_id_check before
+insert
+  or
+update on public.sensors for each row execute function public.check_external_id ();
 -- https://supabase.io/docs/guides/auth#disable-realtime-for-private-tables
 /**
  * REALTIME SUBSCRIPTIONS

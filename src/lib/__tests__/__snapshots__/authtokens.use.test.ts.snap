@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`authtokens POST tests should be able to identify tokens by their hash 1`] = `
+Object {
+  "data": Object {
+    "nice_id": Any<Number>,
+    "token": Any<String>,
+  },
+  "method": "POST",
+  "url": "/api/v3/authtokens",
+}
+`;
+
+exports[`authtokens POST tests should be able to identify tokens by their hash 2`] = `
+Object {
+  "data": Object {
+    "nice_id": Any<Number>,
+    "token": Any<String>,
+  },
+  "method": "POST",
+  "url": "/api/v3/authtokens",
+}
+`;

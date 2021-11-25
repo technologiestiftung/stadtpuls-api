@@ -11,6 +11,7 @@ import {
   closePool,
   connectPool,
   createSensor,
+  maxRows,
   sensorsEndpoint,
   signupUser,
   truncateTables,
@@ -106,13 +107,13 @@ describe(`${sensorsEndpoint}/:sensorId/records tests`, () => {
     expect(json.nextPage).not.toBeDefined();
   });
 
-  test("should get response with 1000 and nextPage", async () => {
+  test(`should get response with ${maxRows} and nextPage`, async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
     const sensor = await createSensor({ user_id: user.id });
     await createRecords({
       sensor_id: sensor.id,
-      numberOfRecords: 2000,
+      numberOfRecords: maxRows * 3,
     });
     const response = await server.inject({
       method: "GET",
@@ -121,14 +122,14 @@ describe(`${sensorsEndpoint}/:sensorId/records tests`, () => {
 
     const json = response.json<JsonResponseRecords>();
     expect(response.statusCode).toBe(200);
-    expect(json.data).toHaveLength(1000);
+    expect(json.data).toHaveLength(maxRows);
     expect(json.nextPage).toBeDefined();
     expect(json.nextPage).toMatchInlineSnapshot(
-      `"/api/v3/sensors/1/records?offset=1000&limit=1000"`
+      `"/api/v3/sensors/1/records?offset=3000&limit=3000"`
     );
 
     expect(response.headers["content-range"]).toBeDefined();
-    expect(response.headers["content-range"]).toBe("0-999/*");
+    expect(response.headers["content-range"]).toBe(`0-${maxRows - 1}/*`);
 
     expect(response.headers["range-unit"]).toBeDefined();
     expect(response.headers["range-unit"]).toBe("record");

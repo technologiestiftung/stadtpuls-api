@@ -1,0 +1,27 @@
+{
+  "name": "@technologiestiftung/supabase-mirror",
+  "version": "0.0.1",
+  "description": "Tool for mirroring the production db to staging. These scripts assume that your staging and production environment have the same schema. It only dumps and restores data from some specif tables. No functions, no triggers.",
+  "main": "src/cli.ts",
+  "scripts": {
+    "test": "jest",
+    "dev": "node -r ts-node/register src/cli.ts"
+  },
+  "keywords": [],
+  "author": "Fabian Morón Zirfas <fabianmoronzirfas@protonmail.ch> (https://fabianmoronzirfas.me)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/inquirer": "8.1.3",
+    "@types/node": "14.17.32",
+    "@types/yargs": "17.0.5",
+    "ts-node": "10.4.0",
+    "ts-node-dev": "1.1.8",
+    "typescript": "4.4.4"
+  },
+  "dependencies": {
+    "@humanwhocodes/env": "2.2.0",
+    "execa": "5.1.1",
+    "inquirer": "8.2.0",
+    "yargs": "17.2.1"
+  }
+}
