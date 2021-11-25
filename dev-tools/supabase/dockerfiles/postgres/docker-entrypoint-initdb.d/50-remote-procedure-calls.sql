@@ -11,3 +11,14 @@ where id = auth.uid();
 delete from auth.users
 where id = auth.uid();
 $$;
+
+-- get users alphabetically (case-insensitively!)
+CREATE OR REPLACE FUNCTION public.get_users_alphabetically()
+  RETURNS SETOF public.user_profiles
+  LANGUAGE plpgsql AS
+$$
+BEGIN
+   RETURN QUERY
+   SELECT * FROM public.user_profiles ORDER BY lower(name);
+END;
+$$;
