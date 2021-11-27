@@ -13,7 +13,7 @@ services:
       - ${KONG_PORT_TLS}:8443/tcp
   auth:
     container_name: supabase-auth
-    image: supabase/gotrue:v2.2.3
+    image: supabase/gotrue:v2.2.10
     ports:
       - ${AUTH_PORT}
     depends_on:
