@@ -93,7 +93,6 @@ describe("tests for authtokens PUT method", () => {
       payload: httpPayload,
     });
     expect(responsePOST1.statusCode).toBe(201);
-    const newTokenDescription = "new description of rotated token";
     // rotate the token
     const responsePUT1 = await server.inject({
       url: `/api/v${apiVersion}/authtokens`,
@@ -103,13 +102,12 @@ describe("tests for authtokens PUT method", () => {
         "content-type": "application/json",
       },
       payload: {
-        description: newTokenDescription,
+        description: "new description of rotated token",
         nice_id: entireAuthResponse.nice_id,
       },
     });
     expect(responsePUT1.statusCode).toBe(201);
     const data = responsePUT1.json().data;
-    expect(data.description).toBe(newTokenDescription);
     expect(data.nice_id).toBe(entireAuthResponse.nice_id);
 
     const rotatedToken = responsePUT1.json().data.token;
