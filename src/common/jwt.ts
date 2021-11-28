@@ -1,3 +1,4 @@
+import { SignOptions } from "jsonwebtoken";
 import { definitions } from "./supabase";
 type Scope = definitions["auth_tokens"]["scope"];
 
@@ -9,3 +10,5 @@ export interface AuthToken {
   scope: Scope;
   iat: number;
 }
+
+export const jwtSignOptions: SignOptions = { algorithm: "HS256" };
