@@ -222,7 +222,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
 
       const { data: currentTokens, error } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
-        .select("description, nice_id, scope, user_id")
+        .select("description, nice_id, scope, user_id, salt")
         .eq("user_id", decoded.sub)
         .eq("nice_id", nice_id);
       if (currentTokens === null || currentTokens.length === 0) {
@@ -242,9 +242,9 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         iss: issuer,
       };
       const token = fastify.jwt.sign(payload, options);
-      const { computedHash: hashedToken } = await hash({
+      const { computedHash: hashedToken, salt } = await hash({
         token,
-        salt: currentTokens[0].salt,
+        // salt: currentTokens[0].salt,
       });
 
       const { data: newTokens } = await fastify.supabase
@@ -253,6 +253,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
           id: hashedToken,
           description,
           scope: scope ? scope : "sudo",
+          salt,
         })
         .eq("user_id", decoded.sub)
         .eq("nice_id", nice_id);
