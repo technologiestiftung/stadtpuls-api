@@ -1,12 +1,11 @@
 import { FastifyPluginAsync } from "fastify";
 
 import { v4 as uuidv4 } from "uuid";
-import { SignOptions } from "jsonwebtoken";
 import fp from "fastify-plugin";
 import { hash } from "./crypto";
 import S from "fluent-json-schema";
 import { definitions } from "../common/supabase";
-import { AuthToken } from "../common/jwt";
+import { AuthToken, jwtSignOptions } from "../common/jwt";
 import { logLevel } from "./env";
 
 interface PostBody {
@@ -158,7 +157,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       const { description, scope } = request.body;
 
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
-      const options: SignOptions = { algorithm: "HS256" };
       const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: "sudo",
@@ -168,7 +166,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       };
       // TODO: [STADTPULS-417] Refactor authtokens.ts to allow the usage a different JWT secret.
       // means we need to use jwt.sign directly and not the fastify plugin
-      const token = fastify.jwt.sign(payload, options);
+      const token = fastify.jwt.sign(payload, jwtSignOptions);
       const { computedHash: hashedToken, salt } = await hash({ token });
 
       const { data: authTokens, error } = await fastify.supabase
@@ -233,7 +231,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         throw fastify.httpErrors.internalServerError();
       }
 
-      const options: SignOptions = { algorithm: "HS256" };
       const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: scope ? scope : currentTokens[0].scope,
@@ -241,7 +238,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         jti: uuidv4(),
         iss: issuer,
       };
-      const token = fastify.jwt.sign(payload, options);
+      const token = fastify.jwt.sign(payload, jwtSignOptions);
       const { computedHash: hashedToken, salt } = await hash({
         token,
         // salt: currentTokens[0].salt,
