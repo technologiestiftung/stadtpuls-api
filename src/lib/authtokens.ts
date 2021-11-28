@@ -1,13 +1,13 @@
 import { FastifyPluginAsync } from "fastify";
 
 import { v4 as uuidv4 } from "uuid";
+import { SignOptions } from "jsonwebtoken";
 import fp from "fastify-plugin";
 import { hash } from "./crypto";
 import S from "fluent-json-schema";
 import { definitions } from "../common/supabase";
-import { AuthToken, jwtSignOptions } from "../common/jwt";
+import { AuthToken } from "../common/jwt";
 import { logLevel } from "./env";
-import { buildReplyPayload } from "./reply-utils";
 
 interface PostBody {
   description: string;
@@ -128,11 +128,10 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         throw fastify.httpErrors.internalServerError(error.hint);
       }
 
-      const payload = buildReplyPayload({
+      reply.status(200).send({
         url: `${request.url}`,
-        payload: authtokens,
+        data: authtokens,
       });
-      reply.status(200).send(payload);
     },
   });
 
@@ -159,6 +158,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       const { description, scope } = request.body;
 
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
+      const options: SignOptions = { algorithm: "HS256" };
       const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: "sudo",
@@ -168,7 +168,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       };
       // TODO: [STADTPULS-417] Refactor authtokens.ts to allow the usage a different JWT secret.
       // means we need to use jwt.sign directly and not the fastify plugin
-      const token = fastify.jwt.sign(payload, jwtSignOptions);
+      const token = fastify.jwt.sign(payload, options);
       const { computedHash: hashedToken, salt } = await hash({ token });
 
       const { data: authTokens, error } = await fastify.supabase
@@ -191,12 +191,11 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
       }
-      const replyPayload = buildReplyPayload({
+      reply.status(201).send({
+        method: `${request.method}`,
         url: `${request.url}`,
-        payload: { token, nice_id: authTokens[0].nice_id },
+        data: { token, nice_id: authTokens[0].nice_id },
       });
-
-      reply.status(201).send(replyPayload);
     },
   });
   //  ██▓███   █    ██ ▄▄▄█████▓
@@ -222,8 +221,8 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       const { description, scope, nice_id } = request.body;
 
       const { data: currentTokens, error } = await fastify.supabase
-        .from<Omit<definitions["auth_tokens"], "salt">>("auth_tokens")
-        .select("description, nice_id, scope")
+        .from<definitions["auth_tokens"]>("auth_tokens")
+        .select("description, nice_id, scope, user_id, salt")
         .eq("user_id", decoded.sub)
         .eq("nice_id", nice_id);
       if (currentTokens === null || currentTokens.length === 0) {
@@ -234,6 +233,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         throw fastify.httpErrors.internalServerError();
       }
 
+      const options: SignOptions = { algorithm: "HS256" };
       const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: scope ? scope : currentTokens[0].scope,
@@ -241,7 +241,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         jti: uuidv4(),
         iss: issuer,
       };
-      const token = fastify.jwt.sign(payload, jwtSignOptions);
+      const token = fastify.jwt.sign(payload, options);
       const { computedHash: hashedToken, salt } = await hash({
         token,
         // salt: currentTokens[0].salt,
@@ -261,15 +261,12 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       if (newTokens === null || newTokens.length === 0) {
         throw fastify.httpErrors.internalServerError();
       }
-      const replyPayload = buildReplyPayload({
+
+      reply.status(201).send({
+        method: `${request.method}`,
         url: `${request.url}`,
-        payload: {
-          token,
-          nice_id: newTokens[0].nice_id,
-          description: newTokens[0].description,
-        },
+        data: { token, nice_id: newTokens[0].nice_id },
       });
-      reply.status(201).send(replyPayload);
     },
   });
 
