@@ -1,3 +1,4 @@
+// TODO: [STADTPULS-531] Use unified buildReplyPayload function for responses
 import { FastifyPluginAsync } from "fastify";
 
 import { v4 as uuidv4 } from "uuid";
