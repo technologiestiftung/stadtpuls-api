@@ -17,7 +17,7 @@ CREATE TABLE "public"."user_profiles" (
     "created_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "role" "public"."role" DEFAULT 'maker'::"role",
     "url" varchar(100),
-    "description" varchar(200),
+    "description" varchar(500),
     PRIMARY KEY ("id")
 );
 CREATE UNIQUE INDEX user_name_case_insensitive ON "public"."user_profiles" (LOWER(name));
@@ -79,7 +79,7 @@ CREATE TABLE "public"."sensors" (
     "id" int4 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "external_id" varchar(36),
     "name" varchar(50) CONSTRAINT name_length_min_3_check check(char_length(name) >= 3),
-    "description" varchar(200),
+    "description" varchar(500),
     "connection_type" "public"."connection_types" NOT NULL DEFAULT 'http'::"connection_types",
     "location" varchar(50),
     "longitude" float8,
