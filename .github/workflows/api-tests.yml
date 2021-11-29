@@ -93,7 +93,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Run supabase
-        run: docker-compose --env-file dev-tools/supabase/.env.example --file dev-tools/supabase/docker-compose.yml up --detach --build --force-recreate
+        run: docker-compose --env-file supabase/supabase-docker-compose/.env.example --file supabase/supabase-docker-compose/docker-compose.yml up --detach --build --force-recreate
       - run: npm ci
       - run: npm run test:ci
       - name: Setup tmate session
