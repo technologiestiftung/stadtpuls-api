@@ -75,7 +75,7 @@ jobs:
       - name: Checkout technologiestiftung/stadtpuls-supabase#staging
         uses: actions/checkout@v2
         # check the supabase setup for staging
-        if: github.event.pull_request.base.ref == 'staging' || github.base_ref == 'staging'
+        if: github.event.pull_request.base.ref == 'staging' || github.ref == 'ref/heads/staging'
         with:
           repository: technologiestiftung/stadtpuls-supabase
           path: supabase
@@ -83,7 +83,7 @@ jobs:
       - name: Checkout technologiestiftung/stadtpuls-supabase#main
         uses: actions/checkout@v2
         # check the supabase setup for main
-        if: github.event.pull_request.base.ref == 'main' || github.base_ref == 'main'
+        if: github.event.pull_request.base.ref == 'main' || github.ref == 'refs/heads/main'
         with:
           repository: technologiestiftung/stadtpuls-supabase
           path: supabase
