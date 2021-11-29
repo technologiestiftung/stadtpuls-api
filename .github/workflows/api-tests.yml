@@ -70,7 +70,24 @@ jobs:
           # Opens tcp port 6379 on the host and service container
           - 6379:6379
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout technologiestiftung/stadtpuls-api
+        uses: actions/checkout@v2
+      - name: Checkout technologiestiftung/stadtpuls-supabase#staging
+        uses: actions/checkout@v2
+        # check the supabase setup for staging
+        if: github.event.pull_request.base.ref == 'staging' || github.base_ref == 'staging'
+        with:
+          repository: technologiestiftung/stadtpuls-supabase
+          path: supabase
+          ref: staging
+      - name: Checkout technologiestiftung/stadtpuls-supabase#main
+        uses: actions/checkout@v2
+        # check the supabase setup for main
+        if: github.event.pull_request.base.ref == 'main' || github.base_ref == 'main'
+        with:
+          repository: technologiestiftung/stadtpuls-supabase
+          path: supabase
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
