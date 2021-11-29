@@ -24,7 +24,7 @@ To get the project ready you need to do some tasks.
 - Get your service key and `postgresql://…` connection string
 - Add your service role key to `.env`
 - Provision the dev database
-  - use the scripts `dev-tools/supabase/dockerfiles/postgres/docker-entrypoint-initdb.d/` to give your DB the final touches. Watch out: 00-initial-schema.sql, 01-auth-schema.sql and 02-storage-schema.sql are covered by supabase. You don't need these when working with the cloud. The other SQL scripts
+  - use the scripts `stadtpuls-supabase/supabase-docker-compose/dockerfiles/postgres/docker-entrypoint-initdb.d/` to give your DB the final touches. Watch out: 00-initial-schema.sql, 01-auth-schema.sql and 02-storage-schema.sql are covered by supabase. You don't need these when working with the cloud. The other SQL scripts
     - create replication of users into the public users table (like mentioned in their [docs](https://supabase.io/docs/guides/auth#create-a-publicusers-table))
     - disable realtime for all non public tables (see also the link above on the why to do this)
     - enable row level security on all tables
@@ -41,27 +41,32 @@ When a request over TTN, HTTP, or any other integration, comes in we take the to
 
 You need Docker and Node.js.
 
-To start you local copy of supabase do the following:
-
-<!--
-~TODO: [STADTPULS-473] api docs: Add instruction for running redis
- -->
+To start your local redis database run the following commands:
 
 ```bash
-cd dev-tools/supabase/
+git clone https://github.com/technologiestiftung/stadtpuls-redis
+cd stadtpuls-redis/
+docker composse up --detach
+```
+
+To start you local copy of supabase run the following steps:
+
+```bash
+git clone https://github.com/technologiestiftung/stadtpuls-supabase
+cd stadtpuls-supabase/supabase-docker-compose
 cp .env.example .env
 mkdir dockerfiles/postgres/pg-data
 docker compose up --detach
 ```
 
-When your supabase instance is running you can proceed. Test if the supabase is by running the following command. Make sure to replace `<YOUR ANON KEY>` with the anon key you can find in `dev-tools/supabase/dockerfiles/kong/kong.yml` at the bottom. The port may change based on `KONG_PORT` in `dev-tools/supabase/.env`.
+When your supabase instance is running you can proceed. Test if the supabase is by running the following command. Make sure to replace `<YOUR ANON KEY>` with the anon key you can find in `stadtpuls-supabase/supabase-docker-compose/dockerfiles/kong/kong.yml` at the bottom. The port may change based on `KONG_PORT` in `stadtpuls-supabase/supabase-docker-compose/.env`.
 
 ```bash
 curl http://localhost:8000/rest/v1/ \
   -H "apikey: <YOUR ANON KEY>"
 ```
 
-To start your local copy of the API create your `.env` file in the root of the repository `cp .env.example .env` and update the values. You can find them in `dev-tools/supabase/.env` and `dev-tools/supabase/dockerfiles/kong/kong.yml`. Use the `KONG_PORT` for your `SUPABASE_URL` (`http://localhost:<KONG_PORT>`)
+To start your local copy of the API create your `.env` file in the root of the repository `cp .env.example .env` and update the values. You can find them in `stadtpuls-supabase/supabase-docker-compose/.env` and `stadtpuls-supabase/supabase-docker-compose/dockerfiles/kong/kong.yml`. Use the `KONG_PORT` for your `SUPABASE_URL` (`http://localhost:<KONG_PORT>`)
 
 ```bash
 cp .env.example .env
@@ -219,13 +224,13 @@ networks:
 
 ### Running within your supabase setup
 
-- Copy the whole service `stadtpuls-api` to the file `dev-tools/supabase/docker-compose.yml`.
+- Copy the whole service `stadtpuls-api` to the file `stadtpuls-supabase/supabase-docker-compose/docker-compose.yml`.
 - Dont copy the network part.
 - Adjust the `SUPABASE_URL` to (TBD)
 - Adjust the `DATABASE_URL` to (TBD)
 
 ```bash
-cd dev-tools/supabase/
+cd stadtpuls-supabase/supabase-docker-compose/
 # if you had the whole setup already running
 docker compose down && rm -rf dockerfiles/postgres/pg-data/ && mkdir dockerfiles/postgres/pg-data
 # MacOS & Windows
