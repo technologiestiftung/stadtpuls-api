@@ -23,6 +23,8 @@
 @auth_token = {{ $dotenv %AUTH_TOKEN }}
 @sensor_id = 3
 
+@nice_id = {{ $dotenv %NICE_ID }}
+
 
 ### Healthcheck
 GET {{ baseurl }}
@@ -114,7 +116,7 @@ Authorization: Bearer {{user_token}}
 
 ### GET token by nice_id
 
-GET {{baseurl}}/authtokens?nice_id=2
+GET {{baseurl}}/authtokens?nice_id={{nice_id}}
 Content-Type: application/json
 Authorization: Bearer {{user_token}}
 
@@ -125,7 +127,7 @@ POST {{baseurl}}/authtokens
 Content-Type: application/json
 Authorization: Bearer {{user_token}}
 
-{"description": "testing new tokens"}
+{"description": "testing new tokens 345"}
 
 # {
 #   "comment": "Should do create a token",
@@ -137,6 +139,13 @@ Authorization: Bearer {{user_token}}
 # }
 
 
+### Rotate an authToken in this API
+
+PUT {{baseurl}}/authtokens
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+{"description": "testing old to new tokens rotate", "nice_id": 4 }
 
 ### post records using HTTP integration  in this API
 
