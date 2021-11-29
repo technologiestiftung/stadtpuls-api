@@ -61,7 +61,7 @@ services:
 
   realtime:
     container_name: supabase-realtime
-    image: supabase/realtime:v0.17.1
+    image: supabase/realtime:v0.19.0
     ports:
       - ${REALTIME_PORT}
     depends_on:
