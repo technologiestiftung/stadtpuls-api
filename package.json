@@ -25,9 +25,8 @@
     "test:ci": "jest --runInBand --forceExit",
     "generate:types": "ts-node -r dotenv/config scripts/create-supabase-types.ts",
     "prebuild": "rimraf dist",
-    "postbuild": "tsc --emitDeclarationOnly --outDir dist",
-    "build": "esbuild --platform=node --sourcemap --banner:js='\"use strict\";' --target=es2020 --target=node14 --format=cjs src/*.ts src/**/*.ts src/**/*.ts --outdir=dist",
-    "prepare": "npm run build",
+    "postbuild": "tsc --noEmit --project tsconfig.build.json",
+    "build": "esbuild --platform=node --sourcemap --banner:js='\"use strict\";' --target=es2020 --target=node14 --format=cjs src/*.ts src/**/*.ts src/**/*.ts --outdir=dist --tsconfig=tsconfig.build.json",
     "dev": "nodemon",
     "test:supabase:start": "docker compose --remove-orphan -f ./dev-tools/local-supabase/docker/docker-compose.yml up -d ",
     "test:supabase:stop": "docker compose -f ./dev-tools/local-supabase/docker/docker-compose.yml down"
