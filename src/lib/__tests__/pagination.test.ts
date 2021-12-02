@@ -9,9 +9,11 @@ import {
   createSensor,
   sensorsEndpoint,
   signupUser,
+  maxRows,
 } from "../../__test-utils";
 import { createRecords } from "../../__test-utils/create-records";
 import buildServer from "../server";
+
 type JsonResponseRecords = {
   nextPage?: string;
   data: definitions["records"][];
@@ -33,7 +35,7 @@ describe("pagination", () => {
     const sensor = await createSensor({ user_id: user.id });
     await createRecords({
       sensor_id: sensor.id,
-      numberOfRecords: 3000,
+      numberOfRecords: maxRows * 3,
     });
     const response1 = await server.inject({
       method: "GET",
@@ -41,10 +43,10 @@ describe("pagination", () => {
     });
     const json1 = response1.json<JsonResponseRecords>();
 
-    expect(json1.data).toHaveLength(1000);
+    expect(json1.data).toHaveLength(maxRows);
     expect(json1.nextPage).toBeDefined();
     expect(json1.nextPage).toMatchInlineSnapshot(
-      `"/api/v3/sensors/1/records?offset=1000&limit=1000"`
+      `"/api/v3/sensors/1/records?offset=3000&limit=3000"`
     );
 
     const response2 = await server.inject({
@@ -53,7 +55,7 @@ describe("pagination", () => {
     });
     const json2 = response2.json<JsonResponseRecords>();
     expect(json2.nextPage).toMatchInlineSnapshot(
-      `"/api/v3/sensors/1/records?offset=2000&limit=1000"`
+      `"/api/v3/sensors/1/records?offset=6000&limit=3000"`
     );
     const response3 = await server.inject({
       method: "GET",
@@ -61,7 +63,7 @@ describe("pagination", () => {
     });
     const json3 = response3.json<JsonResponseRecords>();
     expect(json3.nextPage).toMatchInlineSnapshot(
-      `"/api/v3/sensors/1/records?offset=3000&limit=1000"`
+      `"/api/v3/sensors/1/records?offset=9000&limit=3000"`
     );
   });
 });

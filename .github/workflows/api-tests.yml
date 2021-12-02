@@ -35,8 +35,9 @@ env:
   REALTIME_PORT: 4000
   KONG_PORT: 8000
   KONG_PORT_TLS: 8443
-  SUPABASE_MAX_ROWS: 1000
-
+  SUPABASE_MAX_ROWS: 3000
+  REDIS_URL: http://redis:6379
+  STAGE: test
 on:
   push:
     branches: [main, staging]
@@ -58,15 +59,41 @@ jobs:
       matrix:
         node-version: [12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    # Service containers to run with `runner-job`
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis:6.2.6-alpine
+        #
+        ports:
+          # Opens tcp port 6379 on the host and service container
+          - 6379:6379
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout technologiestiftung/stadtpuls-api
+        uses: actions/checkout@v2
+      - name: Checkout technologiestiftung/stadtpuls-supabase#staging
+        uses: actions/checkout@v2
+        # check the supabase setup for staging
+        if: github.event.pull_request.base.ref == 'staging' || github.ref == 'refs/heads/staging'
+        with:
+          repository: technologiestiftung/stadtpuls-supabase
+          path: supabase
+          ref: staging
+      - name: Checkout technologiestiftung/stadtpuls-supabase#main
+        uses: actions/checkout@v2
+        # check the supabase setup for main
+        if: github.event.pull_request.base.ref == 'main' || github.ref == 'refs/heads/main'
+        with:
+          repository: technologiestiftung/stadtpuls-supabase
+          path: supabase
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - name: Run supabase
-        run: docker-compose --env-file dev-tools/supabase/.env.example --file dev-tools/supabase/docker-compose.yml up --detach --build --force-recreate
+        run: docker-compose --env-file supabase/supabase-docker-compose/.env.example --file supabase/supabase-docker-compose/docker-compose.yml up --detach --build --force-recreate
       - run: npm ci
       - run: npm run test:ci
       - name: Setup tmate session

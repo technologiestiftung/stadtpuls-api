@@ -2,6 +2,8 @@
   "recommendations": [
     "humao.rest-client",
     "ms-azuretools.vscode-docker",
-    "mtxr.sqltools"
+    "mtxr.sqltools",
+    "foxundermoon.shell-format",
+    "timonwong.shellcheck"
   ]
 }

@@ -21,19 +21,14 @@
 @service_role_key = {{ $dotenv %SUPABASE_SERVICE_ROLE_KEY }}
 
 @auth_token = {{ $dotenv %AUTH_TOKEN }}
-@sensor_id = 73
+@sensor_id = 3
+
+@nice_id = {{ $dotenv %NICE_ID }}
 
 
 ### Healthcheck
 GET {{ baseurl }}
 
-### auth
-
-
-POST {{ baseurl }}/auth
-Content-Type: application/json
-
-{"userId":"123"}
 
 
 ### postgrest with anon key
@@ -48,7 +43,7 @@ apikey: {{service_role_key}}
 
 
 
-### Create a user in supabase
+### login as an user in supabase
 # should return a token for later use
 # add it to the .env file
 
@@ -59,7 +54,7 @@ Content-Type: application/json
 {"email": "hash@ff6347.email",
 "password": "123password"}
 
-### login as an user in supabase
+### signup a user in supabase
 # should return a token for later use
 # add it to the .env file
 
@@ -121,7 +116,7 @@ Authorization: Bearer {{user_token}}
 
 ### GET token by nice_id
 
-GET {{baseurl}}/authtokens?nice_id=2
+GET {{baseurl}}/authtokens?nice_id={{nice_id}}
 Content-Type: application/json
 Authorization: Bearer {{user_token}}
 
@@ -132,7 +127,7 @@ POST {{baseurl}}/authtokens
 Content-Type: application/json
 Authorization: Bearer {{user_token}}
 
-{"description": "testing ttn"}
+{"description": "testing new tokens 345"}
 
 # {
 #   "comment": "Should do create a token",
@@ -142,6 +137,15 @@ Authorization: Bearer {{user_token}}
 #     "token": "123"
 #   }
 # }
+
+
+### Rotate an authToken in this API
+
+PUT {{baseurl}}/authtokens
+Content-Type: application/json
+Authorization: Bearer {{user_token}}
+
+{"description": "testing old to new tokens rotate", "nice_id": 4 }
 
 ### post records using HTTP integration  in this API
 

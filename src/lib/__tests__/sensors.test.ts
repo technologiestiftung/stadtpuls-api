@@ -3,6 +3,7 @@
 // Copyright (c) 2021 Technologiestiftung Berlin & Fabian Morón Zirfas
 //
 // This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
 
 import { definitions } from "../../common/supabase";
 import {
@@ -11,13 +12,38 @@ import {
   connectPool,
   createSensor,
   createSensors,
+  maxRows,
   sensorsEndpoint,
   signupUser,
   truncateTables,
 } from "../../__test-utils";
 import buildServer from "../server";
-
-// https://opensource.org/licenses/MIT
+const sensorSnapshotDescription = {
+  data: [
+    {
+      altitude: expect.any(Number),
+      category: {
+        id: expect.any(Number),
+        description: expect.any(String),
+        name: expect.any(String),
+      },
+      author: {
+        name: expect.any(String),
+        display_name: null,
+      },
+      connection_type: "http",
+      created_at: expect.any(String),
+      description: null,
+      external_id: null,
+      icon_id: null,
+      id: 1,
+      latitude: expect.any(Number),
+      location: null,
+      longitude: expect.any(Number),
+      name: "test",
+    },
+  ],
+};
 beforeAll(async () => {
   await connectPool();
 });
@@ -79,27 +105,15 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     });
     expect(response.statusCode).toBe(200);
     expect(response.json().data).toHaveLength(1);
-    expect(response.json().data[0]).toMatchSnapshot({
-      altitude: expect.any(Number),
-      category_id: 1,
-      connection_type: "http",
-      created_at: expect.any(String),
-      description: null,
-      external_id: null,
-      icon_id: null,
-      id: expect.any(Number),
-      latitude: expect.any(Number),
-      location: null,
-      longitude: expect.any(Number),
-      name: "test",
-    });
+    expect(response.json().data[0]).toMatchSnapshot(
+      sensorSnapshotDescription.data[0]
+    );
   });
 
-  test("get list of all sensors GET > 1000 should have pagination", async () => {
+  test(`get list of all sensors GET > ${maxRows} should have pagination`, async () => {
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
-    await createSensors(user.id, 2000);
-    // await createSensor({ user_id: user.id, name: "test" });
+    await createSensors(user.id, maxRows * 2);
     const response = await server.inject({
       method: "GET",
       url: sensorsEndpoint,
@@ -112,9 +126,9 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     const lastItem = json.data[json.data.length - 1];
     expect(json).toMatchSnapshot({
       data: expect.any(Array),
-      nextPage: "/api/v3/sensors?offset=1000&limit=1000",
+      nextPage: `/api/v3/sensors?offset=${maxRows}&limit=${maxRows}`,
     });
-    expect(lastItem.id).toBe(1000);
+    expect(lastItem.id).toBe(maxRows);
     expect(response.statusCode).toBe(200);
 
     // make another request
@@ -128,7 +142,7 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     }>();
 
     expect(response2.statusCode).toBe(200);
-    expect(json2.data[0].id).toBe(1001);
+    expect(json2.data[0].id).toBe(maxRows + 1);
   });
 });
 
@@ -166,23 +180,6 @@ describe(`single ${sensorsEndpoint}/:sensorId tests`, () => {
       url: `${sensorsEndpoint}/${sensor.id}`,
     });
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toMatchSnapshot({
-      data: [
-        {
-          altitude: expect.any(Number),
-          category_id: 1,
-          connection_type: "http",
-          created_at: expect.any(String),
-          description: null,
-          external_id: null,
-          icon_id: null,
-          id: 1,
-          latitude: expect.any(Number),
-          location: null,
-          longitude: expect.any(Number),
-          name: "test",
-        },
-      ],
-    });
+    expect(response.json()).toMatchSnapshot(sensorSnapshotDescription);
   });
 });

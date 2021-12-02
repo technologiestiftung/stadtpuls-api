@@ -1,7 +1,12 @@
+import faker from "faker";
+import { definitions } from "../../common/supabase";
 import {
   closePool,
   connectPool,
+  createSensor,
   execQuery,
+  signupUser,
+  supabase,
   truncateTables,
 } from "../../__test-utils";
 
@@ -15,6 +20,60 @@ describe("things the schema should provide", () => {
   afterAll(async () => {
     await truncateTables();
     await closePool();
+  });
+
+  test("should return an error if external_id is not set on insert of ttn sensor", async () => {
+    const user = await signupUser();
+
+    const { data: sensors, error: sError } = await supabase
+      .from<definitions["sensors"]>("sensors")
+      .insert([
+        {
+          name: faker.random.words(2),
+          user_id: user.id,
+          connection_type: "ttn",
+          category_id: 1,
+          latitude: parseFloat(faker.address.latitude()),
+          longitude: parseFloat(faker.address.longitude()),
+          altitude: faker.datatype.number({ min: 0, max: 100, precision: 0.1 }),
+        },
+      ]);
+    expect(sError).not.toBeNull();
+    expect(sensors).toBeNull();
+    expect(sError?.message).toMatch(
+      /external_id cannot be null when connection type is ttn/
+    );
+  });
+
+  test("should return an error if external_id is not set on update of http to ttn sensor", async () => {
+    const user = await signupUser();
+    const sensor = await createSensor({ user_id: user.id, name: "snoopy" });
+    const { data: sensors, error: sError } = await supabase
+      .from<definitions["sensors"]>("sensors")
+      .update({
+        connection_type: "ttn",
+      })
+      .eq("id", sensor.id);
+    expect(sError).not.toBeNull();
+    expect(sensors).toBeNull();
+    expect(sError?.message).toMatch(
+      /external_id cannot be null when connection type is ttn/
+    );
+  });
+  test("should return an error if external_id is not set on upsert of http to ttn sensor", async () => {
+    const user = await signupUser();
+    const sensor = await createSensor({ user_id: user.id, name: "snoopy" });
+    const { data: sensors, error: sError } = await supabase
+      .from<definitions["sensors"]>("sensors")
+      .upsert({
+        connection_type: "ttn",
+      })
+      .eq("id", sensor.id);
+    expect(sError).not.toBeNull();
+    expect(sensors).toBeNull();
+    expect(sError?.message).toMatch(
+      /external_id cannot be null when connection type is ttn/
+    );
   });
   test("should have user_profiles.name case insensitive", async () => {
     await execQuery(

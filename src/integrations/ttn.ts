@@ -1,6 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { compare } from "bcrypt";
 import { definitions } from "../common/supabase";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
@@ -17,10 +16,31 @@ export interface TTNPostBody {
   [key: string]: unknown;
   received_at: string;
   uplink_message: {
+    f_port?: number;
+    frm_payload?: string;
     decoded_payload: {
-      bytes: number[];
+      bytes?: number[];
       measurements: number[];
     };
+    rx_metadata?: [
+      {
+        gateway_ids?: {
+          gateway_id?: string;
+        };
+        rssi?: number;
+        channel_rssi?: number;
+        snr?: number;
+      }
+    ];
+    settings?: {
+      data_rate?: {
+        lora?: {
+          bandwidth?: number;
+          spreading_factor?: number;
+        };
+      };
+    };
+    received_at?: string;
     locations?: {
       user?: {
         latitude: number;
@@ -31,6 +51,8 @@ export interface TTNPostBody {
     };
   };
   end_device_ids: {
+    [key: string]: unknown;
+
     device_id: string;
     application_ids: {
       application_id: string;
@@ -84,42 +106,33 @@ const postTTNBodySchema = S.object()
   )
   .required()
   .additionalProperties(true);
-// console.log(JSON.stringify(postTTNBodySchema.valueOf(), null, 2));
 
 const ttn: FastifyPluginAsync = async (fastify) => {
   fastify.route<{ Body: TTNPostBody }>({
+    // TODO: [STADTPULS-516] TTN should not be mounted on its own URL
     url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
     method: "POST",
     logLevel,
     schema: { body: postTTNBodySchema, headers: postTTNHeaderSchema },
     preHandler: fastify.auth([fastify.verifyJWT]),
     handler: async (request, reply) => {
+      const decoded = (await request.jwtVerify()) as AuthToken;
       if (request.headers.authorization === undefined) {
         throw fastify.httpErrors.unauthorized();
       }
-      const decoded = (await request.jwtVerify()) as AuthToken;
+
       const token = request.headers.authorization?.split(" ")[1];
-      const { data: authtokens, error } = await fastify.supabase
-        .from<definitions["auth_tokens"]>("auth_tokens")
-        .select("*")
-        .eq("user_id", decoded.sub);
-      if (!authtokens || authtokens.length === 0) {
-        fastify.log.warn("no token found");
+      const authTokenExists = await fastify.checkAuthtokenExists(
+        token,
+        decoded.sub
+      );
+      if (!authTokenExists) {
+        // this shouldn't happen the request comes in with an valid but
+        // not existing token.
+        fastify.log.error("using old/non existing token");
         throw fastify.httpErrors.unauthorized();
       }
 
-      if (error) {
-        fastify.log.error("postgres error");
-        throw fastify.httpErrors.internalServerError();
-      }
-
-      const compared = await compare(token, authtokens[0].id);
-      if (!compared) {
-        // this shouldn't happen since the token has to be deleted at this point
-        // and should already throw an error that it wasnt founds
-        fastify.log.error("using old token");
-        throw fastify.httpErrors.unauthorized();
-      }
       const { end_device_ids, received_at, uplink_message } = request.body;
       const { device_id } = end_device_ids;
       const { decoded_payload, locations } = uplink_message;
@@ -188,4 +201,22 @@ const ttn: FastifyPluginAsync = async (fastify) => {
   });
 };
 
+/**
+ * A birds eye view of the TTN plugin.
+ * When a request comes in, it will be validated against the schema and if it is valid and it has a valid JWT token, the request will be passed on to the handler function.
+ *
+ * In the handler it first looks up the JWT token in the data base. If it is found, it will be verified.
+ *
+ * From the token we obtain the `user_id`.
+ *
+ * Within the payload from TTN we also have a field called `end_device_ids.device_id`. This corresponds to the `external_id` id of a TTN sensor in our DB.
+ * If the user has a sensor with that `external_id` we finally have a valid request.
+ *
+ * From there on it is basic request handling.
+ *
+ * We take the `measurements` from `uplink_message.decoded_payload.measurements` and insert them into the DB as record for the sensor.
+ *
+ * We update the lat/lon/alt fields of the sensor based on `uplink_message.locations.user.latitude`, `uplink_message.locations.user.longitude` and `uplink_message.locations.user.altitude`.
+ *
+ */
 export default fp(ttn);

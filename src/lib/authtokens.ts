@@ -1,12 +1,12 @@
+// TODO: [STADTPULS-531] Use unified buildReplyPayload function for responses
 import { FastifyPluginAsync } from "fastify";
 
 import { v4 as uuidv4 } from "uuid";
-import { SignOptions } from "jsonwebtoken";
 import fp from "fastify-plugin";
-import { hash } from "bcrypt";
+import { hash } from "./crypto";
 import S from "fluent-json-schema";
 import { definitions } from "../common/supabase";
-import { AuthToken } from "../common/jwt";
+import { AuthToken, jwtSignOptions } from "../common/jwt";
 import { logLevel } from "./env";
 
 interface PostBody {
@@ -158,7 +158,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       const { description, scope } = request.body;
 
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
-      const options: SignOptions = { algorithm: "HS256" };
       const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: "sudo",
@@ -168,8 +167,8 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       };
       // TODO: [STADTPULS-417] Refactor authtokens.ts to allow the usage a different JWT secret.
       // means we need to use jwt.sign directly and not the fastify plugin
-      const token = fastify.jwt.sign(payload, options);
-      const hashedToken = await hash(token, 10);
+      const token = fastify.jwt.sign(payload, jwtSignOptions);
+      const { computedHash: hashedToken, salt } = await hash({ token });
 
       const { data: authTokens, error } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
@@ -179,13 +178,16 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
             description,
             scope: scope ? scope : "sudo",
             user_id: decoded.sub,
+            salt,
           },
         ]);
 
       if (error) {
+        fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
       }
       if (authTokens === null || authTokens.length === 0) {
+        fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
       }
       reply.status(201).send({
@@ -219,7 +221,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
 
       const { data: currentTokens, error } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
-        .select("description, nice_id, scope, user_id")
+        .select("description, nice_id, scope, user_id, salt")
         .eq("user_id", decoded.sub)
         .eq("nice_id", nice_id);
       if (currentTokens === null || currentTokens.length === 0) {
@@ -230,7 +232,6 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         throw fastify.httpErrors.internalServerError();
       }
 
-      const options: SignOptions = { algorithm: "HS256" };
       const payload: Omit<AuthToken, "iat"> = {
         sub: decoded.sub,
         scope: scope ? scope : currentTokens[0].scope,
@@ -238,8 +239,11 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         jti: uuidv4(),
         iss: issuer,
       };
-      const token = fastify.jwt.sign(payload, options);
-      const hashedToken = await hash(token, 10);
+      const token = fastify.jwt.sign(payload, jwtSignOptions);
+      const { computedHash: hashedToken, salt } = await hash({
+        token,
+        // salt: currentTokens[0].salt,
+      });
 
       const { data: newTokens } = await fastify.supabase
         .from<definitions["auth_tokens"]>("auth_tokens")
@@ -247,6 +251,7 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
           id: hashedToken,
           description,
           scope: scope ? scope : "sudo",
+          salt,
         })
         .eq("user_id", decoded.sub)
         .eq("nice_id", nice_id);

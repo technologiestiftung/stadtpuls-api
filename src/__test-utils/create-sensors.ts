@@ -22,6 +22,7 @@ export async function createSensor({
         name: name ? name : faker.random.words(2),
         user_id,
         external_id,
+        connection_type: external_id ? "ttn" : "http",
         category_id: 1,
         latitude: parseFloat(faker.address.latitude()),
         longitude: parseFloat(faker.address.longitude()),

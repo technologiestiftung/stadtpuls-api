@@ -5,9 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Attach by Process ID",
+      "processId": "${command:PickProcess}",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
+    },
+    {
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "name": "nodemon",
+      "name": "nodemon expose gc",
       "program": "${workspaceFolder}/dist/index.js",
       "request": "launch",
       "restart": true,
@@ -15,6 +22,7 @@
       "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node"
     },
+
     {
       "name": "Debug index.ts",
       "type": "node",
