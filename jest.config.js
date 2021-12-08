@@ -41,6 +41,7 @@ module.exports = merge(inPjsConfig, {
     "<rootDir>/src/__test-utils/*",
     "<rootDir>/dev-tools/*",
     "<rootDir>/dist/*",
+    "<rootDir>/supabase/*",
   ],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
