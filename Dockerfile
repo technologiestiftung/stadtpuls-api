@@ -1,6 +1,10 @@
 FROM node:14.18-slim as builder
 ENV NODE_ENV=development
+RUN apt-get update \
+  && apt-get install -y build-essential python \
+  && rm -rf /var/lib/apt/lists/*
 WORKDIR /usr/src/app/
+
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm ci --silent
 COPY . .
@@ -10,6 +14,9 @@ FROM node:14.18-slim as runner
 WORKDIR /usr/app/
 COPY ["package.json", "package-lock.json*", "./"]
 ENV NODE_ENV=production
+RUN apt-get update \
+  && apt-get install -y build-essential python \
+  && rm -rf /var/lib/apt/lists/*
 RUN npm ci --silent
 COPY --from=builder /usr/src/app/dist/ /usr/app/
 COPY ./config/ /usr/app/config/
