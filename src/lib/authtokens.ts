@@ -79,7 +79,7 @@ const deleteTokenBodySchema = S.object()
 // TODO: [STADTPULS-400] authtokens GET is missing pagination
 const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
   fastify,
-  { mount, apiVersion, endpoint, issuer }
+  { mount, apiVersion, endpoint, issuer: _issuer }
 ) => {
   //   ▄████ ▓█████▄▄▄█████▓
   //  ██▒ ▀█▒▓█   ▀▓  ██▒ ▓▒
@@ -159,12 +159,15 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
 
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
       // FIXME: [STADTPULS-636] Temporary fix until ttn allows more then 256 characters
-      const payload: Omit<AuthToken, "iat" | "description" | "scope"> = {
+      const payload: Omit<
+        AuthToken,
+        "iat" | "description" | "scope" | "iss"
+      > = {
         sub: decoded.sub,
         // scope: "sudo",
         // description,
         jti: uuidv4(),
-        iss: issuer,
+        // iss: issuer,
       };
       // TODO: [STADTPULS-417] Refactor authtokens.ts to allow the usage a different JWT secret.
       // means we need to use jwt.sign directly and not the fastify plugin
@@ -233,12 +236,15 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         throw fastify.httpErrors.internalServerError();
       }
       // FIXME:  [STADTPULS-636] add scope and maybe description again
-      const payload: Omit<AuthToken, "iat" | "description" | "scope"> = {
+      const payload: Omit<
+        AuthToken,
+        "iat" | "description" | "scope" | "iss"
+      > = {
         sub: decoded.sub,
         // scope: scope ? scope : currentTokens[0].scope,
         // description: description ? description : currentTokens[0].description,
         jti: uuidv4(),
-        iss: issuer,
+        // iss: issuer,
       };
       const token = fastify.jwt.sign(payload, jwtSignOptions);
       const { computedHash: hashedToken, salt } = await hash({
