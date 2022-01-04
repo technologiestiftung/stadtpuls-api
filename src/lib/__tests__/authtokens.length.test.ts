@@ -28,12 +28,13 @@ describe("authtokens POST tests", () => {
     await closePool();
   });
   test("tokens should never have more then 256 characters", async () => {
+    const iterations = 100;
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
     // POST test
     const url = `/api/v${apiVersion}/authtokens`;
     const postResponses: LightMyRequestResponse[] = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < iterations; i++) {
       const response = await server.inject({
         method: "POST",
         url,
@@ -53,7 +54,7 @@ describe("authtokens POST tests", () => {
 
     const postTokenLengths: number[] = postResponses.map(
       (res: LightMyRequestResponse) => {
-        const actual = res.json().data.token;
+        const actual = `Bearer ${res.json().data.token}`;
         return actual.length;
       }
     );
@@ -88,7 +89,7 @@ describe("authtokens POST tests", () => {
 
     const putTokenLengths: number[] = putResponses.map(
       (res: LightMyRequestResponse) => {
-        const actual = res.json().data.token;
+        const actual = `Bearer ${res.json().data.token}`;
         return actual.length;
       }
     );

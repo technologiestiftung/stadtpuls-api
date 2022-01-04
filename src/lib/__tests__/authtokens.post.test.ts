@@ -91,7 +91,7 @@ describe("authtokens POST tests", () => {
     //   )
     // ).toBeTruthy();
     expect(user.id).toBe(decodedToken.sub);
-    expect(decodedToken.iss).toBe(buildServerOpts.issuer);
+    // expect(decodedToken.iss).toBe(buildServerOpts.issuer);
     expect(response.statusCode).toBe(201);
     expect(getResponse.statusCode).toBe(200);
 
