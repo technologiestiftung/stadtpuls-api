@@ -3,44 +3,13 @@
 
 name: Node.js CI
 env:
-  SUPABASE_ANON_KEY: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.sUHErUOiKZ3nHQIxy-7jND6B80Uzf9G4NtMLmL6HXPQ"
-  SUPABASE_SERVICE_ROLE_KEY: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwNzUzMiwiZXhwIjoxNjkwMjc5NTMyLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoic2VydmljZV9yb2xlIn0.hfdXFZV5PdvUdo2xK0vStb1i97GJukSkRqfwd4YIh2M"
-  JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
-  SUPABASE_URL: http://localhost:8000
-  PORT: 4000
-  ISSUER: "stadtpuls.com"
-  LOG_LEVEL: "info"
-  DATABASE_URL: "postgres://postgres:your-super-secret-and-long-postgres-password@localhost:5432/postgres"
-  POSTGRES_PASSWORD: "your-super-secret-and-long-postgres-password"
-  # fill with random passwords
-  OPERATOR_TOKEN: your-super-secret-operator-token
-  # some SMTP server to send your auth-mails with
-  # uses inbucket http://localhost:9000
-  SMTP_HOST: mail
-  SMTP_PORT: 2500
-  SMTP_USER: admin
-  SMTP_PASS: 123456
-  SMTP_ADMIN_EMAIL: info@stadtpuls.com
-  # storage config
-  STORAGE_BACKENDP: file # file | s3
-  STORAGE_S3_BUCKET: supa-storage-testing # name of s3 bucket where you want to store objects
-  STORAGE_REGION: us-east-1 # region where your bucket is located
-  # STORAGE_AWS_ACCESS_KEY_ID=XXXX # replace-with-your-aws-key and don't commit this to github
-  # STORAGE_AWS_SECRET_ACCESS_KEY=XXXX # replace-with-your-aws-key and don't commit this to github
-  FILE_SIZE_LIMIT: 52428800 # max file size (in bytes)
-  # predefined; don't change these unless you know what you're doing
-  POSTGRES_PORT: 5432
-  AUTH_PORT: 9999
-  REST_PORT: 3000
-  REALTIME_PORT: 4000
-  KONG_PORT: 8000
-  KONG_PORT_TLS: 8443
-  SUPABASE_MAX_ROWS: 3000
-  REDIS_URL: http://redis:6379
-  STAGE: test
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 on:
   push:
     branches: [main, staging]
+    tags:
+      - "v*"
   pull_request:
     branches: [main, staging]
   workflow_dispatch:
@@ -52,6 +21,41 @@ on:
 
 jobs:
   build:
+    env:
+      SUPABASE_ANON_KEY: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwODU0MCwiZXhwIjoxOTc0MzYzNzQwLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoiYW5vbiJ9.sUHErUOiKZ3nHQIxy-7jND6B80Uzf9G4NtMLmL6HXPQ"
+      SUPABASE_SERVICE_ROLE_KEY: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYyNzIwNzUzMiwiZXhwIjoxNjkwMjc5NTMyLCJhdWQiOiIiLCJzdWIiOiIiLCJyb2xlIjoic2VydmljZV9yb2xlIn0.hfdXFZV5PdvUdo2xK0vStb1i97GJukSkRqfwd4YIh2M"
+      JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      SUPABASE_URL: http://localhost:8000
+      PORT: 4000
+      ISSUER: "stadtpuls.com"
+      LOG_LEVEL: "info"
+      DATABASE_URL: "postgres://postgres:your-super-secret-and-long-postgres-password@localhost:5432/postgres"
+      POSTGRES_PASSWORD: "your-super-secret-and-long-postgres-password"
+      OPERATOR_TOKEN: your-super-secret-operator-token
+      # some SMTP server to send your auth-mails with
+      # uses inbucket http://localhost:9000
+      SMTP_HOST: mail
+      SMTP_PORT: 2500
+      SMTP_USER: admin
+      SMTP_PASS: 123456
+      SMTP_ADMIN_EMAIL: info@stadtpuls.com
+      # storage config
+      STORAGE_BACKENDP: file # file | s3
+      STORAGE_S3_BUCKET: supa-storage-testing # name of s3 bucket where you want to store objects
+      STORAGE_REGION: us-east-1 # region where your bucket is located
+      # STORAGE_AWS_ACCESS_KEY_ID=XXXX # replace-with-your-aws-key and don't commit this to github
+      # STORAGE_AWS_SECRET_ACCESS_KEY=XXXX # replace-with-your-aws-key and don't commit this to github
+      FILE_SIZE_LIMIT: 52428800 # max file size (in bytes)
+      # predefined; don't change these unless you know what you're doing
+      POSTGRES_PORT: 5432
+      AUTH_PORT: 9999
+      REST_PORT: 3000
+      REALTIME_PORT: 4000
+      KONG_PORT: 8000
+      KONG_PORT_TLS: 8443
+      SUPABASE_MAX_ROWS: 3000
+      REDIS_URL: http://redis:6379
+      STAGE: test
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
 
@@ -96,17 +100,124 @@ jobs:
         run: docker-compose --env-file supabase/supabase-docker-compose/.env.example --file supabase/supabase-docker-compose/docker-compose.yml up --detach --build --force-recreate
       - run: npm ci
       - run: npm run test:ci
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
-        # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
-        timeout-minutes: 3
-        with:
-          limit-access-to-actor: true
+      # - name: Setup tmate session
+      #   if: ${{ failure() }}
+      #   uses: mxschmitt/action-tmate@v3
+      #   # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      #   timeout-minutes: 3
+      #   with:
+      #     limit-access-to-actor: true
       - run: npm run build --if-present
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
+      # - name: Semantic Release
+      #   uses: cycjimmy/semantic-release-action@v2
 
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    needs:
+      - build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "lts/*"
+      - name: Install dependencies
+        run: npm ci
+      - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        #   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npx semantic-release
+  build-and-push-docker-hub:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v2
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
+      #   with:
+      #     platforms: all
+
+      # - name: Set up Docker Buildx
+      #   id: buildx
+      #   uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          # platforms: "linux/amd64,linux/arm64,linux/arm/v7"
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  build-and-push-ghcr:
+    env:
+      REGISTRY: ghcr.io
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
+      #   with:
+      #     platforms: all
+
+      # - name: Set up Docker Buildx
+      #   id: buildx
+      #   uses: docker/setup-buildx-action@v1
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: metaghcr
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          # platforms: "linux/amd64,linux/arm64,linux/arm/v7"
+          tags: ${{ steps.metaghcr.outputs.tags }}
+          labels: ${{ steps.metaghcr.outputs.labels }}
