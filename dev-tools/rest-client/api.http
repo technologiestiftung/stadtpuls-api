@@ -67,8 +67,20 @@ Content-Type: application/json
 
 
 
+### Create a TTN sensor in supabase
 
-### Create a sensor in supabase
+POST {{supabase_url}}/rest/v1/sensors
+apikey: {{anon_key}}
+Authorization: Bearer {{user_token}}
+Content-Type: application/json
+Prefer: return=representation
+
+{ "name": "http-client",  "user_id":"{{user_id}}" , "category_id": 1, "connection_type": "ttn", "external_id":"foo"}
+
+# [
+
+
+### Create a HTTP sensor in supabase
 
 POST {{supabase_url}}/rest/v1/sensors
 apikey: {{anon_key}}
@@ -198,4 +210,4 @@ POST {{ baseurl }}/integrations/ttn/v3
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
-{"simulated":true,"end_device_ids":{"application_ids":{"application_id":"foo"},"device_id":"123"},"received_at":"2021-10-04T14:36:58.082Z","uplink_message":{"decoded_payload":{"measurements":[1,2,3],"bytes":[1,2,3]},"locations":{"user":{"latitude":13,"longitude":52,"altitude":23,"source":"SOURCE_REGISTRY"}}}}
+{"simulated":true,"end_device_ids":{"application_ids":{"application_id":"foo"},"device_id":"foo"},"received_at":"2021-10-04T14:36:58.082Z","uplink_message":{"decoded_payload":{"foo":"bah","measurements":[1,2,3],"bytes":[1,2,3]},"locations":{"user":{"latitude":13,"longitude":52,"altitude":23,"source":"SOURCE_REGISTRY"}}}}

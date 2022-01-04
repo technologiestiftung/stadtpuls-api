@@ -158,10 +158,11 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
       const { description, scope } = request.body;
 
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
-      const payload: Omit<AuthToken, "iat"> = {
+      // FIXME: [STADTPULS-636] Temporary fix until ttn allows more then 256 characters
+      const payload: Omit<AuthToken, "iat" | "description" | "scope"> = {
         sub: decoded.sub,
-        scope: "sudo",
-        description,
+        // scope: "sudo",
+        // description,
         jti: uuidv4(),
         iss: issuer,
       };
@@ -231,18 +232,17 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
         fastify.log.error(error);
         throw fastify.httpErrors.internalServerError();
       }
-
-      const payload: Omit<AuthToken, "iat"> = {
+      // FIXME:  [STADTPULS-636] add scope and maybe description again
+      const payload: Omit<AuthToken, "iat" | "description" | "scope"> = {
         sub: decoded.sub,
-        scope: scope ? scope : currentTokens[0].scope,
-        description: description ? description : currentTokens[0].description,
+        // scope: scope ? scope : currentTokens[0].scope,
+        // description: description ? description : currentTokens[0].description,
         jti: uuidv4(),
         iss: issuer,
       };
       const token = fastify.jwt.sign(payload, jwtSignOptions);
       const { computedHash: hashedToken, salt } = await hash({
         token,
-        // salt: currentTokens[0].salt,
       });
 
       const { data: newTokens } = await fastify.supabase
