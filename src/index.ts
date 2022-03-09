@@ -7,26 +7,41 @@ import {
   supabaseUrl,
   supabaseServiceRoleKey,
   issuer,
+  logLevel,
+  logFlareApiKey,
+  logFlareSourceToken,
 } from "./lib/env";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import pino from "pino";
+import { createWriteStream } from "pino-logflare";
 
-const transport = pino.transport({
-  target: "pino-syslog",
-
-  options: {
-    enablePipelining: false, // optional (default: true)
-    destination: 1, // optional (default: stdout)
-    modern: true,
-    newline: true,
-    appname: "stadtpuls.com",
-    level: "info",
-    redact: ["req.headers.authorization"],
-    enabled: true,
-    crlf: true,
-  },
+const stream = createWriteStream({
+  apiKey: "JZ3es6hQ-sHx",
+  sourceToken: "9242097b-c882-42f5-b57f-f66f261a8626",
 });
-const pinoLogger = pino(transport);
+
+const loggerOptions = {
+  enablePipelining: false, // optional (default: true)
+  destination: 1, // optional (default: stdout)
+  modern: true,
+  newline: true,
+  appname: "stadtpuls.com",
+  level: logLevel,
+  redact: ["req.headers.authorization"],
+  enabled: true,
+  crlf: true,
+};
+const pinoTransportOptions = {
+  target: "pino-syslog",
+  options: loggerOptions,
+};
+let pinoLogger: pino.Logger;
+if (!logFlareApiKey || !logFlareSourceToken) {
+  const transport = pino.transport(pinoTransportOptions);
+  pinoLogger = pino(transport);
+} else {
+  pinoLogger = pino(loggerOptions, stream);
+}
 
 import buildServer from "./lib/server";
 

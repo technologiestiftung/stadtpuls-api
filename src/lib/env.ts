@@ -11,6 +11,10 @@ const issuer = env.require("ISSUER");
 const logLevel = env.require("LOG_LEVEL") as LogLevel;
 const redisUrl = env.require("REDIS_URL");
 const stage = env.require("STAGE");
+
+const logFlareApiKey = env.get("LOG_FLARE_API_KEY");
+const logFlareSourceToken = env.get("LOG_FLARE_SOURCE_TOKEN");
+
 const logLevels = ["info", "error", "debug", "fatal", "warn", "trace"];
 const supabaseMaxRows = parseInt(env.require("SUPABASE_MAX_ROWS"), 10);
 if (isNaN(supabaseMaxRows)) {
@@ -30,6 +34,8 @@ export {
   issuer,
   jwtSecret,
   logLevel,
+  logFlareApiKey,
+  logFlareSourceToken,
   port,
   redisUrl,
   stage,

@@ -86,6 +86,7 @@
     "make-promises-safe": "5.1.0",
     "pg": "8.7.1",
     "pino": "7.0.0-rc.9",
+    "pino-logflare": "0.3.12",
     "pino-pretty": "7.0.1",
     "pino-syslog": "2.0.0",
     "uuid": "8.3.2"
