@@ -15,11 +15,6 @@ import {
 import pino from "pino";
 import { createWriteStream } from "pino-logflare";
 
-const stream = createWriteStream({
-  apiKey: "JZ3es6hQ-sHx",
-  sourceToken: "9242097b-c882-42f5-b57f-f66f261a8626",
-});
-
 const loggerOptions = {
   enablePipelining: false, // optional (default: true)
   destination: 1, // optional (default: stdout)
@@ -40,6 +35,10 @@ if (!logFlareApiKey || !logFlareSourceToken) {
   const transport = pino.transport(pinoTransportOptions);
   pinoLogger = pino(transport);
 } else {
+  const stream = createWriteStream({
+    apiKey: logFlareApiKey,
+    sourceToken: logFlareSourceToken,
+  });
   pinoLogger = pino(loggerOptions, stream);
 }
 
