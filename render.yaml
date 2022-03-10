@@ -33,3 +33,5 @@ services:
         sync: false
       - key: LOG_FLARE_SOURCE_TOKEN
         sync: false
+      - key: STAGE
+        sync: false
