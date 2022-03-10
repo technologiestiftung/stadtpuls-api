@@ -15,15 +15,23 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
-      - key: PORT
-        sync: false
       - key: SUPABASE_ANON_KEY
         sync: false
-      - key: ISSUER
+      - key: SUPABASE_MAX_ROWS
         sync: false
       - key: DATABASE_URL
         sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: PORT
+        sync: false
+      - key: ISSUER
+        sync: false
       - key: LOG_LEVEL
         sync: false
-      - key: SUPABASE_MAX_ROWS
+      - key: LOG_FLARE_API_KEY
+        sync: false
+      - key: LOG_FLARE_SOURCE_TOKEN
+        sync: false
+      - key: STAGE
         sync: false

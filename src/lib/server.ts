@@ -29,11 +29,6 @@ import { redisUrl, stage } from "./env";
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
 
-const redis = new Redis(redisUrl, {
-  connectionName: `stadtpuls-api-${stage}`,
-  connectTimeout: 500,
-  maxRetriesPerRequest: 1,
-});
 export const buildServer: (options: {
   jwtSecret: string;
   supabaseUrl: string;
@@ -79,8 +74,26 @@ export const buildServer: (options: {
       },
     },
   });
+  let redis: Redis.Redis | undefined;
+
+  // eslint-disable-next-line prefer-const
+  redis = new Redis(redisUrl, {
+    connectionName: `stadtpuls-api-${stage}`,
+
+    autoResubscribe: false,
+    // lazyConnect: true,
+    connectTimeout: 500,
+    maxRetriesPerRequest: 0,
+    enableOfflineQueue: false,
+  });
+  redis.on("error", (err) => {
+    // TODO: [STADTPULS-726] Remove console log when done
+    console.log("Redis error", err);
+    server.log.error(err);
+  });
 
   server.register(fastifyBlipp);
+
   server.register(fastifyRateLimit, {
     allowList: ["127.0.0.1"],
     redis,
