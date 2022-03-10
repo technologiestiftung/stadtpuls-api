@@ -54,7 +54,7 @@ jobs:
       KONG_PORT: 8000
       KONG_PORT_TLS: 8443
       SUPABASE_MAX_ROWS: 3000
-      REDIS_URL: redis:6379
+      REDIS_URL: localhost:6379
       STAGE: test
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
