@@ -1,7 +1,7 @@
 version: "3"
 services:
   k6:
-    image: loadimpact/k6:0.35.0
+    image: loadimpact/k6:0.36.0
     volumes:
       - ./scripts:/scripts
     command: ["run", "/scripts/load-test.js"]
