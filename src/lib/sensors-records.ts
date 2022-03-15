@@ -231,7 +231,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
       // hm records are null but they should not.
       // we cant do anything for the user
       if (!records) {
-        fastify.log.error("records are null but should not", sensorId);
+        fastify.log.error(sensorId, "records are null but should not");
         throw fastify.httpErrors.internalServerError();
       }
       // this is for pagination in header and in payload
