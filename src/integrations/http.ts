@@ -121,9 +121,9 @@ const http: FastifyPluginAsync = async (fastify) => {
         })
         .eq("id", sensors[0].id);
       if (updateError) {
-        fastify.log.error("Error while updating lat, lon, alt", updateError);
+        fastify.log.error(updateError, "Error while updating lat, lon, alt");
       }
-      fastify.log.info("updated lat, lon, alt", updatedSensors);
+      fastify.log.info(updatedSensors, "updated lat, lon, alt");
 
       const recordedAt = new Date().toISOString();
       const { data: record, error: recordError } = await fastify.supabase
