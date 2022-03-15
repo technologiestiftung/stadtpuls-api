@@ -170,9 +170,9 @@ const ttn: FastifyPluginAsync = async (fastify) => {
         .eq("id", sensors[0].id);
 
       if (updateError) {
-        fastify.log.error("Error while updating lat, lon, alt", updateError);
+        fastify.log.error(updateError, "Error while updating lat, lon, alt");
       }
-      fastify.log.info("updated lat, lon, alt", updatedSensors);
+      fastify.log.info(updatedSensors, "updated lat, lon, alt");
 
       // console.log(
       //   new Date(received_at).toISOString().replace("T", " ").replace("Z", "")

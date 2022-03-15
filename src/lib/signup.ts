@@ -98,7 +98,7 @@ const signupPlugin: FastifyPluginAsync<SignupPluginOptions> = async (
       try {
         isEmailTaken = await checkEmail(email);
       } catch (error) {
-        fastify.log.error("pg db request error", error);
+        fastify.log.error(error, "pg db request error");
         throw fastify.httpErrors.internalServerError();
       }
       if (isEmailTaken === true) {
@@ -164,10 +164,6 @@ const signupPlugin: FastifyPluginAsync<SignupPluginOptions> = async (
         payload: { email, name },
       });
       reply.status(204).send(payload);
-      // } catch (error) {
-      //   fastify.log.error("db error", error);
-      //   throw fastify.httpErrors.internalServerError();
-      // }
     },
   });
 };

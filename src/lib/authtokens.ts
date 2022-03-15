@@ -108,8 +108,10 @@ const server: FastifyPluginAsync<AuthtokensPluginOptions> = async (
 
       const decoded = (await request.jwtVerify()) as SupabaseJWTPayload;
       let res;
+      // BUG: [STADTPULS-730] Request with param for nice_id that can not be parsed using parseInt creates 500 error response
       if (request.query.nice_id !== undefined) {
         const nice_id = parseInt(request.query.nice_id, 10);
+
         res = fastify.supabase
           .from<PickedTokenProps>("auth_tokens")
           .select(selection)
