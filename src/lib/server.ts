@@ -12,7 +12,7 @@ import fastifyHelmet from "fastify-helmet";
 import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 import fastifyAuth from "fastify-auth";
-// import fastifyRateLimit from "fastify-rate-limit";
+import fastifyRateLimit from "fastify-rate-limit";
 
 import fastifySupabase from "./supabase";
 import routesAuth from "./authtokens";
@@ -94,10 +94,10 @@ export const buildServer: (options: {
 
   server.register(fastifyBlipp);
 
-  // server.register(fastifyRateLimit, {
-  //   allowList: ["127.0.0.1"],
-  //   redis,
-  // });
+  server.register(fastifyRateLimit, {
+    allowList: ["127.0.0.1"],
+    redis,
+  });
   server.register(fastifyHelmet);
   server.register(fastifyCors, {
     origin: "*",
