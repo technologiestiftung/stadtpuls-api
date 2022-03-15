@@ -79,9 +79,9 @@ jobs:
           - 6379:6379
     steps:
       - name: Checkout technologiestiftung/stadtpuls-api
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Checkout technologiestiftung/stadtpuls-supabase#staging
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         # check the supabase setup for staging
         if: github.event.pull_request.base.ref == 'staging' || github.ref == 'refs/heads/staging'
         with:
@@ -89,7 +89,7 @@ jobs:
           path: supabase
           ref: staging
       - name: Checkout technologiestiftung/stadtpuls-supabase#main
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         # check the supabase setup for main
         if: github.event.pull_request.base.ref == 'main' || github.ref == 'refs/heads/main'
         with:
@@ -126,7 +126,7 @@ jobs:
       - build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Node.js
@@ -147,7 +147,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: Checkout source repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3
@@ -191,7 +191,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       # - name: Set up QEMU
       #   uses: docker/setup-qemu-action@v1
       #   with:
