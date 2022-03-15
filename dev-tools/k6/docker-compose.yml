@@ -4,4 +4,4 @@ services:
     image: loadimpact/k6:0.36.0
     volumes:
       - ./scripts:/scripts
-    command: ["run", "/scripts/load-test.js"]
+    command: ["run", "/scripts/memory-leaks.js"]

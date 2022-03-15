@@ -120,6 +120,12 @@ Prefer: return=representation
 # ]
 
 
+### healthcheck
+
+GET {{baseurl}}/
+Content-Type: application/json
+
+
 ### GET all your tokens
 
 GET {{baseurl}}/authtokens
