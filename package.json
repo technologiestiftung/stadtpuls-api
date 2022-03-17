@@ -36,6 +36,7 @@
     "url": "https://github.com/technologiestiftung/stadtpuls-api/issues"
   },
   "devDependencies": {
+    "@faker-js/faker": "6.0.0",
     "@inpyjamas/scripts": "0.1.11-alpha",
     "@semantic-release/git": "10.0.1",
     "@semantic-release/npm": "8.0.3",
