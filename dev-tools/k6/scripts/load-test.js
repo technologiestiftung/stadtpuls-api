@@ -9,7 +9,7 @@
 import http from "k6/http";
 import { check } from "k6";
 
-const apiUrl = "http://localhost:4000/api/v3";
+const apiUrl = "https://stadtpuls-api-v3-staging-pr-126.onrender.com/api/v3";
 export let options = {
   // vus: 10,
   // duration: "1m",
@@ -49,7 +49,10 @@ export let options = {
     http_req_failed: [{ threshold: "rate<0.01", abortOnFail: false }], // http errors should be less than 1%
     // 90% of requests must finish within 400ms, 95% within 800, and 99.9% within 2s.
     http_req_duration: [
-      "'p(90) < 500', 'p(95) < 800', 'p(99.9) < 2000', 'avg < 400t'",
+      "p(90) < 500",
+      "p(95) < 800",
+      "p(99.9) < 2000",
+      "avg < 400",
     ],
   },
 };
