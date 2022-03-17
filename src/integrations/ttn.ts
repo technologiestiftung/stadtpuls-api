@@ -181,7 +181,7 @@ const ttn: FastifyPluginAsync = async (fastify) => {
         .from<definitions["records"]>("records")
         .insert([
           {
-            measurements: `{${measurements.join(",")}}`,
+            measurements: measurements,
             recorded_at: received_at,
             sensor_id: sensors[0].id,
           },
