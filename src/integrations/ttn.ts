@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 import config from "config";

@@ -1,5 +1,4 @@
-import faker from "faker";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { signup } from "./signup";
 import { supabaseAnonKey, supabaseUrl, supabase } from "./index";
 
