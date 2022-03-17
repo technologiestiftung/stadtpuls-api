@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import fp from "fastify-plugin";
 import { hash } from "./crypto";
 import S from "fluent-json-schema";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { AuthToken, jwtSignOptions } from "../common/jwt";
 import { logLevel } from "./env";
 

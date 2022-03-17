@@ -47,7 +47,6 @@ module.exports = merge(inPjsConfig, {
     "src/**/*.{ts,tsx}",
     "!src/__test-utils/*",
     "!src/mocks/*",
-    "!src/common/supabase.ts",
     "!src/index.ts",
     "!src/common/jwt.ts",
   ],

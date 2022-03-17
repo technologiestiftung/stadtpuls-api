@@ -1,6 +1,6 @@
 /* eslint-disable jest/require-top-level-describe */
 
-import { definitions } from "../../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import {
   connectPool,
   truncateTables,

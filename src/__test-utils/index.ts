@@ -1,6 +1,6 @@
 import config from "config";
 import { createClient } from "@supabase/supabase-js";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { Pool } from "pg";
 export { createAuthToken } from "./create-auth-token";
 export { truncateTables, closePool, connectPool, execQuery } from "./db";

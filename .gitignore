@@ -92,3 +92,4 @@ dev-tools/supabase-mirror/supabase.dump
 dev-tools/supabase-mirror/stadtpuls.dump
 dev-tools/supabase-mirror/NOTES.md
 vscode-profile-*.heapsnapshot
+.clinic

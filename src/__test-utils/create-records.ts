@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 import { supabase } from "./index";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 // const binomial = require("@stdlib/random/base/binomial");
 
 type Record = Omit<definitions["records"], "measurements"> & {
