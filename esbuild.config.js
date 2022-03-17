@@ -12,6 +12,7 @@ require("esbuild")
   .build({
     platform: "node",
     sourcemap: true,
+    treeShaking: true,
     banner: {
       js: '"use strict";',
     },
