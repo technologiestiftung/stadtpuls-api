@@ -83,7 +83,7 @@
     "ioredis": "4.28.5",
     "make-promises-safe": "5.1.0",
     "pg": "8.7.3",
-    "pino": "7.9.0",
+    "pino": "7.9.1",
     "pino-logflare": "0.3.12",
     "pino-pretty": "7.5.4",
     "pino-syslog": "2.0.0",
