@@ -2,7 +2,7 @@ import fp from "fastify-plugin";
 import { FastifyInstance } from "fastify";
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { compare } from "./crypto";
 import * as bycrypt from "bcrypt";
 type CheckAuthtokenExistsType = (

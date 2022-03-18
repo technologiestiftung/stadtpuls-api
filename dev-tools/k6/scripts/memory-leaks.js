@@ -20,40 +20,35 @@ export let options = {
       vus: 1,
       iterations: 1000,
       startTime: "0s",
-      maxDuration: "3m",
+      maxDuration: "30s",
     },
     middle: {
       executor: "per-vu-iterations",
       vus: 10,
       iterations: 100,
-      maxDuration: "3m",
-      startTime: "3m",
+      maxDuration: "1m",
+      startTime: "30s",
     },
     high: {
       executor: "per-vu-iterations",
       vus: 50,
       iterations: 10,
-      maxDuration: "3m",
-      startTime: "6m",
+      maxDuration: "2m",
+      startTime: "2m",
     },
     long: {
       executor: "per-vu-iterations",
       vus: 10,
       iterations: 1000,
-      maxDuration: "10m",
-      startTime: "9m",
+      maxDuration: "3m",
+      startTime: "3m",
     },
   },
   thresholds: {
     checks: ["rate>0.99"],
     http_req_failed: [{ threshold: "rate<0.01", abortOnFail: false }], // http errors should be less than 1%
     // 90% of requests must finish within 400ms, 95% within 800, and 99.9% within 2s.
-    http_req_duration: [
-      "p(90) < 500",
-      "p(95) < 800",
-      "p(99.9) < 2000",
-      "avg < 400",
-    ],
+    http_req_duration: ["p(90)<500", "p(95)<800", "p(99.9)<2000", "avg<400"],
   },
 };
 
@@ -68,11 +63,11 @@ export default function () {
   check(responseSensors, { "sensors status was 200": (r) => r.status === 200 });
 
   // @ts-ignore
-  const json = JSON.parse(responseSensors.body);
-  for (const sensor of json.data) {
-    let responseRecords = http.get(`${apiUrl}/sensors/${sensor.id}/records`);
-    check(responseRecords, {
-      "records status was 200": (r) => r.status === 200,
-    });
-  }
+  // const json = JSON.parse(responseSensors.body);
+  // for (const sensor of json.data) {
+  //   let responseRecords = http.get(`${apiUrl}/sensors/${sensor.id}/records`);
+  //   check(responseRecords, {
+  //     "records status was 200": (r) => r.status === 200,
+  //   });
+  // }
 }

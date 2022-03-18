@@ -4,7 +4,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import { definitions } from "../../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import {
   deleteUser,
   supabaseAnonKey,

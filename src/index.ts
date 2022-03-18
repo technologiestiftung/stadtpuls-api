@@ -67,7 +67,6 @@ async function main(): Promise<void> {
 }
 
 if (require.main === module) {
-  console.log("called directly");
   main().catch((error) => {
     console.error(error);
     server.log.error(error);

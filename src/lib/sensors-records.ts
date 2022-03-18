@@ -8,7 +8,7 @@ import { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 
 import fp from "fastify-plugin";
 import S from "fluent-json-schema";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { logLevel, supabaseMaxRows } from "./env";
 import {
   buildReplyHeaders,

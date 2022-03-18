@@ -1,7 +1,7 @@
 // TODO: Should this file be moved to sensors-records.ts?
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 import config from "config";
@@ -130,7 +130,7 @@ const http: FastifyPluginAsync = async (fastify) => {
         .from<definitions["records"]>("records")
         .insert([
           {
-            measurements: `{${measurements.join(",")}}`,
+            measurements: measurements,
             recorded_at: recordedAt,
             sensor_id: sensors[0].id,
           },

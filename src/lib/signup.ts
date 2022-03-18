@@ -6,7 +6,7 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import S from "fluent-json-schema";
-import { definitions } from "../common/supabase";
+import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { getIdByEmail, checkEmail } from "./db-utils";
 import { logLevel } from "./env";
 import { buildReplyPayload } from "./reply-utils";
