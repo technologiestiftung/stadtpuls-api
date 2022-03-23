@@ -87,8 +87,6 @@ export const buildServer: (options: {
     enableOfflineQueue: false,
   });
   redis.on("error", (err) => {
-    // TODO: [STADTPULS-726] Remove console log when done
-    console.log("Redis error", err);
     server.log.error(err);
   });
 
