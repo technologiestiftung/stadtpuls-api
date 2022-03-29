@@ -29,7 +29,7 @@ const mountPoint = config.get<string>("mountPoint");
 const postHTTPBodySchema = S.object()
   .id("/integration/http")
   .title("Validation for data coming in via HTTP")
-  .additionalProperties(false)
+  .additionalProperties(true)
   .prop("latitude", S.number().minimum(-90).maximum(90))
   .prop("longitude", S.number().minimum(-180).maximum(180))
   .prop("altitude", S.number().minimum(0).maximum(10000))
