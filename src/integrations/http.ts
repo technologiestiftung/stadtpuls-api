@@ -1,6 +1,7 @@
 // TODO: Should this file be moved to sensors-records.ts?
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
+import isDate from "date-fns/isDate";
 import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
@@ -17,6 +18,7 @@ interface HTTPPostBody {
   latitude?: number;
   longitude?: number;
   altitude?: number;
+  recorded_at?: string;
   measurements: number[];
 }
 
@@ -33,6 +35,7 @@ const postHTTPBodySchema = S.object()
   .prop("latitude", S.number().minimum(-90).maximum(90))
   .prop("longitude", S.number().minimum(-180).maximum(180))
   .prop("altitude", S.number().minimum(0).maximum(10000))
+  .prop("recorded_at", S.string().format("date-time"))
   .prop("measurements", S.array().items(S.number()).required());
 
 const postHTTPParamsSchema = S.object()
@@ -108,6 +111,7 @@ const http: FastifyPluginAsync = async (fastify) => {
       const latitude = request.body.latitude;
       const longitude = request.body.longitude;
       const altitude = request.body.altitude;
+      const recorded_at_string = request.body.recorded_at;
 
       const {
         data: updatedSensors,
@@ -125,7 +129,15 @@ const http: FastifyPluginAsync = async (fastify) => {
       }
       fastify.log.info(updatedSensors, "updated lat, lon, alt");
 
-      const recordedAt = new Date().toISOString();
+      let recordedAt: string | undefined;
+      if (recorded_at_string) {
+        if (isDate(new Date(recorded_at_string))) {
+          recordedAt = new Date(recorded_at_string).toISOString();
+        }
+      } else {
+        recordedAt = new Date().toISOString();
+      }
+
       const { data: record, error: recordError } = await fastify.supabase
         .from<definitions["records"]>("records")
         .insert([
