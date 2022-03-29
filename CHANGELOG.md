@@ -1,3 +1,10 @@
+# [3.1.0-rc.1](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.0.2...v3.1.0-rc.1) (2022-03-29)
+
+
+### Features
+
+* **http integration:** allow additional props in body ([9487983](https://github.com/technologiestiftung/stadtpuls-api/commit/9487983046429e7b8e6404914b29585de68c6cdc))
+
 ## [3.0.2](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.0.1...v3.0.2) (2022-03-23)
 
 
