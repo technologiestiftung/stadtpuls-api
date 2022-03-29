@@ -266,6 +266,76 @@ describe("tests for the http integration", () => {
     await deleteUser(user.token);
     // end boilerplate
   });
+
+  test("should set recorded_at of record", async () => {
+    // start boilerplate setup test
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+    });
+    const device = await createSensor({
+      user_id: user.id,
+    });
+    // end boilerplate
+    const recorded_at = "2020-01-01T00:00:00.000Z";
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v${apiVersion}/sensors/${device.id}/records`,
+      payload: {
+        ...httpPayload,
+        recorded_at,
+      },
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.statusCode).toBe(201);
+    expect(response.json().record[0].recorded_at).toBe(
+      "2020-01-01T00:00:00+00:00"
+    );
+    // start boilerplate delete user
+    await deleteUser(user.token);
+    // end boilerplate
+  });
+
+  test("should set recorded_at of record with timezone done right", async () => {
+    // see https://en.wikipedia.org/wiki/ISO_8601
+    // start boilerplate setup test
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+    });
+    const device = await createSensor({
+      user_id: user.id,
+    });
+    // end boilerplate
+    const recorded_at = "2020-01-02T06:00:00-06:00";
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v${apiVersion}/sensors/${device.id}/records`,
+      payload: {
+        ...httpPayload,
+        recorded_at: recorded_at,
+      },
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.statusCode).toBe(201);
+    expect(response.json().record[0].recorded_at).toBe(
+      "2020-01-02T12:00:00+00:00"
+    );
+    // start boilerplate delete user
+    await deleteUser(user.token);
+    // end boilerplate
+  });
+
   // test should throw an PostgrestError
   // how can we mock the call to supabase.from("authtokens")
   // eslint-disable-next-line jest/no-disabled-tests
