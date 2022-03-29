@@ -235,6 +235,37 @@ describe("tests for the http integration", () => {
     await deleteUser(user.token);
     // end boilerplate
   });
+
+  test("should pass with additional properties", async () => {
+    // start boilerplate setup test
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+    });
+    const device = await createSensor({
+      user_id: user.id,
+    });
+    // end boilerplate
+
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v${apiVersion}/sensors/${device.id}/records`,
+      payload: {
+        additionalProperties: { something: "unexpected" },
+        ...httpPayload,
+      },
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.statusCode).toBe(201);
+    // start boilerplate delete user
+    await deleteUser(user.token);
+    // end boilerplate
+  });
   // test should throw an PostgrestError
   // how can we mock the call to supabase.from("authtokens")
   // eslint-disable-next-line jest/no-disabled-tests
