@@ -74,7 +74,7 @@ describe("tests for the ttn integration", () => {
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should have required property 'end_device_ids'\\"}"`
+      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should have required property 'end_device_ids', body should have required property 'received_at', body should have required property 'uplink_message'\\"}"`
     );
   });
   test("should be rejected due to no authorization header", async () => {
