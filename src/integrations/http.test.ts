@@ -301,6 +301,43 @@ describe("tests for the http integration", () => {
     // end boilerplate
   });
 
+  test("should reject recorded_at if date-time cannot be parsed as date", async () => {
+    // start boilerplate setup test
+    const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+    });
+    const device = await createSensor({
+      user_id: user.id,
+    });
+    // end boilerplate
+    const recorded_at = "2020-01-01";
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v${apiVersion}/sensors/${device.id}/records`,
+      payload: {
+        ...httpPayload,
+        recorded_at,
+      },
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.json()).toMatchInlineSnapshot(`
+      Object {
+        "error": "Bad Request",
+        "message": "body/recorded_at should match format \\"date-time\\" in ISO 8601 notation with UTC offset. Should be YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss+HH:mm or YYYY-MM-DDTHH:mm:ss-HH:mm-HH:mm",
+        "statusCode": 400,
+      }
+    `);
+    // start boilerplate delete user
+    await deleteUser(user.token);
+    // end boilerplate
+  });
   test("should set recorded_at of record with timezone done right", async () => {
     // see https://en.wikipedia.org/wiki/ISO_8601
     // start boilerplate setup test
