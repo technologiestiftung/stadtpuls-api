@@ -1,3 +1,12 @@
+# [3.1.0](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.0.2...v3.1.0) (2022-03-30)
+
+
+### Features
+
+* **error messages:** Add custom error response ([068eb1f](https://github.com/technologiestiftung/stadtpuls-api/commit/068eb1faf9178c6ae272849e0061034dfdd27fa2))
+* **http integration:** allow additional props in body ([9487983](https://github.com/technologiestiftung/stadtpuls-api/commit/9487983046429e7b8e6404914b29585de68c6cdc))
+* **http:** adds ability to post with own recorded_at prop ([83966c2](https://github.com/technologiestiftung/stadtpuls-api/commit/83966c2e17e6e4c5c12f2aa4d2e15ce1f46ba7a7))
+
 # [3.1.0-rc.2](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0-rc.1...v3.1.0-rc.2) (2022-03-30)
 
 
