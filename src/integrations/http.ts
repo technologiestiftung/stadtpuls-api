@@ -1,7 +1,6 @@
 // TODO: Should this file be moved to sensors-records.ts?
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import isDate from "date-fns/isDate";
 import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
@@ -32,6 +31,14 @@ const postHTTPBodySchema = S.object()
   .id("/integration/http")
   .title("Validation for data coming in via HTTP")
   .additionalProperties(true)
+  .raw({
+    errorMessage: {
+      properties: {
+        recorded_at:
+          'should match format "date-time" in ISO 8601 notation with UTC offset. Should be YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss+HH:mm or YYYY-MM-DDTHH:mm:ss-HH:mm-HH:mm',
+      },
+    },
+  })
   .prop("latitude", S.number().minimum(-90).maximum(90))
   .prop("longitude", S.number().minimum(-180).maximum(180))
   .prop("altitude", S.number().minimum(0).maximum(10000))
@@ -131,9 +138,7 @@ const http: FastifyPluginAsync = async (fastify) => {
 
       let recordedAt: string | undefined;
       if (recorded_at_string) {
-        if (isDate(new Date(recorded_at_string))) {
-          recordedAt = new Date(recorded_at_string).toISOString();
-        }
+        recordedAt = new Date(recorded_at_string).toISOString();
       } else {
         recordedAt = new Date().toISOString();
       }
