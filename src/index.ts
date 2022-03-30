@@ -56,9 +56,17 @@ const server = buildServer({
 });
 async function main(): Promise<void> {
   try {
+    server.ready((err) => {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      server.swagger();
+    });
     await server.listen(port, "0.0.0.0");
     server.log.info(`Server listening on http://localhost:${port}`);
     server.blipp();
+    server.swagger();
   } catch (error) {
     console.error(error);
     server.log.error(error);

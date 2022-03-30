@@ -13,6 +13,7 @@ import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 import fastifyAuth from "fastify-auth";
 import fastifyRateLimit from "fastify-rate-limit";
+import fastifySwagger from "fastify-swagger";
 import ajvError from "ajv-errors";
 // TODO: Add useful formats for validation once we are in fastify 4
 // import ajvFormats from "ajv-formats";
@@ -98,6 +99,46 @@ export const buildServer: (options: {
   });
 
   server.register(fastifyBlipp);
+  server.register(fastifySwagger, {
+    routePrefix: "/docs",
+    swagger: {
+      info: {
+        title: "Stadtpuls API",
+        description: "API for Stadtpuls",
+        version: `v${apiVersion}`,
+      },
+      externalDocs: {
+        url: "https://stadtpuls.com/docs/api",
+        description: "Stadtpuls API Docs",
+      },
+      host: "localhost",
+      schemes: ["http"],
+      consumes: ["application/json"],
+      produces: ["application/json"],
+      securityDefinitions: {
+        jwt: {
+          type: "apiKey",
+          name: "Authorization",
+          in: "header",
+        },
+      },
+    },
+    uiConfig: {
+      docExpansion: "full",
+      deepLinking: false,
+    },
+    uiHooks: {
+      onRequest: function (request, reply, next) {
+        next();
+      },
+      preHandler: function (request, reply, next) {
+        next();
+      },
+    },
+    staticCSP: true,
+    transformStaticCSP: (header) => header,
+    exposeRoute: true,
+  });
 
   server.register(fastifyRateLimit, {
     allowList: ["127.0.0.1"],

@@ -86,6 +86,7 @@
     "fastify-postgres": "3.6.0",
     "fastify-rate-limit": "5.8.0",
     "fastify-sensible": "3.1.2",
+    "fastify-swagger": "5.1.0",
     "fluent-json-schema": "3.1.0",
     "ioredis": "4.28.5",
     "make-promises-safe": "5.1.0",
