@@ -13,6 +13,9 @@ import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 import fastifyAuth from "fastify-auth";
 import fastifyRateLimit from "fastify-rate-limit";
+import ajvError from "ajv-errors";
+// TODO: Add useful formats for validation once we are in fastify 4
+// import ajvFormats from "ajv-formats";
 
 import fastifySupabase from "./supabase";
 import routesAuth from "./authtokens";
@@ -68,8 +71,12 @@ export const buildServer: (options: {
     logger,
     ignoreTrailingSlash: true,
     exposeHeadRoutes: true,
+    // TODO: Update ajvError to latests once we are in fastify 4
     ajv: {
+      plugins: [ajvError /*,[ajvFormats, { formats: ["iso-date-time"] }]*/],
       customOptions: {
+        jsonPointers: true,
+        allErrors: true,
         removeAdditional: false,
       },
     },
