@@ -48,17 +48,34 @@
       "request": "launch",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/jest",
       "args": [
-        "-p ${input:pattern}",
-        // "--runInBand",
+        "-p http",
+        "--runInBand",
         // "--no-cache",
-        "--watch"
+        "--watch",
+        "-f"
       ],
       "cwd": "${workspaceRoot}",
       "protocol": "inspector",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     },
-
+    {
+      "name": "Jest Debug tests watch mode specific file",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/jest",
+      "args": [
+        "src/integration/http.test.ts",
+        "--runInBand",
+        // "--no-cache",
+        "--watch",
+        "-f"
+      ],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
     {
       "name": "Inpyjamas scripts Debug tests watch mode",
       "type": "node",
