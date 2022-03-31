@@ -6,7 +6,7 @@ import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 import config from "config";
 import { logLevel, recordsMaxLength } from "../lib/env";
-import { isDate, parseISO } from "date-fns";
+import { isValidDate } from "../lib/date-utils";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -168,8 +168,9 @@ const http: FastifyPluginAsync = async (fastify) => {
         const altitude = request.body.altitude;
         const recorded_at_string = request.body.recorded_at;
         let recorded_at: string | undefined;
-        if (recorded_at_string) {
-          if (!(parseISO(recorded_at_string) instanceof Date)) {
+        if (recorded_at_string !== undefined) {
+          // const parsedDate = parseISO(recorded_at_string);
+          if (!isValidDate(new Date(recorded_at_string))) {
             throw fastify.httpErrors.badRequest(
               "recorded_at should match format 'date-time' in ISO 8601 notation with UTC offset. Should be YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss+HH:mm or YYYY-MM-DDTHH:mm:ss-HH:mm-HH:mm"
             );

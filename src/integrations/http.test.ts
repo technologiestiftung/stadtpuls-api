@@ -316,7 +316,7 @@ describe("tests for the http integration", () => {
     // end boilerplate
   });
 
-  test("should reject recorded_at if date-time cannot be parsed as date", async () => {
+  test.only("should reject recorded_at if date-time cannot be parsed as date", async () => {
     // start boilerplate setup test
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
@@ -341,12 +341,11 @@ describe("tests for the http integration", () => {
         Authorization: `Bearer ${authToken}`,
       },
     });
-    console.log(response.body);
     expect(response.statusCode).toBe(400);
     expect(response.json()).toMatchInlineSnapshot(`
       Object {
         "error": "Bad Request",
-        "message": "body/recorded_at should match format \\"date-time\\" in ISO 8601 notation with UTC offset. Should be YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss+HH:mm or YYYY-MM-DDTHH:mm:ss-HH:mm-HH:mm",
+        "message": "recorded_at should match format 'date-time' in ISO 8601 notation with UTC offset. Should be YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss+HH:mm or YYYY-MM-DDTHH:mm:ss-HH:mm-HH:mm",
         "statusCode": 400,
       }
     `);
