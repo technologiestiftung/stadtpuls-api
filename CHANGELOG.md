@@ -1,3 +1,15 @@
+# [3.1.0-rc.3](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0-rc.2...v3.1.0-rc.3) (2022-03-31)
+
+
+### Bug Fixes
+
+* **http:** fixes failing logic and adds tests ([e030419](https://github.com/technologiestiftung/stadtpuls-api/commit/e03041984368fedb6a16649fc42060457b2d7efa))
+
+
+### Features
+
+* **http:** adds batch posting of records ([510d433](https://github.com/technologiestiftung/stadtpuls-api/commit/510d433c358f50360890918d583709cdfa2cf1a9))
+
 # [3.1.0-rc.2](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0-rc.1...v3.1.0-rc.2) (2022-03-30)
 
 
