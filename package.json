@@ -74,7 +74,7 @@
   "dependencies": {
     "@humanwhocodes/env": "2.2.0",
     "@supabase/supabase-js": "1.31.1",
-    "ajv-errors": "1.0.1",
+    "ajv-errors": "3.0.0",
     "bcrypt": "5.0.1",
     "config": "3.3.7",
     "fastify": "3.27.4",
