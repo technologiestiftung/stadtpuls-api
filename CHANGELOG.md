@@ -1,3 +1,10 @@
+# [3.1.0-rc.4](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0-rc.3...v3.1.0-rc.4) (2022-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update react monorepo to v18 ([7caef30](https://github.com/technologiestiftung/stadtpuls-api/commit/7caef30be2873989a33a10361e5f4f86e70e32c6))
+
 # [3.1.0-rc.3](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0-rc.2...v3.1.0-rc.3) (2022-03-31)
 
 
