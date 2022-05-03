@@ -16,7 +16,7 @@ each([
 ]).describe("date utils tests", (input, expected) => {
   test(`returns ${expected}`, async () => {
     const actual = isValidDate(new Date(input));
-    console.log(new Date(input), actual);
+    // console.log(new Date(input), actual);
     expect(actual).toBe(expected);
   });
 });
