@@ -5,7 +5,7 @@ import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions
 import { AuthToken } from "../common/jwt";
 import S from "fluent-json-schema";
 import config from "config";
-import { logLevel, recordsMaxLength } from "../lib/env";
+import { logLevel } from "../lib/env";
 import { isValidDate } from "../lib/date-utils";
 
 declare module "fastify" {
@@ -55,13 +55,9 @@ const recordsSchema = S.object()
   .additionalProperties(true)
   .prop(
     "records",
-    S.array()
-      .items(
-        S.object()
-          .required(["measurements", "recorded_at"])
-          .extend(recordSchema)
-      )
-      .maxItems(recordsMaxLength)
+    S.array().items(
+      S.object().required(["measurements", "recorded_at"]).extend(recordSchema)
+    )
   );
 
 const postHTTPBodySchema = S.object()

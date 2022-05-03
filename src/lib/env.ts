@@ -14,7 +14,6 @@ const stage = env.require("STAGE");
 
 const logFlareApiKey = env.get("LOG_FLARE_API_KEY");
 const logFlareSourceToken = env.get("LOG_FLARE_SOURCE_TOKEN");
-const recordsMaxLength = 1000;
 
 const logLevels = ["info", "error", "debug", "fatal", "warn", "trace"];
 const supabaseMaxRows = parseInt(env.require("SUPABASE_MAX_ROWS"), 10);
@@ -43,5 +42,4 @@ export {
   supabaseMaxRows,
   supabaseServiceRoleKey,
   supabaseUrl,
-  recordsMaxLength,
 };
