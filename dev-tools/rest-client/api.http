@@ -119,6 +119,28 @@ Prefer: return=representation
 #   }
 # ]
 
+### delete a record in database using postgrest
+
+delete {{supabase_url}}/rest/v1/records?id=eq.15
+apikey: {{anon_key}}
+Authorization: Bearer {{user_token}}
+
+# curl -X DELETE 'https://porgaqmrgwwrbwahohml.supabase.co/rest/v1/records?some_column=eq.someValue' \
+# -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzMTEwMjk1MywiZXhwIjoxOTQ2Njc4OTUzfQ.gIAOKid7GXvlS3Mr66wETAIPlZII8w5FGg_bBnCJuG8" \
+# -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzMTEwMjk1MywiZXhwIjoxOTQ2Njc4OTUzfQ.gIAOKid7GXvlS3Mr66wETAIPlZII8w5FGg_bBnCJuG8"
+
+
+
+#  ▄▄▄       ██▓███   ██▓
+# ▒████▄    ▓██░  ██▒▓██▒
+# ▒██  ▀█▄  ▓██░ ██▓▒▒██▒
+# ░██▄▄▄▄██ ▒██▄█▓▒ ▒░██░
+#  ▓█   ▓██▒▒██▒ ░  ░░██░
+#  ▒▒   ▓▒█░▒▓▒░ ░  ░░▓
+#   ▒   ▒▒ ░░▒ ░      ▒ ░
+#   ░   ▒   ░░        ▒ ░
+#       ░  ░          ░
+
 
 ### healthcheck
 
