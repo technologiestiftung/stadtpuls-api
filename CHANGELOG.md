@@ -1,3 +1,10 @@
+# [3.2.0-rc.2](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.2.0-rc.1...v3.2.0-rc.2) (2022-05-03)
+
+
+### Bug Fixes
+
+* **HTTP:** Remove max number of records ([f996c56](https://github.com/technologiestiftung/stadtpuls-api/commit/f996c5601334f494a905478754dd0c3dbc03e338))
+
 # [3.2.0-rc.1](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0...v3.2.0-rc.1) (2022-05-03)
 
 

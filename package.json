@@ -1,7 +1,7 @@
 {
   "name": "@technologiestiftung/stadtpuls-api",
   "private": true,
-  "version": "3.2.0-rc.1",
+  "version": "3.2.0-rc.2",
   "description": "An API for the stadtpuls.com project",
   "author": "ff6347 <fabianmoronzirfas@protonmail.ch>",
   "homepage": "https://github.com/technologiestiftung/stadtpuls-api/tree/main/packages/stadtpuls-api#readme",
