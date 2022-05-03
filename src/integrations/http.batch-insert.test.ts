@@ -16,7 +16,6 @@ import {
 } from "../__test-utils";
 import { createAuthToken } from "../__test-utils/create-auth-token";
 import { createRecordsPayload } from "../__test-utils/create-records";
-import { recordsMaxLength } from "../lib/env";
 
 const issuer = "tsb";
 const buildServerOpts = {
