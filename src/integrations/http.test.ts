@@ -316,7 +316,7 @@ describe("tests for the http integration", () => {
     // end boilerplate
   });
 
-  test.only("should reject recorded_at if date-time cannot be parsed as date", async () => {
+  test("should reject recorded_at if date-time cannot be parsed as date", async () => {
     // start boilerplate setup test
     const server = buildServer(buildServerOpts);
     const user = await signupUser();
