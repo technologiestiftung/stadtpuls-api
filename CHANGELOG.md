@@ -1,3 +1,17 @@
+# [3.2.0](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0...v3.2.0) (2022-05-09)
+
+
+### Bug Fixes
+
+* **deps:** update react monorepo to v18 ([7caef30](https://github.com/technologiestiftung/stadtpuls-api/commit/7caef30be2873989a33a10361e5f4f86e70e32c6))
+* **http:** fixes failing logic and adds tests ([e030419](https://github.com/technologiestiftung/stadtpuls-api/commit/e03041984368fedb6a16649fc42060457b2d7efa))
+* **HTTP:** Remove max number of records ([f996c56](https://github.com/technologiestiftung/stadtpuls-api/commit/f996c5601334f494a905478754dd0c3dbc03e338))
+
+
+### Features
+
+* **http:** adds batch posting of records ([510d433](https://github.com/technologiestiftung/stadtpuls-api/commit/510d433c358f50360890918d583709cdfa2cf1a9))
+
 # [3.2.0-rc.2](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.2.0-rc.1...v3.2.0-rc.2) (2022-05-03)
 
 
