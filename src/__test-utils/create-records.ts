@@ -2,7 +2,7 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-
+import { sub } from "date-fns";
 import { supabase } from "./index";
 import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 // const binomial = require("@stdlib/random/base/binomial");
@@ -46,4 +46,40 @@ export async function createRecords({
     throw new Error("No data returned");
   }
   return data;
+}
+
+export async function createRecordsPayload({
+  amount,
+}: {
+  amount: number;
+}): Promise<
+  {
+    recorded_at: string;
+    measurements: number[];
+    latitude?: number;
+    longitude?: number;
+    altitude?: number;
+  }[]
+> {
+  if (amount <= 0) throw new Error("amount must not be negative");
+  const records = [];
+  const now = new Date();
+  for (let i = 0; i < amount; i++) {
+    const measurements = [Math.random() * 10];
+    const recorded_at = sub(now.setUTCHours(i % 24), {
+      minutes: i,
+    }).toISOString();
+    const latitude = Math.random() * 10;
+    const longitude = Math.random() * 10;
+    const altitude = Math.random() * 10;
+    records.push({
+      recorded_at,
+      measurements,
+      latitude,
+      longitude,
+      altitude,
+    });
+  }
+
+  return records;
 }

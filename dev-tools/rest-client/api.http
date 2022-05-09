@@ -21,7 +21,7 @@
 @service_role_key = {{ $dotenv %SUPABASE_SERVICE_ROLE_KEY }}
 
 @auth_token = {{ $dotenv %AUTH_TOKEN }}
-@sensor_id = 3
+@sensor_id = {{ $dotenv %SENSOR_ID }}
 
 @nice_id = {{ $dotenv %NICE_ID }}
 
@@ -118,6 +118,18 @@ Prefer: return=representation
 #     "userId": "xxxxxx"
 #   }
 # ]
+
+### delete a record in database using postgrest
+
+#  ▄▄▄       ██▓███   ██▓
+# ▒████▄    ▓██░  ██▒▓██▒
+# ▒██  ▀█▄  ▓██░ ██▓▒▒██▒
+# ░██▄▄▄▄██ ▒██▄█▓▒ ▒░██░
+#  ▓█   ▓██▒▒██▒ ░  ░░██░
+#  ▒▒   ▓▒█░▒▓▒░ ░  ░░▓
+#   ▒   ▒▒ ░░▒ ░      ▒ ░
+#   ░   ▒   ░░        ▒ ░
+#       ░  ░          ░
 
 
 ### healthcheck
@@ -217,3 +229,36 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {"simulated":true,"end_device_ids":{"application_ids":{"application_id":"foo"},"device_id":"foo"},"received_at":"2021-10-04T14:36:58.082Z","uplink_message":{"decoded_payload":{"foo":"bah","measurements":[1,2,3],"bytes":[1,2,3]},"locations":{"user":{"latitude":13,"longitude":52,"altitude":23,"source":"SOURCE_REGISTRY"}}}}
+
+
+### records create
+
+
+POST {{supabase_url}}/rest/v1/records
+Content-Type: application/json
+apikey: {{anon_key}}
+Authorization: Bearer {{user_token}}
+Prefer: return=representation
+
+{"measurements":[1], "recorded_at":"2021-10-04T14:36:58.082Z","sensor_id": {{sensor_id}}}
+
+
+### update a record
+
+PATCH {{supabase_url}}/rest/v1/records?id=eq.2
+Content-Type: application/json
+apikey: {{anon_key}}
+Authorization: Bearer {{user_token}}
+Prefer: return=representation
+
+{"measurements":[5,2,3,4], "recorded_at":"2021-10-04T14:36:58.082Z","sensor_id": {{sensor_id}}}
+
+
+
+### delete a record
+
+DELETE {{supabase_url}}/rest/v1/records?id=eq.2&sensor_id=eq.{{sensor_id}}
+Content-Type: application/json
+apikey: {{anon_key}}
+Authorization: Bearer {{user_token}}
+Prefer: return=representation

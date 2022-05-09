@@ -75,15 +75,30 @@ describe("tests for the http integration", () => {
 
   test("should be rejected due to no wrong body", async () => {
     const server = buildServer(buildServerOpts);
+    const user = await signupUser();
+
+    const authToken = await createAuthToken({
+      server,
+      userToken: user.token,
+    });
+    const sensor = await createSensor({
+      user_id: user.id,
+    });
     const response = await server.inject({
       method: "POST",
-      url: `/api/v${apiVersion}/sensors/1/records`,
+      url: `/api/v${apiVersion}/sensors/${sensor.id}/records`,
       payload: {},
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
       `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should have required property 'measurements'\\"}"`
     );
+    // start boilerplate
+    await deleteUser(user.token);
+    // end boilerplate
   });
 
   test("should be rejected due to no authorization header", async () => {
@@ -314,7 +329,7 @@ describe("tests for the http integration", () => {
       user_id: user.id,
     });
     // end boilerplate
-    const recorded_at = "2020-01-01";
+    const recorded_at = "abc";
     const response = await server.inject({
       method: "POST",
       url: `/api/v${apiVersion}/sensors/${device.id}/records`,
@@ -330,7 +345,7 @@ describe("tests for the http integration", () => {
     expect(response.json()).toMatchInlineSnapshot(`
       Object {
         "error": "Bad Request",
-        "message": "body/recorded_at should match format \\"date-time\\" in ISO 8601 notation with UTC offset. Should be YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss+HH:mm or YYYY-MM-DDTHH:mm:ss-HH:mm-HH:mm",
+        "message": "recorded_at should match format 'date-time' in ISO 8601 notation with UTC offset. Should be YYYY-MM-DDTHH:mm:ssZ or YYYY-MM-DDTHH:mm:ss+HH:mm or YYYY-MM-DDTHH:mm:ss-HH:mm-HH:mm",
         "statusCode": 400,
       }
     `);
