@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "@inpyjamas/scripts": "0.1.11-alpha",
-    "dotenv": "8.2.0",
-    "jest": "26.6.3",
-    "ts-node": "9.1.1",
+    "dotenv": "16.0.1",
+    "jest": "28.1.0",
+    "ts-node": "10.7.0",
     "ts-node-dev": "1.1.6"
   }
 }
