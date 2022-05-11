@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.2.0...v3.2.1) (2022-05-11)
+
+
+### Bug Fixes
+
+* typo in badge ([520875f](https://github.com/technologiestiftung/stadtpuls-api/commit/520875fec715532027a9293432adcac4823e20fa))
+
 # [3.2.0](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0...v3.2.0) (2022-05-09)
 
 
