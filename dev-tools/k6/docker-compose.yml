@@ -1,7 +1,7 @@
 version: "3"
 services:
   k6:
-    image: loadimpact/k6:0.38.2
+    image: loadimpact/k6:0.38.3
     volumes:
       - ./scripts:/scripts
     command: ["run", "/scripts/memory-leaks.js"]
