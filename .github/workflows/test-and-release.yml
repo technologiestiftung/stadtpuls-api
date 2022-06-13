@@ -151,7 +151,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
@@ -210,7 +210,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: metaghcr
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
