@@ -1,4 +1,4 @@
-import faker from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 import { definitions } from "@technologiestiftung/stadtpuls-supabase-definitions";
 import { signup } from "./signup";
 import { supabaseAnonKey, supabaseUrl, supabase } from "./index";
