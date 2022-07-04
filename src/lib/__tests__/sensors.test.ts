@@ -66,7 +66,7 @@ describe(`all ${sensorsEndpoint} tests`, () => {
     expect(response.json()).toMatchInlineSnapshot(`
       Object {
         "error": "Bad Request",
-        "message": "querystring should NOT have additional properties",
+        "message": "querystring must NOT have additional properties",
         "statusCode": 400,
       }
     `);

@@ -62,7 +62,7 @@ describe("tests for the ttn integration", () => {
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should be object\\"}"`
+      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body must be object\\"}"`
     );
   });
   test("should be rejected due to no wrong body", async () => {
@@ -74,7 +74,7 @@ describe("tests for the ttn integration", () => {
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should have required property 'end_device_ids', body should have required property 'received_at', body should have required property 'uplink_message'\\"}"`
+      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body must have required property 'end_device_ids', body must have required property 'received_at', body must have required property 'uplink_message'\\"}"`
     );
   });
   test("should be rejected due to no authorization header", async () => {

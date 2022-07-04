@@ -44,9 +44,6 @@ if (!logFlareApiKey || !logFlareSourceToken) {
 
 import buildServer from "./lib/server";
 
-const _logger: FastifyLoggerOptions = {
-  prettyPrint: true,
-};
 const server = buildServer({
   jwtSecret,
   supabaseUrl,
@@ -56,7 +53,7 @@ const server = buildServer({
 });
 async function main(): Promise<void> {
   try {
-    await server.listen(port, "0.0.0.0");
+    await server.listen({ port, host: "0.0.0.0" });
     server.log.info(`Server listening on http://localhost:${port}`);
     server.blipp();
   } catch (error) {
