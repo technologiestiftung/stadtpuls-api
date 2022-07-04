@@ -249,7 +249,7 @@ describe("tests for the http integration", () => {
     expect(responseArray.json()).toMatchInlineSnapshot(`
       Object {
         "error": "Bad Request",
-        "message": "body/records/5 should have required property 'measurements', body should match \\"then\\" schema",
+        "message": "body/records/5 must have required property 'measurements', body must match \\"then\\" schema",
         "statusCode": 400,
       }
     `);
@@ -292,7 +292,7 @@ describe("tests for the http integration", () => {
     expect(responseArray.json()).toMatchInlineSnapshot(`
       Object {
         "error": "Bad Request",
-        "message": "body/records/5 should have required property 'recorded_at', body/records/100 should have required property 'recorded_at', body should match \\"then\\" schema",
+        "message": "body/records/5 must have required property 'recorded_at', body/records/100 must have required property 'recorded_at', body must match \\"then\\" schema",
         "statusCode": 400,
       }
     `);

@@ -126,7 +126,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
     url: `/${mountPoint}/v${apiVersion}/sensors/:sensorId/records/:recordId`,
     schema: {
       params: getRecordParamsSchema,
-      response: { response: { $ref: "get-response-default#" } },
+      // response: { response: { $ref: "get-response-default#" } },
     },
     method: ["GET", "HEAD"],
     logLevel,
@@ -190,7 +190,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
     schema: {
       params: getSensorParamsSchema,
       querystring: getQuerySchemaRecords,
-      response: { response: { $ref: "get-response-default#" } },
+      // response: { response: { $ref: "get-response-default#" } },
     },
     method: ["HEAD", "GET"],
     logLevel,
@@ -278,7 +278,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
     url: `/${mountPoint}/v${apiVersion}/sensors/:sensorId`,
     schema: {
       params: getSensorParamsSchema,
-      response: { response: { $ref: "get-response-default#" } },
+      // response: { response: { $ref: "get-response-default#" } },
     },
     method: ["GET", "HEAD"],
     logLevel,
@@ -343,7 +343,7 @@ const sensorsRecordsRoutes: FastifyPluginAsync = async (fastify) => {
     url: `/${mountPoint}/v${apiVersion}/sensors/`,
     schema: {
       querystring: getQuerySchemaSensors,
-      response: { response: { $ref: "get-response-default#" } },
+      // response: { response: { $ref: "get-response-default#" } },
     },
     method: ["GET", "HEAD"],
     logLevel,

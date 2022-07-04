@@ -35,7 +35,7 @@ interface HTTPPostParams {
 const apiVersion = config.get("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
 const recordSchema = S.object()
-  .id("#record")
+  // .id("#record")
   .additionalProperties(true)
   .raw({
     errorMessage: {
@@ -52,6 +52,7 @@ const recordSchema = S.object()
   .prop("measurements", S.array().items(S.number()).required());
 
 const recordsSchema = S.object()
+  // .id("#records")
   .additionalProperties(true)
   .prop(
     "records",
@@ -61,7 +62,7 @@ const recordsSchema = S.object()
   );
 
 const postHTTPBodySchema = S.object()
-  .id("/integration/http")
+  .id("/integration/http/records")
   .title("Validation for data coming in via HTTP")
   .additionalProperties(true)
   .ifThenElse(

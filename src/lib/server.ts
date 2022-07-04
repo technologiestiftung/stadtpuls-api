@@ -7,12 +7,12 @@ import fastify, {
   FastifyRequest,
 } from "fastify";
 import fastifyBlipp from "fastify-blipp";
-import fastifyJwt from "fastify-jwt";
-import fastifyHelmet from "fastify-helmet";
-import fastifyCors from "fastify-cors";
+import fastifyJwt from "@fastify/jwt";
+import fastifyHelmet from "@fastify/helmet";
+import fastifyCors from "@fastify/cors";
 import fastifySensible from "fastify-sensible";
-import fastifyAuth from "fastify-auth";
-import fastifyRateLimit from "fastify-rate-limit";
+import fastifyAuth from "@fastify/auth";
+import fastifyRateLimit from "@fastify/rate-limit";
 import ajvError from "ajv-errors";
 // TODO: [BA-70] Add useful formats for validation once we are in fastify 4
 // import ajvFormats from "ajv-formats";
@@ -45,120 +45,120 @@ export const buildServer: (options: {
   logger,
   issuer,
 }) => {
-  const authtokensRouteOptions = {
-    endpoint: "authtokens",
-    mount: mountPoint,
-    apiVersion: `v${apiVersion}`,
-    issuer,
-  };
-  const singinRouteOptoins = {
-    endpoint: "signin",
-    mount: mountPoint,
-    apiVersion: `v${apiVersion}`,
-  };
-  const singupRouteOptoins = {
-    endpoint: "signup",
-    mount: mountPoint,
-    apiVersion: `v${apiVersion}`,
-  };
-  const sensorsRouteOptions = {
-    endpoint: "sensors",
-    mount: mountPoint,
-    apiVersion: `v${apiVersion}`,
-  };
+    const authtokensRouteOptions = {
+      endpoint: "authtokens",
+      mount: mountPoint,
+      apiVersion: `v${apiVersion}`,
+      issuer,
+    };
+    const singinRouteOptoins = {
+      endpoint: "signin",
+      mount: mountPoint,
+      apiVersion: `v${apiVersion}`,
+    };
+    const singupRouteOptoins = {
+      endpoint: "signup",
+      mount: mountPoint,
+      apiVersion: `v${apiVersion}`,
+    };
+    const sensorsRouteOptions = {
+      endpoint: "sensors",
+      mount: mountPoint,
+      apiVersion: `v${apiVersion}`,
+    };
 
-  const server = fastify({
-    logger,
-    ignoreTrailingSlash: true,
-    exposeHeadRoutes: true,
-    // TODO: [BA-71] Update ajvError to latests once we are in fastify 4
-    ajv: {
-      plugins: [ajvError /*,[ajvFormats, { formats: ["iso-date-time"] }]*/],
-      customOptions: {
-        jsonPointers: true,
-        allErrors: true,
-        removeAdditional: false,
-      },
-    },
-  });
-  let redis: Redis.Redis | undefined;
-
-  // eslint-disable-next-line prefer-const
-  redis = new Redis(redisUrl, {
-    connectionName: `stadtpuls-api-${stage}`,
-
-    autoResubscribe: false,
-    // lazyConnect: true,
-    connectTimeout: 500,
-    maxRetriesPerRequest: 0,
-    enableOfflineQueue: false,
-  });
-  redis.on("error", (err) => {
-    server.log.error(err);
-  });
-
-  server.register(fastifyBlipp);
-
-  server.register(fastifyRateLimit, {
-    allowList: ["127.0.0.1"],
-    redis,
-  });
-  server.register(fastifyHelmet);
-  server.register(fastifyCors, {
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"],
-  });
-  server.register(fastifySensible);
-  server.register(fastifyAuth);
-  // server.register(fastifyPostgres, {
-  //   connectionString: databaseUrl,
-  // });
-  server.register(fastifyJwt, {
-    secret: jwtSecret,
-  });
-
-  server.register(fastifySupabase, {
-    supabaseUrl,
-    supabaseServiceRoleKey,
-  });
-  server.decorate(
-    "verifyJWT",
-    async (request: FastifyRequest, _reply: FastifyReply) => {
-      await request.jwtVerify();
-    }
-  );
-
-  // TODO: [STADTPULS-398] Write Schemas for all responses
-  // https://www.fastify.io/docs/latest/Validation-and-Serialization/#adding-a-shared-schema
-  server.addSchema(getResponseDefaultSchema);
-
-  server.register(signin, singinRouteOptoins);
-  server.register(signup, singupRouteOptoins);
-  server.register(routesAuth, authtokensRouteOptions);
-  server.register(sensorsRecordsRoutes, sensorsRouteOptions);
-  server.register(ttn);
-  server.register(http);
-
-  [
-    "/",
-    `/${authtokensRouteOptions.mount}`,
-    `/${authtokensRouteOptions.mount}/${authtokensRouteOptions.apiVersion}`,
-  ].forEach((path) => {
-    server.route({
-      method: ["GET", "HEAD"],
-      url: path,
-      logLevel: process.env.NODE_ENV === "production" ? "warn" : "info",
-      exposeHeadRoute: true,
-      handler: async (request, reply) => {
-        reply.send({
-          comment: "healthcheck",
-          method: `${request.method}`,
-          url: `${request.url}`,
-        });
+    const server = fastify({
+      logger,
+      ignoreTrailingSlash: true,
+      exposeHeadRoutes: true,
+      // TODO: [BA-71] Update ajvError to latests once we are in fastify 4
+      ajv: {
+        plugins: [ajvError /*,[ajvFormats, { formats: ["iso-date-time"] }]*/],
+        customOptions: {
+          // jsonPointers: true,
+          allErrors: true,
+          removeAdditional: false,
+        },
       },
     });
-  });
-  return server;
-};
+    let redis: Redis.Redis | undefined;
+
+    // eslint-disable-next-line prefer-const
+    redis = new Redis(redisUrl, {
+      connectionName: `stadtpuls-api-${stage}`,
+
+      autoResubscribe: false,
+      // lazyConnect: true,
+      connectTimeout: 500,
+      maxRetriesPerRequest: 0,
+      enableOfflineQueue: false,
+    });
+    redis.on("error", (err) => {
+      server.log.error(err);
+    });
+
+    server.register(fastifyBlipp);
+
+    server.register(fastifyRateLimit, {
+      allowList: ["127.0.0.1"],
+      redis,
+    });
+    server.register(fastifyHelmet);
+    server.register(fastifyCors, {
+      origin: "*",
+      methods: ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"],
+    });
+    server.register(fastifySensible);
+    server.register(fastifyAuth);
+    // server.register(fastifyPostgres, {
+    //   connectionString: databaseUrl,
+    // });
+    server.register(fastifyJwt, {
+      secret: jwtSecret,
+    });
+
+    server.register(fastifySupabase, {
+      supabaseUrl,
+      supabaseServiceRoleKey,
+    });
+    server.decorate(
+      "verifyJWT",
+      async (request: FastifyRequest, _reply: FastifyReply) => {
+        await request.jwtVerify();
+      }
+    );
+
+    // TODO: [STADTPULS-398] Write Schemas for all responses
+    // https://www.fastify.io/docs/latest/Validation-and-Serialization/#adding-a-shared-schema
+    server.addSchema(getResponseDefaultSchema);
+
+    server.register(signin, singinRouteOptoins);
+    server.register(signup, singupRouteOptoins);
+    server.register(routesAuth, authtokensRouteOptions);
+    server.register(sensorsRecordsRoutes, sensorsRouteOptions);
+    server.register(ttn);
+    server.register(http);
+
+    [
+      "/",
+      `/${authtokensRouteOptions.mount}`,
+      `/${authtokensRouteOptions.mount}/${authtokensRouteOptions.apiVersion}`,
+    ].forEach((path) => {
+      server.route({
+        method: ["GET", "HEAD"],
+        url: path,
+        logLevel: process.env.NODE_ENV === "production" ? "warn" : "info",
+        exposeHeadRoute: true,
+        handler: async (request, reply) => {
+          reply.send({
+            comment: "healthcheck",
+            method: `${request.method}`,
+            url: `${request.url}`,
+          });
+        },
+      });
+    });
+    return server;
+  };
 
 export default buildServer;

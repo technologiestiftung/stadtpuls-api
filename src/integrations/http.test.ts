@@ -68,7 +68,7 @@ describe("tests for the http integration", () => {
     });
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatchInlineSnapshot(
-      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body should be object\\"}"`
+      `"{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"body must be object\\"}"`
     );
     await deleteUser(user.token);
   });
