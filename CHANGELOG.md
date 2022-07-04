@@ -1,3 +1,10 @@
+# [3.2.0-rc.3](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.2.0-rc.2...v3.2.0-rc.3) (2022-07-04)
+
+
+### Bug Fixes
+
+* **tsconfig:** remove strict from esbuild tsconfig ([cc8e980](https://github.com/technologiestiftung/stadtpuls-api/commit/cc8e980598f6016dd90ab25531e4a81323e48ddd))
+
 # [3.2.0](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.1.0...v3.2.0) (2022-05-09)
 
 
