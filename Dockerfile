@@ -1,4 +1,4 @@
-FROM node:14.19-slim as builder
+FROM node:14.21-slim as builder
 ENV NODE_ENV=development
 RUN apt-get update \
   && apt-get install -y build-essential python \
@@ -10,7 +10,7 @@ RUN npm ci --silent
 COPY . .
 RUN npm run build
 
-FROM node:14.19-slim as runner
+FROM node:14.21-slim as runner
 WORKDIR /usr/app/
 COPY ["package.json", "package-lock.json*", "./"]
 ENV NODE_ENV=production
