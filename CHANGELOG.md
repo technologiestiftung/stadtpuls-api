@@ -1,3 +1,10 @@
+# [3.2.0-rc.4](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.2.0-rc.3...v3.2.0-rc.4) (2022-12-13)
+
+
+### Features
+
+* **server:** Adds control method for shutdown ([9d7da9e](https://github.com/technologiestiftung/stadtpuls-api/commit/9d7da9e86af612b51035c4aa5eb157e25736bfda))
+
 # [3.2.0-rc.3](https://github.com/technologiestiftung/stadtpuls-api/compare/v3.2.0-rc.2...v3.2.0-rc.3) (2022-07-04)
 
 
