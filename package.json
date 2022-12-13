@@ -45,6 +45,7 @@
     "@semantic-release/github": "8.0.4",
     "@semantic-release/npm": "9.0.1",
     "@semantic-release/release-notes-generator": "10.0.3",
+    "@technologiestiftung/semantic-release-config": "1.2.0",
     "@technologiestiftung/stadtpuls-supabase-definitions": "1.0.1",
     "@types/ajv-errors": "1.0.3",
     "@types/bcrypt": "5.0.0",
