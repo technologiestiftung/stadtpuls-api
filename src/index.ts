@@ -10,6 +10,7 @@ import {
   logLevel,
   logFlareApiKey,
   logFlareSourceToken,
+  shutdownLevel,
 } from "./lib/env";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import pino from "pino";
@@ -50,6 +51,7 @@ const server = buildServer({
   supabaseServiceRoleKey,
   logger: pinoLogger,
   issuer,
+  shutdownLevel,
 });
 async function main(): Promise<void> {
   try {
