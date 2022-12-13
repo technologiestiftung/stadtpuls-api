@@ -12,9 +12,15 @@ const logLevel = env.require("LOG_LEVEL") as LogLevel;
 const redisUrl = env.require("REDIS_URL");
 const stage = env.require("STAGE");
 
+const shutdownLevel = parseInt(env.get("SHUTDOWN_LEVEL", "0") as string);
+
 const logFlareApiKey = env.get("LOG_FLARE_API_KEY");
 const logFlareSourceToken = env.get("LOG_FLARE_SOURCE_TOKEN");
-
+enum ShutdownLevels {
+  none = 0,
+  graceperiod = 1,
+  shutdown = 2,
+}
 const logLevels = ["info", "error", "debug", "fatal", "warn", "trace"];
 const supabaseMaxRows = parseInt(env.require("SUPABASE_MAX_ROWS"), 10);
 if (isNaN(supabaseMaxRows)) {
@@ -26,6 +32,20 @@ if (isNaN(supabaseMaxRows)) {
 if (!logLevels.includes(logLevel)) {
   throw new Error(
     `Environment variable LOG_LEVEL must be one of ${logLevels.join(", ")}`
+  );
+}
+
+if (
+  ![
+    ShutdownLevels.none,
+    ShutdownLevels.graceperiod,
+    ShutdownLevels.shutdown,
+  ].includes(shutdownLevel)
+) {
+  throw new Error(
+    `Environment variable SHUTDOWN_LEVEL must be one of ${Object.keys(
+      ShutdownLevels
+    ).join(", ")}`
   );
 }
 
@@ -42,4 +62,6 @@ export {
   supabaseMaxRows,
   supabaseServiceRoleKey,
   supabaseUrl,
+  shutdownLevel,
+  ShutdownLevels,
 };
