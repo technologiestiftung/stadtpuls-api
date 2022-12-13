@@ -1,4 +1,5 @@
 module.exports = {
+  extends: "@technologiestiftung/semantic-release-config",
   branches: [
     { name: "main" },
     { name: "staging", channel: "pre/rc", prerelease: "rc" }, // `prerelease` is built with the template `${name.replace(/^pre\\//g, "")}`
@@ -7,11 +8,12 @@ module.exports = {
   npmPublish: false,
   dryRun: false,
   plugins: [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog",
-    "@semantic-release/npm",
-    "@semantic-release/git",
-    "@semantic-release/github",
+    [
+      "@saithodev/semantic-release-backmerge",
+      {
+        branch: ["staging"],
+        backmergeStrategy: "merge",
+      },
+    ],
   ],
 };
