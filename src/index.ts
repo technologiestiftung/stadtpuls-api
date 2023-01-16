@@ -10,6 +10,7 @@ import {
   logLevel,
   logFlareApiKey,
   logFlareSourceToken,
+  shutdownLevel,
 } from "./lib/env";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import pino from "pino";
@@ -44,19 +45,17 @@ if (!logFlareApiKey || !logFlareSourceToken) {
 
 import buildServer from "./lib/server";
 
-const _logger: FastifyLoggerOptions = {
-  prettyPrint: true,
-};
 const server = buildServer({
   jwtSecret,
   supabaseUrl,
   supabaseServiceRoleKey,
   logger: pinoLogger,
   issuer,
+  shutdownLevel,
 });
 async function main(): Promise<void> {
   try {
-    await server.listen(port, "0.0.0.0");
+    await server.listen({ port, host: "0.0.0.0" });
     server.log.info(`Server listening on http://localhost:${port}`);
     server.blipp();
   } catch (error) {

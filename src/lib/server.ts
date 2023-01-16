@@ -5,14 +5,15 @@ import fastify, {
   FastifyLoggerOptions,
   FastifyReply,
   FastifyRequest,
+  HTTPMethods,
 } from "fastify";
 import fastifyBlipp from "fastify-blipp";
-import fastifyJwt from "fastify-jwt";
-import fastifyHelmet from "fastify-helmet";
-import fastifyCors from "fastify-cors";
+import fastifyJwt from "@fastify/jwt";
+import fastifyHelmet from "@fastify/helmet";
+import fastifyCors from "@fastify/cors";
 import fastifySensible from "fastify-sensible";
-import fastifyAuth from "fastify-auth";
-import fastifyRateLimit from "fastify-rate-limit";
+import fastifyAuth from "@fastify/auth";
+import fastifyRateLimit from "@fastify/rate-limit";
 import ajvError from "ajv-errors";
 // TODO: [BA-70] Add useful formats for validation once we are in fastify 4
 // import ajvFormats from "ajv-formats";
@@ -28,7 +29,7 @@ import http from "../integrations/http";
 import { getResponseDefaultSchema } from "../common/schemas";
 import pino from "pino";
 import Redis from "ioredis";
-import { redisUrl, stage } from "./env";
+import { redisUrl, ShutdownLevels, stage } from "./env";
 const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
 
@@ -38,12 +39,14 @@ export const buildServer: (options: {
   supabaseServiceRoleKey: string;
   logger: boolean | FastifyLoggerOptions | pino.Logger;
   issuer: string;
+  shutdownLevel?: ShutdownLevels;
 }) => FastifyInstance = ({
   jwtSecret,
   supabaseUrl,
   supabaseServiceRoleKey,
   logger,
   issuer,
+  shutdownLevel = 0,
 }) => {
   const authtokensRouteOptions = {
     endpoint: "authtokens",
@@ -75,7 +78,7 @@ export const buildServer: (options: {
     ajv: {
       plugins: [ajvError /*,[ajvFormats, { formats: ["iso-date-time"] }]*/],
       customOptions: {
-        jsonPointers: true,
+        // jsonPointers: true,
         allErrors: true,
         removeAdditional: false,
       },
@@ -132,12 +135,103 @@ export const buildServer: (options: {
   // https://www.fastify.io/docs/latest/Validation-and-Serialization/#adding-a-shared-schema
   server.addSchema(getResponseDefaultSchema);
 
-  server.register(signin, singinRouteOptoins);
-  server.register(signup, singupRouteOptoins);
-  server.register(routesAuth, authtokensRouteOptions);
-  server.register(sensorsRecordsRoutes, sensorsRouteOptions);
-  server.register(ttn);
-  server.register(http);
+  // disable singup when we go into grace period
+  if (shutdownLevel === ShutdownLevels.none) {
+    server.register(signup, singupRouteOptoins);
+  } else {
+    server.route({
+      method: "POST",
+      url: `/${singupRouteOptoins.mount}/${singupRouteOptoins.apiVersion}/${singupRouteOptoins.endpoint}`,
+      handler: (_request, reply) => {
+        reply.code(404).send({
+          error: "Not Found",
+          statusCode: 404,
+          message:
+            "Signup is disabled - we are in shutdown mode. Please see https://stadtpuls.com for further information",
+        });
+      },
+    });
+  }
+  // Disable all actionable routes when we are in shutdown
+  // This means we can also pause the project on render.com
+  if (shutdownLevel !== ShutdownLevels.shutdown) {
+    server.register(signin, singinRouteOptoins);
+    server.register(routesAuth, authtokensRouteOptions);
+    server.register(sensorsRecordsRoutes, sensorsRouteOptions);
+    server.register(ttn);
+    server.register(http);
+  } else {
+    server.route({
+      url: `/${singinRouteOptoins.mount}/${singinRouteOptoins.apiVersion}/${singinRouteOptoins.endpoint}`,
+      method: "POST",
+
+      handler: (_request, reply) => {
+        reply.code(404).send({
+          error: "Not Found",
+          statusCode: 404,
+          message:
+            "Signin is disabled - we are in shutdown mode. Please see https://stadtpuls.com for further information",
+        });
+      },
+    });
+    server.route({
+      url: `/${authtokensRouteOptions.mount}/${authtokensRouteOptions.apiVersion}/${authtokensRouteOptions.endpoint}`,
+      method: ["POST", "GET", "DELETE", "PUT"],
+      handler: (_request, reply) => {
+        reply.code(404).send({
+          error: "Not Found",
+          statusCode: 404,
+          message:
+            "Authtoken retrieval is disabled - we are in shutdown mode. Please see https://stadtpuls.com for further information",
+        });
+      },
+    });
+    const apiVersion = config.get<number>("apiVersion");
+    const mountPoint = config.get<string>("mountPoint");
+    const sensorRoutes: {
+      url: string;
+      method: HTTPMethods[];
+      message?: string;
+    }[] = [
+      {
+        url: `/${mountPoint}/v${apiVersion}/integrations/ttn/v3`,
+        method: ["POST"],
+        message:
+          "TTN integration is disabled - we are in shutdown mode. Please see https://stadtpuls.com for further information",
+      },
+      {
+        method: ["GET", "HEAD", "POST"],
+        url: `/${mountPoint}/v${apiVersion}/sensors/:sensorId/records`,
+      },
+      {
+        method: ["GET", "HEAD"],
+        url: `/${mountPoint}/v${apiVersion}/sensors/:sensorId/records/recordId`,
+      },
+      {
+        method: ["GET", "HEAD"],
+        url: `/${mountPoint}/v${apiVersion}/sensors/:sensorId`,
+      },
+      {
+        method: ["GET", "HEAD"],
+        url: `/${mountPoint}/v${apiVersion}/sensors/`,
+      },
+    ];
+    sensorRoutes.forEach((item) => {
+      server.route({
+        url: item.url,
+        method: item.method,
+        handler: (_request, reply) => {
+          reply.code(404).send({
+            error: "Not Found",
+            statusCode: 404,
+            message: item.message
+              ? item.message
+              : "Sensors and records creation and retrieval is disabled - we are in shutdown mode. Please see https://stadtpuls.com for further information",
+          });
+        },
+      });
+    });
+  }
 
   [
     "/",

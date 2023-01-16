@@ -64,7 +64,7 @@ const apiVersion = config.get<number>("apiVersion");
 const mountPoint = config.get<string>("mountPoint");
 
 const postTTNHeaderSchema = S.object()
-  .id("/integration/zzn/header")
+  .id("/integration/ttn/header")
   .title("HTTP Header")
   .additionalProperties(true)
   .oneOf([

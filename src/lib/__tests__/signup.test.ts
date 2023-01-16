@@ -4,7 +4,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import faker from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 import {
   apiVersion,
   buildServerOpts,

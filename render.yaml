@@ -35,3 +35,5 @@ services:
         sync: false
       - key: STAGE
         sync: false
+      - key: SHUTDOWN_LEVEL
+        value: "0"
