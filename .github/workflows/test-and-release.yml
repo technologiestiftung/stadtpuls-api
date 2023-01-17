@@ -68,7 +68,7 @@ jobs:
       # Label used to access the service container
       redis:
         # Docker Hub image
-        image: redis:6.2.6-alpine
+        image: redis:7.0.8-alpine
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
